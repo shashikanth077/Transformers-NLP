@@ -17,6 +17,7 @@ robustness on negation / contrast.
 | `Project_Study_Guide.html` | **Interactive study guide** (open in any browser, works offline): real-world story, step-by-step pipeline, sentence lab with real attention maps, all 872 test sentences for every model, results explorer, Q&A, quiz, rehearsal timer |
 | `Transformers_NLP_Kannada_Notes.pdf` | **Study notes in Kannada** (40 pages): NLP and Transformers explained with Karnataka examples, the project's real results, viva Q&A with English answer lines, glossary, quiz, one-page summary |
 | `Transformers_Explained_Overview.html` | **Interactive overview of Transformers** (works offline), following the structure of Ketan Doshi's "Transformers Explained Visually, Part 1" article with original text and demos: architecture explorer, real DistilBERT attention maps, step-by-step training and inference with real English→Kannada outputs (NLLB-200), teacher forcing, task heads, RNN comparison, quiz |
+| `CNN_Pipeline_Explained.html` | **CNN explained end to end** (offline): image → convolution → ReLU → pooling → flatten → dense → prediction → loss → backpropagation → weight updates on a PIN-code digit reader, with plain-words, real-world and maths boxes; a real CNN runs live in the browser (gradient check, training, draw-your-own digit) |
 
 ## Main results (SST-2 test set, 872 sentences)
 
