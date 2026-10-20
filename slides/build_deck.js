@@ -11,7 +11,7 @@ const fa = require("react-icons/fa");
 const ROOT = path.resolve(__dirname, "..");
 const RES = path.join(ROOT, "code", "results");
 const FIG = path.join(ROOT, "code", "figures");
-const OUT = path.join(ROOT, "Transformers_in_NLP_Presentation.pptx");
+const OUT = path.join(ROOT, "docs", "Transformers_in_NLP_Presentation.pptx");
 const APPLY_THEME = process.env.APPLY_THEME;
 
 // ---------------------------------------------------------------- data
@@ -180,7 +180,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
 
   // ============================================================ 4. Literature
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Theory" });
-  title(s, "Literature: Transformers lead, but cost and small data are under-studied");
+  title(s, "Literature: Transformers lead, but gaps remain");
   const fams = [
     ["Encoder-only", "BERT, RoBERTa, DistilBERT, DeBERTa", "Understanding & classification", H.accent1],
     ["Decoder-only", "GPT-2/3/4, Llama", "Generation, in-context learning", H.accent2],
@@ -256,7 +256,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
   // ============================================================ 7. Results accuracy (native chart)
   pres.addSection({ title: "Results" });
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Results" });
-  title(s, `Fine-tuned Transformers beat classical models by ${((bestFt.accuracy - bestCls.accuracy) * 100).toFixed(1)} points`);
+  title(s, `Fine-tuned DistilBERT: +${(+pct(bestFt.accuracy) - +pct(bestCls.accuracy)).toFixed(1)} points over classical`);
   const asc = [...summary].reverse();
   const famOrder = ["classical", "recurrent", "transformer"];
   const series = famOrder.map((f) => ({
@@ -276,7 +276,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
     showValAxisTitle: true, valAxisTitle: "Test accuracy, %", valAxisTitleFontSize: 11, valAxisTitleColor: "52516E",
   });
   const call = [
-    [pct(bestFt.accuracy), `best: ${bestFt.name}`, H.accent1],
+    [pct(bestFt.accuracy), `${bestFt.name}`, H.accent1],
     [pct(bestCls.accuracy), `best classical: ${bestCls.name}`, H.accent2],
     [pct(zeroShot.accuracy), "zero-shot – no labels at all", H.accent5],
   ];
@@ -292,7 +292,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Results" });
   title(s, "The price: slower training and inference, bigger models");
   const rowsCost = [["Model", "Acc., %", "Train time", "Latency, ms", "Params"]];
-  const fmtTime = (t) => (t === 0 ? "–" : t < 60 ? `${t.toFixed(0)} s` : `${(t / 60).toFixed(0)} min`);
+  const fmtTime = (t) => (t === 0 ? "–" : t < 60 ? `${t.toFixed(0)} s` : t < 3600 ? `${(t / 60).toFixed(0)} min` : `${(t / 3600).toFixed(1)} h`);
   const fmtPar = (p) => (p >= 1e6 ? `${(p / 1e6).toFixed(1)} M` : `${(p / 1e3).toFixed(0)} k`);
   const pick = [bestCls, bilstm, ...summary.filter((r) => r.family === "transformer-finetuned").sort((a, b) => a.parameters - b.parameters), ptSst2, zeroShot];
   pick.forEach((r) => rowsCost.push([r.name, pct(r.accuracy), fmtTime(r.train_time_s), r.latency_ms_per_sample < 1 ? r.latency_ms_per_sample.toFixed(2) : r.latency_ms_per_sample.toFixed(1), fmtPar(r.parameters)]));
@@ -330,10 +330,10 @@ function imgFit(slide, file, x, y, maxW, maxH) {
   const lcT = (n, z) => lc.find((r) => r.series === n && r.train_size === z).accuracy;
   const tn = lcSeries.find((n) => !n.startsWith("TF")), cn = lcSeries.find((n) => n.startsWith("TF"));
   const fullCls = bestCls.accuracy;
-  const firstBeat = sizes.find((z) => lcT(tn, z) > fullCls);
+  const firstBeat = sizes.find((z) => lcT(tn, z) >= fullCls - 0.005);
   card(s, 9.2, 1.5, 3.5, 2.4, "E6F6EF");
   s.addText(firstBeat ? firstBeat.toLocaleString("en-US") : "–", { isTextBox: true, x: 9.45, y: 1.6, w: 3.0, h: 0.9, fontFace: "Cambria", fontSize: 40, bold: true, color: H.accent1, margin: 0 });
-  s.addText(`labels were enough for BERT-small to beat the best classical model trained on all ${(nTrain / 1000).toFixed(0)}k`, { isTextBox: true, x: 9.45, y: 2.5, w: 3.0, h: 1.3, fontSize: 13, color: "52516E", margin: 0 });
+  s.addText(`labels: BERT-small already matches the best classical model trained on all ${(nTrain / 1000).toFixed(0)}k (${pct(lcT(tn, firstBeat))}% vs ${pct(fullCls)}%)`, { isTextBox: true, x: 9.45, y: 2.5, w: 3.0, h: 1.3, fontSize: 13, color: "52516E", margin: 0 });
   card(s, 9.2, 4.15, 3.5, 2.5, H.lt2);
   s.addText(`+${((lcT(tn, sizes[0]) - lcT(cn, sizes[0])) * 100).toFixed(0)} p.p.`, { isTextBox: true, x: 9.45, y: 4.25, w: 3.0, h: 0.9, fontFace: "Cambria", fontSize: 40, bold: true, color: H.dk2, margin: 0 });
   s.addText(`advantage with only ${sizes[0]} labels – the gap shrinks as data grows`, { isTextBox: true, x: 9.45, y: 5.15, w: 3.0, h: 1.3, fontSize: 13, color: "52516E", margin: 0 });
@@ -366,7 +366,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
   s.addText("Conclusions & recommendations", { isTextBox: true, x: 0.8, y: 0.55, w: 11.7, h: 0.9, fontFace: "Cambria", fontSize: 34, bold: true, color: "FFFFFF", margin: 0 });
   const concl = [
     [fa.FaTrophy, `Fine-tuned Transformers are the most accurate: ${pct(bestFt.accuracy)}% vs ${pct(bestCls.accuracy)}% (classical) and ${pct(bilstm.accuracy)}% (BiLSTM)`],
-    [fa.FaDatabase, "Pre-training gives data efficiency: a compact BERT with a few thousand labels beats classical models trained on 65k"],
+    [fa.FaDatabase, "Pre-training gives data efficiency: BERT-small with 4,000 labels matches classical models trained on 65k; DistilBERT with 8,000 beats them"],
     [fa.FaStopwatch, "Cost is real but manageable: minutes of CPU fine-tuning, milliseconds per sentence"],
     [fa.FaBoxOpen, `Reuse first: an in-domain public model gives ${pct(ptSst2.accuracy)}% with zero training; zero-shot (${pct(zeroShot.accuracy)}%) and out-of-domain models are useful but weaker`],
     [fa.FaFlag, "For Lithuanian: fine-tune LitLat BERT / XLM-R on a small labelled set – the next step of this work"],

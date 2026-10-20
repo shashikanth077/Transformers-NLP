@@ -1,0 +1,14 @@
+sentence,label,winner
+"in its best moments , resembles a bad high school production of grease , without benefit of song .",0,DistilBERT fine-tuned (8k)
+"pumpkin takes an admirable look at the hypocrisy of political correctness , but it does so with such an uneven tone that you never know when humor ends and tragedy begins .",0,DistilBERT fine-tuned (8k)
+the iditarod lasts for days - this just felt like it did .,0,DistilBERT fine-tuned (8k)
+"... designed to provide a mix of smiles and tears , `` crossroads '' instead provokes a handful of unintentional howlers and numerous yawns .",0,DistilBERT fine-tuned (8k)
+"( w ) hile long on amiable monkeys and worthy environmentalism , jane goodall 's wild chimpanzees is short on the thrills the oversize medium demands .",0,DistilBERT fine-tuned (8k)
+"escaping the studio , piccoli is warmly affecting and so is this adroitly minimalist movie .",1,DistilBERT fine-tuned (8k)
+the subtle strength of `` elling '' is that it never loses touch with the reality of the grim situation .,1,DistilBERT fine-tuned (8k)
+"the title not only describes its main characters , but the lazy people behind the camera as well .",0,DistilBERT fine-tuned (8k)
+"we root for ( clara and paul ) , even like them , though perhaps it 's an emotion closer to pity .",1,TF-IDF + Linear SVM
+a synthesis of cliches and absurdities that seems positively decadent in its cinematic flash and emptiness .,0,TF-IDF + Linear SVM
+"for all its impressive craftsmanship , and despite an overbearing series of third-act crescendos , lily chou-chou never really builds up a head of emotional steam .",0,TF-IDF + Linear SVM
+"though it 's become almost redundant to say so , major kudos go to leigh for actually casting people who look working-class .",1,TF-IDF + Linear SVM
+jaglom ... put ( s ) the audience in the privileged position of eavesdropping on his characters,1,TF-IDF + Linear SVM

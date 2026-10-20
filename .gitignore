@@ -11,3 +11,4 @@ code/checkpoints/
 paper/eq/
 ~$*.docx
 ~$*.pptx
+slides/node_modules/

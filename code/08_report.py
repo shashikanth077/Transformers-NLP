@@ -27,6 +27,9 @@ LABELS = {
     "zs_nli_distilroberta": "Zero-shot NLI DistilRoBERTa",
     "pt_twitter_roberta": "Twitter-RoBERTa (off-the-shelf)",
     "pt_distilbert_sst2": "DistilBERT-SST2 (off-the-shelf)",
+    "ft_bert-tiny_8000": "BERT-tiny fine-tuned (8k)",
+    "ft_bert-small_8000": "BERT-small fine-tuned (8k)",
+    "ft_distilbert_8000": "DistilBERT fine-tuned (8k)",
 }
 
 
@@ -80,8 +83,9 @@ for _, r in df.iterrows():
     size = 30 + 250 * np.sqrt(r["parameters"] / df["parameters"].max())
     ax.scatter(r["latency_ms_per_sample"], r["accuracy"] * 100, s=size, color=FAMILY_COLOR[r["fam"]],
                edgecolor="white", linewidth=2, zorder=3)
+    offset = {"TF-IDF + Linear SVM": (8, 6), "TF-IDF + Naive Bayes": (8, -2), "TF-IDF + Logistic Regr.": (8, -10)}.get(r["name"], (6, 4))
     ax.annotate(r["name"], (r["latency_ms_per_sample"], r["accuracy"] * 100), fontsize=7.5,
-                color=MUTED, xytext=(6, 4), textcoords="offset points")
+                color=MUTED, xytext=offset, textcoords="offset points")
 ax.set_xscale("log")
 ax.set_xlabel("Inference latency, ms per sentence (CPU, log scale)")
 ax.set_ylabel("Accuracy, %")
@@ -106,6 +110,7 @@ if lc:
                     xytext=(6, -3), textcoords="offset points", fontsize=8, color=INK)
     ax.set_xscale("log")
     ax.set_xticks(sorted(lcd["train_size"].unique()), [str(x) for x in sorted(lcd["train_size"].unique())])
+    ax.minorticks_off()
     ax.set_xlabel("Number of labelled training sentences (log scale)")
     ax.set_ylabel("Test accuracy, %")
     ax.legend(frameon=False, fontsize=8, loc="lower right")
@@ -150,18 +155,18 @@ sub.to_csv(os.path.join(RESULTS_DIR, "subset_accuracy.csv"), index=False)
 print(f"\nnegation subset n={neg_mask.sum()}, contrast subset n={contrast_mask.sum()}")
 print(sub.to_string(index=False))
 
-fig, ax = plt.subplots(figsize=(7.2, 3.6))
-x = np.arange(len(sub))
-w = 0.26
+fig, ax = plt.subplots(figsize=(7.2, 5.2))
+y_pos = np.arange(len(sub))
+h = 0.26
 for k, (col, c) in enumerate((("all", "#c3c2b7"), ("negation", "#2a78d6"), ("contrast", "#eb6834"))):
-    ax.bar(x + (k - 1) * w, sub[col] * 100, w, color=c, edgecolor="white", linewidth=1.5,
-           label={"all": "All sentences", "negation": f"With negation (n={neg_mask.sum()})",
-                  "contrast": f"With contrast (n={contrast_mask.sum()})"}[col])
-ax.set_xticks(x, [n.replace(" (", "\n(") for n in sub["name"]], fontsize=7, rotation=0)
-ax.set_ylim(50, 100)
-ax.set_ylabel("Accuracy, %")
-ax.legend(frameon=False, fontsize=8, ncol=3, loc="upper left")
-ax.grid(axis="x", visible=False)
+    ax.barh(y_pos + (1 - k) * h, sub[col] * 100, h, color=c, edgecolor="white", linewidth=1.2,
+            label={"all": "All sentences", "negation": f"With negation (n={neg_mask.sum()})",
+                   "contrast": f"With contrast (n={contrast_mask.sum()})"}[col])
+ax.set_yticks(y_pos, sub["name"], fontsize=8.5)
+ax.set_xlim(60, 92)
+ax.set_xlabel("Accuracy, %")
+ax.legend(frameon=False, fontsize=8, ncol=3, loc="upper center", bbox_to_anchor=(0.4, 1.08))
+ax.grid(axis="y", visible=False)
 fig.tight_layout()
 fig.savefig(os.path.join(FIG_DIR, "fig_subsets.png"), dpi=200)
 

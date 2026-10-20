@@ -78,3 +78,439 @@ roberta.pooler.dense.bias   | UNEXPECTED |  |
 
 Notes:
 - UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\pt_twitter_roberta.json
+{
+  "model": "cardiffnlp/twitter-roberta-base-sentiment-latest",
+  "family": "transformer-pretrained",
+  "train_size": 0,
+  "train_time_s": 0.0,
+  "latency_ms_per_sample": 84.80417029811989,
+  "parameters": 124647939,
+  "accuracy": 0.8577981651376146,
+  "precision": 0.8610169491525423,
+  "recall": 0.8586764334427885,
+  "f1_macro": 0.8576513954713008
+}
+Loading weights:   0%|          | 0/105 [00:00<?, ?it/s]Loading weights:  28%|██▊       | 29/105 [00:00<00:00, 277.00it/s]Loading weights:  56%|█████▌    | 59/105 [00:00<00:00, 277.26it/s]Loading weights: 100%|██████████| 105/105 [00:00<00:00, 341.49it/s]
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\zs_nli_distilroberta.json
+{
+  "model": "cross-encoder/nli-distilroberta-base",
+  "family": "transformer-zero-shot",
+  "train_size": 0,
+  "train_time_s": 0.0,
+  "latency_ms_per_sample": 107.02048612384974,
+  "parameters": 82120707,
+  "accuracy": 0.8176605504587156,
+  "precision": 0.8262800544463633,
+  "recall": 0.8191357245095563,
+  "f1_macro": 0.8168780996783929
+}
+Loading weights:   0%|          | 0/104 [00:00<?, ?it/s]Loading weights:  13%|█▎        | 14/104 [00:00<00:00, 126.53it/s]Loading weights:  49%|████▉     | 51/104 [00:00<00:00, 263.52it/s]Loading weights: 100%|██████████| 104/104 [00:00<00:00, 441.64it/s]
+P(negative)=0.000  P(positive)=1.000
+saved attention figures
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_tfidf_logreg_500.json
+{
+  "model": "tfidf_logreg",
+  "train_size": 500,
+  "accuracy": 0.6181192660550459,
+  "precision": 0.6393075042823874,
+  "recall": 0.61426496590048,
+  "f1_macro": 0.5984484224937252
+}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_tfidf_logreg_1000.json
+{
+  "model": "tfidf_logreg",
+  "train_size": 1000,
+  "accuracy": 0.6811926605504587,
+  "precision": 0.6890325159914712,
+  "recall": 0.6791487749431675,
+  "f1_macro": 0.6762260925312533
+}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_tfidf_logreg_2000.json
+{
+  "model": "tfidf_logreg",
+  "train_size": 2000,
+  "accuracy": 0.7098623853211009,
+  "precision": 0.711164932392554,
+  "recall": 0.7089858550138924,
+  "f1_macro": 0.7087865887865887
+}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_tfidf_logreg_4000.json
+{
+  "model": "tfidf_logreg",
+  "train_size": 4000,
+  "accuracy": 0.7580275229357798,
+  "precision": 0.7598486741709247,
+  "recall": 0.7571672139429149,
+  "f1_macro": 0.7571303171303172
+}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_tfidf_logreg_8000.json
+{
+  "model": "tfidf_logreg",
+  "train_size": 8000,
+  "accuracy": 0.7752293577981652,
+  "precision": 0.7763559322033898,
+  "recall": 0.7745642839100784,
+  "f1_macro": 0.7746556125139759
+}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/39 [00:00<?, ?it/s]Loading weights: 100%|██████████| 39/39 [00:00<00:00, 5163.28it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: google/bert_uncased_L-2_H-128_A-2
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+epoch 1 step 0/250 loss 0.6984
+epoch 1 step 50/250 loss 0.6792
+epoch 1 step 100/250 loss 0.6452
+epoch 1 step 150/250 loss 0.5961
+epoch 1 step 200/250 loss 0.5642
+{'epoch': 1, 'train_loss': 0.5427799240350724, 'dev_accuracy': 0.814}
+epoch 2 step 0/250 loss 0.3406
+epoch 2 step 50/250 loss 0.3563
+epoch 2 step 100/250 loss 0.3565
+epoch 2 step 150/250 loss 0.3502
+epoch 2 step 200/250 loss 0.3451
+{'epoch': 2, 'train_loss': 0.3391469088792801, 'dev_accuracy': 0.8495}
+epoch 3 step 0/250 loss 0.1937
+epoch 3 step 50/250 loss 0.2383
+epoch 3 step 100/250 loss 0.2427
+epoch 3 step 150/250 loss 0.2457
+epoch 3 step 200/250 loss 0.2449
+{'epoch': 3, 'train_loss': 0.2518875662088394, 'dev_accuracy': 0.846}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\ft_bert-tiny_8000.json
+{
+  "model": "google/bert_uncased_L-2_H-128_A-2",
+  "family": "transformer-finetuned",
+  "train_size": 8000,
+  "epochs": 3,
+  "lr": 0.0002,
+  "train_time_s": 120.04169310000725,
+  "latency_ms_per_sample": 1.1737561926732711,
+  "parameters": 4386178,
+  "accuracy": 0.7660550458715596,
+  "precision": 0.7678571428571428,
+  "recall": 0.7652184895175549,
+  "f1_macro": 0.7652201457079506
+}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/71 [00:00<?, ?it/s]Loading weights: 100%|██████████| 71/71 [00:00<00:00, 13866.44it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: google/bert_uncased_L-4_H-512_A-8
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.decoder.bias               | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+classifier.weight                          | MISSING    | 
+classifier.bias                            | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+epoch 1 step 0/250 loss 0.6680
+epoch 1 step 50/250 loss 0.6359
+epoch 1 step 100/250 loss 0.5528
+epoch 1 step 150/250 loss 0.5060
+epoch 1 step 200/250 loss 0.4766
+{'epoch': 1, 'train_loss': 0.45547383204102515, 'dev_accuracy': 0.8665}
+epoch 2 step 0/250 loss 0.3246
+epoch 2 step 50/250 loss 0.2464
+epoch 2 step 100/250 loss 0.2405
+epoch 2 step 150/250 loss 0.2370
+epoch 2 step 200/250 loss 0.2307
+{'epoch': 2, 'train_loss': 0.22742897617816926, 'dev_accuracy': 0.8775}
+epoch 3 step 0/250 loss 0.0536
+epoch 3 step 50/250 loss 0.1046
+epoch 3 step 100/250 loss 0.1309
+epoch 3 step 150/250 loss 0.1253
+epoch 3 step 200/250 loss 0.1187
+{'epoch': 3, 'train_loss': 0.12018336743116378, 'dev_accuracy': 0.881}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\ft_bert-small_8000.json
+{
+  "model": "google/bert_uncased_L-4_H-512_A-8",
+  "family": "transformer-finetuned",
+  "train_size": 8000,
+  "epochs": 3,
+  "lr": 0.0001,
+  "train_time_s": 1580.7664294000133,
+  "latency_ms_per_sample": 14.112915481662874,
+  "parameters": 28764674,
+  "accuracy": 0.8371559633027523,
+  "precision": 0.837352191050313,
+  "recall": 0.8368906289467037,
+  "f1_macro": 0.8370110621449294
+}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights:  47%|████▋     | 47/100 [00:00<00:00, 445.57it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 731.29it/s]
+[transformers] [1mDistilBertForSequenceClassification LOAD REPORT[0m from: distilbert-base-uncased
+Key                     | Status     | 
+------------------------+------------+-
+vocab_transform.weight  | UNEXPECTED | 
+vocab_layer_norm.bias   | UNEXPECTED | 
+vocab_projector.bias    | UNEXPECTED | 
+vocab_transform.bias    | UNEXPECTED | 
+vocab_layer_norm.weight | UNEXPECTED | 
+classifier.weight       | MISSING    | 
+classifier.bias         | MISSING    | 
+pre_classifier.weight   | MISSING    | 
+pre_classifier.bias     | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+epoch 1 step 0/250 loss 0.7005
+epoch 1 step 50/250 loss 0.6042
+epoch 1 step 100/250 loss 0.4728
+epoch 1 step 150/250 loss 0.4267
+epoch 1 step 200/250 loss 0.3916
+{'epoch': 1, 'train_loss': 0.3655885539650917, 'dev_accuracy': 0.9015}
+epoch 2 step 0/250 loss 0.0367
+epoch 2 step 50/250 loss 0.1306
+epoch 2 step 100/250 loss 0.1396
+epoch 2 step 150/250 loss 0.1506
+epoch 2 step 200/250 loss 0.1457
+{'epoch': 2, 'train_loss': 0.14494117789343, 'dev_accuracy': 0.907}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\ft_distilbert_8000.json
+{
+  "model": "distilbert-base-uncased",
+  "family": "transformer-finetuned",
+  "train_size": 8000,
+  "epochs": 2,
+  "lr": 5e-05,
+  "train_time_s": 9529.979623399966,
+  "latency_ms_per_sample": 39.13225814222984,
+  "parameters": 66955010,
+  "accuracy": 0.8876146788990825,
+  "precision": 0.8880292216678245,
+  "recall": 0.8879557127220679,
+  "f1_macro": 0.8876140876929957
+}
+Loading weights:   0%|          | 0/71 [00:00<?, ?it/s]Loading weights: 100%|██████████| 71/71 [00:00<00:00, 8135.82it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: google/bert_uncased_L-4_H-512_A-8
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.decoder.bias               | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+epoch 1 step 0/16 loss 0.7090
+{'epoch': 1, 'train_loss': 0.6535498695373535, 'dev_accuracy': 0.604}
+epoch 2 step 0/16 loss 0.5391
+{'epoch': 2, 'train_loss': 0.49799205708503724, 'dev_accuracy': 0.7705}
+epoch 3 step 0/16 loss 0.2614
+{'epoch': 3, 'train_loss': 0.34085248374938965, 'dev_accuracy': 0.775}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_bert-small_500.json
+{
+  "model": "google/bert_uncased_L-4_H-512_A-8",
+  "family": "transformer-finetuned",
+  "train_size": 500,
+  "epochs": 3,
+  "lr": 0.0001,
+  "train_time_s": 148.10124570003245,
+  "latency_ms_per_sample": 14.017249426565245,
+  "parameters": 28764674,
+  "accuracy": 0.7591743119266054,
+  "precision": 0.762890356897735,
+  "recall": 0.7579986528584659,
+  "f1_macro": 0.7577008574150523
+}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/71 [00:00<?, ?it/s]Loading weights: 100%|██████████| 71/71 [00:00<00:00, 7023.81it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: google/bert_uncased_L-4_H-512_A-8
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.decoder.bias               | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+epoch 1 step 0/32 loss 0.6684
+{'epoch': 1, 'train_loss': 0.6305580258369445, 'dev_accuracy': 0.741}
+epoch 2 step 0/32 loss 0.4906
+{'epoch': 2, 'train_loss': 0.3764828063249588, 'dev_accuracy': 0.8075}
+epoch 3 step 0/32 loss 0.2309
+{'epoch': 3, 'train_loss': 0.20995158100128175, 'dev_accuracy': 0.802}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_bert-small_1000.json
+{
+  "model": "google/bert_uncased_L-4_H-512_A-8",
+  "family": "transformer-finetuned",
+  "train_size": 1000,
+  "epochs": 3,
+  "lr": 0.0001,
+  "train_time_s": 235.65620900003705,
+  "latency_ms_per_sample": 14.04311444953195,
+  "parameters": 28764674,
+  "accuracy": 0.7763761467889908,
+  "precision": 0.7763205684958547,
+  "recall": 0.7762376862844153,
+  "f1_macro": 0.7762699286732112
+}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/71 [00:00<?, ?it/s]Loading weights: 100%|██████████| 71/71 [00:00<00:00, 8526.96it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: google/bert_uncased_L-4_H-512_A-8
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.decoder.bias               | UNEXPECTED | 
+cls.predictions.decoder.weight             | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+classifier.bias                            | MISSING    | 
+classifier.weight                          | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+epoch 1 step 0/63 loss 0.7045
+epoch 1 step 50/63 loss 0.5782
+{'epoch': 1, 'train_loss': 0.5627169423103332, 'dev_accuracy': 0.7865}
+epoch 2 step 0/63 loss 0.4060
+epoch 2 step 50/63 loss 0.3119
+{'epoch': 2, 'train_loss': 0.31659098660945895, 'dev_accuracy': 0.823}
+epoch 3 step 0/63 loss 0.1620
+epoch 3 step 50/63 loss 0.1697
+{'epoch': 3, 'train_loss': 0.17031615954637527, 'dev_accuracy': 0.8305}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_bert-small_2000.json
+{
+  "model": "google/bert_uncased_L-4_H-512_A-8",
+  "family": "transformer-finetuned",
+  "train_size": 2000,
+  "epochs": 3,
+  "lr": 0.0001,
+  "train_time_s": 403.0220722000231,
+  "latency_ms_per_sample": 14.722495412837432,
+  "parameters": 28764674,
+  "accuracy": 0.8073394495412844,
+  "precision": 0.8079515534491838,
+  "recall": 0.8077376441862423,
+  "f1_macro": 0.8073303276920567
+}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/71 [00:00<?, ?it/s]Loading weights: 100%|██████████| 71/71 [00:00<00:00, 10815.17it/s]
+[transformers] [1mBertForSequenceClassification LOAD REPORT[0m from: google/bert_uncased_L-4_H-512_A-8
+Key                                        | Status     | 
+-------------------------------------------+------------+-
+cls.predictions.decoder.weight             | UNEXPECTED | 
+cls.predictions.transform.dense.weight     | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.weight | UNEXPECTED | 
+cls.predictions.bias                       | UNEXPECTED | 
+cls.predictions.transform.LayerNorm.bias   | UNEXPECTED | 
+cls.seq_relationship.weight                | UNEXPECTED | 
+cls.predictions.transform.dense.bias       | UNEXPECTED | 
+cls.predictions.decoder.bias               | UNEXPECTED | 
+cls.seq_relationship.bias                  | UNEXPECTED | 
+classifier.weight                          | MISSING    | 
+classifier.bias                            | MISSING    | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+- MISSING:	those params were newly initialized because missing from the checkpoint. Consider training on your downstream task.
+epoch 1 step 0/125 loss 0.7053
+epoch 1 step 50/125 loss 0.6199
+epoch 1 step 100/125 loss 0.5346
+{'epoch': 1, 'train_loss': 0.5118929798603058, 'dev_accuracy': 0.793}
+epoch 2 step 0/125 loss 0.3379
+epoch 2 step 50/125 loss 0.2659
+epoch 2 step 100/125 loss 0.2627
+{'epoch': 2, 'train_loss': 0.2622742392420769, 'dev_accuracy': 0.8495}
+epoch 3 step 0/125 loss 0.2033
+epoch 3 step 50/125 loss 0.1358
+epoch 3 step 100/125 loss 0.1367
+{'epoch': 3, 'train_loss': 0.13919862987846135, 'dev_accuracy': 0.8605}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\lc_bert-small_4000.json
+{
+  "model": "google/bert_uncased_L-4_H-512_A-8",
+  "family": "transformer-finetuned",
+  "train_size": 4000,
+  "epochs": 3,
+  "lr": 0.0001,
+  "train_time_s": 712.3742493999889,
+  "latency_ms_per_sample": 15.55589942657816,
+  "parameters": 28764674,
+  "accuracy": 0.8268348623853211,
+  "precision": 0.8269830747457529,
+  "recall": 0.8270501810221436,
+  "f1_macro": 0.8268328127568634
+}
+                           name                 family  train_size  parameters  accuracy  precision   recall  f1_macro  train_time_s  latency_ms_per_sample
+      bert-tiny fine-tuned (8k)  transformer-finetuned        8000     4386178  0.766055   0.767857 0.765218  0.765220    120.041693               1.173756
+    Zero-shot NLI DistilRoBERTa  transformer-zero-shot           0    82120707  0.817661   0.826280 0.819136  0.816878      0.000000             107.020486
+        TF-IDF + Logistic Regr.              classical       65349       73556  0.818807   0.821990 0.817862  0.818002      3.625783               0.048589
+           TF-IDF + Naive Bayes              classical       65349      147112  0.822248   0.827765 0.821030  0.821061      1.757153               0.053020
+          BiLSTM (from scratch)              recurrent       65349     1974786  0.827982   0.831604 0.826998  0.827163    380.013567               0.453840
+            TF-IDF + Linear SVM              classical       65349       73556  0.829128   0.830732 0.828460  0.828672      2.316267               0.055078
+     bert-small fine-tuned (8k)  transformer-finetuned        8000    28764674  0.837156   0.837352 0.836891  0.837011   1580.766429              14.112915
+Twitter-RoBERTa (off-the-shelf) transformer-pretrained           0   124647939  0.857798   0.861017 0.858676  0.857651      0.000000              84.804170
+     distilbert fine-tuned (8k)  transformer-finetuned        8000    66955010  0.887615   0.888029 0.887956  0.887614   9529.979623              39.132258
+DistilBERT-SST2 (off-the-shelf) transformer-pretrained           0    66955010  0.910550   0.911292 0.910184  0.910430      0.000000              44.562827
+
+negation subset n=184, contrast subset n=130
+                           name         fam      all  negation  contrast
+      bert-tiny fine-tuned (8k) transformer 0.766055  0.695652  0.653846
+    Zero-shot NLI DistilRoBERTa transformer 0.817661  0.815217  0.792308
+        TF-IDF + Logistic Regr.   classical 0.818807  0.739130  0.769231
+           TF-IDF + Naive Bayes   classical 0.822248  0.739130  0.769231
+          BiLSTM (from scratch)   recurrent 0.827982  0.788043  0.776923
+            TF-IDF + Linear SVM   classical 0.829128  0.744565  0.776923
+     bert-small fine-tuned (8k) transformer 0.837156  0.744565  0.761538
+Twitter-RoBERTa (off-the-shelf) transformer 0.857798  0.836957  0.846154
+     distilbert fine-tuned (8k) transformer 0.887615  0.853261  0.853846
+DistilBERT-SST2 (off-the-shelf) transformer 0.910550  0.869565  0.861538
+
+transformer right / classical wrong: 104, reverse: 53
+
+Statistics vs best model (DistilBERT-SST2 (off-the-shelf)):
+                           name  accuracy   ci_low  ci_high  b01_best_only  b10_model_only  mcnemar_p_vs_best
+      bert-tiny fine-tuned (8k)  0.766055 0.737385 0.792431            154              28       2.791843e-22
+    Zero-shot NLI DistilRoBERTa  0.817661 0.791284 0.841743            116              35       2.444259e-11
+        TF-IDF + Logistic Regr.  0.818807 0.792431 0.844037            114              34       2.691956e-11
+           TF-IDF + Naive Bayes  0.822248 0.795872 0.847477            115              38       3.389844e-10
+          BiLSTM (from scratch)  0.827982 0.802752 0.852093            103              31       3.179542e-10
+            TF-IDF + Linear SVM  0.829128 0.803899 0.853211            106              35       1.694474e-09
+     bert-small fine-tuned (8k)  0.837156 0.810780 0.858945             90              26       1.894641e-09
+Twitter-RoBERTa (off-the-shelf)  0.857798 0.833716 0.880734             82              36       2.758379e-05
+     distilbert fine-tuned (8k)  0.887615 0.865826 0.907110             48              28       2.862666e-02
+DistilBERT-SST2 (off-the-shelf)  0.910550 0.891055 0.928899              0               0       1.000000e+00
+figures written to C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\figures
