@@ -16,6 +16,7 @@ robustness on negation / contrast.
 | `Transformers_in_NLP_Presentation.pptx` | 11-slide presentation for a 7–10 minute talk, with speaker notes |
 | `Project_Study_Guide.html` | **Interactive study guide** (open in any browser, works offline): real-world story, step-by-step pipeline, sentence lab with real attention maps, all 872 test sentences for every model, results explorer, Q&A, quiz, rehearsal timer |
 | `Transformers_NLP_Kannada_Notes.pdf` | **Study notes in Kannada** (40 pages): NLP and Transformers explained with Karnataka examples, the project's real results, viva Q&A with English answer lines, glossary, quiz, one-page summary |
+| `Transformers_Explained_Overview.html` | **Interactive overview of Transformers** (works offline), following the structure of Ketan Doshi's "Transformers Explained Visually, Part 1" article with original text and demos: architecture explorer, real DistilBERT attention maps, step-by-step training and inference with real English→Kannada outputs (NLLB-200), teacher forcing, task heads, RNN comparison, quiz |
 
 ## Main results (SST-2 test set, 872 sentences)
 
@@ -45,6 +46,8 @@ slides/   build_deck.js (generates the presentation from the results)
 docs/     final paper, presentation and the interactive study guide
 study_guide/  export_data.py (collects the real results, TF-IDF weights and attention maps) and
               build.py (writes docs/Project_Study_Guide.html from src/ and data.json)
+              overview/ export_overview_data.py (real NLLB, DistilGPT-2, DistilBERT outputs) and
+              build_overview.py (writes docs/Transformers_Explained_Overview.html)
               kannada/  build_kannada_notes.py (notes_kn.html + Edge print-to-PDF; numbers come from data.json)
 ```
 

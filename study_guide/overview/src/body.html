@@ -1,0 +1,207 @@
+<!-- ============ INTRO ============ -->
+<section class="sec" id="intro">
+  <p class="eyebrow">Companion to Part 1 · Overview of functionality</p>
+  <h1>Transformers, explained visually</h1>
+  <p class="lead">An interactive tour of what a Transformer is, what attention does, how one is trained, how it writes text one word at a time, what it is used for, and why it pushed RNNs aside. Every demo runs on <b>real outputs</b> of small public models that were run on a laptop CPU.</p>
+  <div class="callout src"><b>About this page</b>It follows the structure of Ketan Doshi’s article <a href="https://towardsdatascience.com/transformers-explained-visually-part-1-overview-of-functionality-95a6dd460452/" target="_blank" rel="noopener">“Transformers Explained Visually (Part 1): Overview of Functionality”</a> (Towards Data Science, 13 December 2020), the first article of his series. All wording, diagrams, examples and demos on this page are original; none of the article’s text or images is reproduced. The article is short and clear, so read it as well.</div>
+
+  <h3>The journey</h3>
+  <div class="grid g3" id="journey"></div>
+  <h3>How to read the demos</h3>
+  <div class="grid g3">
+    <div class="card flat"><span class="pill t">REAL</span><p class="small muted" style="margin:.5em 0 0">Produced by an actual model: <b>NLLB-200 (distilled, 600M)</b> for English→Kannada translation, <b>DistilGPT-2</b> for next-word probabilities, <b>DistilBERT</b> for attention maps.</p></div>
+    <div class="card flat"><span class="pill">ILLUSTRATIVE</span><p class="small muted" style="margin:.5em 0 0">Hand-made to explain an idea (for example the idealised attention arrows). Always labelled. Never presented as model output.</p></div>
+    <div class="card flat"><span class="pill e">TRY IT</span><p class="small muted" style="margin:.5em 0 0">Buttons, sliders and clicks change what you see. Your visited sections are remembered in this browser.</p></div>
+  </div>
+  <h3>The series this page belongs to</h3>
+  <div class="scroll"><table class="compact"><thead><tr><th>Part</th><th>Topic</th><th>On this page</th></tr></thead><tbody>
+    <tr><td><b>1</b></td><td>Overview of functionality: uses, why better than RNNs, components, behaviour in training and inference</td><td>Everything below</td></tr>
+    <tr><td>2</td><td>How it works step by step (data flow and matrix computations)</td><td>Only previewed</td></tr>
+    <tr><td>3</td><td>Multi-head attention in depth</td><td>Intuition in section 2</td></tr>
+    <tr><td>4</td><td>Why attention boosts performance</td><td>Intuition in sections 2 and 7</td></tr></tbody></table></div>
+</section>
+
+<!-- ============ 1 WHAT ============ -->
+<section class="sec" id="what">
+  <p class="eyebrow">Section 1</p>
+  <h2>What is a Transformer?</h2>
+  <p>A Transformer is a neural network that reads one sequence of tokens and writes another. Text is a natural fit: it is a sequence, order carries meaning, and lengths vary. The classic job is <b>translation</b>, so that is our running example. Pick a sentence and watch a real model do it.</p>
+  <div class="row" id="sentPick1" role="group" aria-label="Choose an example sentence"></div>
+  <div class="io" style="margin-top:12px">
+    <div class="card"><div class="small muted">Input sequence (English)</div><div class="big" id="ioSrc"></div><div class="tokens" id="ioSrcTok" style="justify-content:center"></div></div>
+    <div class="farrow" aria-hidden="true">&rarr;<br><span class="small muted">Transformer</span></div>
+    <div class="card"><div class="small muted">Output sequence (Kannada)</div><div class="big kn" id="ioTgt"></div><div class="tokens kn" id="ioTgtTok" style="justify-content:center"></div></div>
+  </div>
+  <p class="small muted" id="ioFacts" style="margin-top:8px"></p>
+  <div class="callout"><b>Real-world feel</b>Asking for directions in Bengaluru in Kannada is exactly this task. Notice that the English question starts with “Where” while the Kannada answer ends with the word for “where” (ಎಲ್ಲಿದೆ): the model must reorder, not just replace words. The input has more tokens than the output, so the two sequences do not need equal length.</div>
+
+  <h3>The building blocks (click any block)</h3>
+  <p>Inside, a Transformer is two <b>stacks</b> of layers plus some plumbing. To avoid confusion, a single layer is called an <b>encoder</b> or a <b>decoder</b>, and a group of them an <b>encoder stack</b> or <b>decoder stack</b>.</p>
+  <div class="card">
+    <div class="row"><label class="field" for="nLayers" style="margin:0">Layers per stack (N): <b id="nVal">6</b></label><input type="range" id="nLayers" min="1" max="12" value="6" style="max-width:240px" aria-label="Layers per stack"></div>
+    <div class="arch2" style="margin-top:14px">
+      <div class="stackcol" id="encCol"></div>
+      <div class="stackcol" id="decCol"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px" id="archInfo"></div>
+
+  <h3>Three common flavours</h3>
+  <div class="tabs" id="flavTabs" role="tablist" aria-label="Architecture flavours"></div>
+  <div class="card" id="flavInfo"></div>
+</section>
+
+<!-- ============ 2 ATTENTION ============ -->
+<section class="sec" id="attention">
+  <p class="eyebrow">Section 2</p>
+  <h2>What does attention do?</h2>
+  <p>Attention is the idea that made the architecture work. While the model processes one word, attention lets it <b>look at the other words and pull in information from the ones that matter</b> for that word. Self-attention does this for every word against every other word in the same sentence.</p>
+  <h3>The classic puzzle: what does “it” refer to?</h3>
+  <p>Change one word at the end and the meaning of “it” flips. To read “it” correctly a model has to connect it to the right noun.</p>
+  <div class="card">
+    <div class="row"><span class="small">The sentence ends with:</span><button class="btn small" id="itBig" aria-pressed="true" type="button">“…it was too <b>big</b>”</button><button class="btn small" id="itSmall" aria-pressed="false" type="button">“…it was too <b>small</b>”</button><span class="pill">ILLUSTRATIVE</span></div>
+    <div id="itSvg" style="margin-top:8px"></div>
+    <p class="small muted" id="itNote" style="margin:4px 0 0"></p>
+  </div>
+  <h3>Now the real thing: a real model’s attention</h3>
+  <p>Below are the actual attention weights of <b>DistilBERT</b> (6 layers × 12 heads) on those two sentences. Click a word to see how much attention it pays to every other word. Layers and heads differ a lot, and that is the point of the next paragraph.</p>
+  <div class="card">
+    <div class="row" id="attSentPick" role="group" aria-label="Sentence"></div>
+    <div class="row" style="margin-top:8px"><label class="small" for="attLayer">Layer</label><select id="attLayer" style="width:auto"></select><label class="small" for="attHead">Head</label><select id="attHead" style="width:auto"></select>
+      <button class="btn small on" id="attWords" type="button">Words</button><button class="btn small" id="attHeat" type="button">Heat-map</button><span class="pill t">REAL</span></div>
+    <div id="attView" style="margin-top:6px"></div>
+    <p class="small muted" id="attHint" style="margin:6px 0 0"></p>
+  </div>
+  <h3>Several attention scores per word (multi-head attention)</h3>
+  <p>A single set of weights cannot capture every kind of relationship in a sentence. So each word gets <b>several attention scores at once</b>, one per <b>head</b>. One head might link a pronoun to a possible noun; another might track a nearby verb or adjective. The results are combined, so the final meaning of “it” can carry a bit of several things.</p>
+  <div class="card">
+    <p class="small muted" style="margin-top:0">The table lists, for the word <b>“it”</b>, the heads that put the most attention on the two nouns, taken from the real model. Notice how the numbers hardly change between “big” and “small”: DistilBERT is a small, general model, and a single head does <em>not</em> resolve the puzzle on its own. Several heads, several layers and the feed-forward layers all contribute.</p>
+    <div class="scroll"><table class="compact" id="headTable"></table></div>
+  </div>
+</section>
+
+<!-- ============ 3 TRAINING ============ -->
+<section class="sec" id="training">
+  <p class="eyebrow">Section 3</p>
+  <h2>Training the Transformer</h2>
+  <p>A Transformer behaves a little differently when it learns than when it is used. For training, every example is a <b>pair</b>: a source sequence and the correct target sequence. For translation that is an English sentence and a human Kannada translation. The goal is to learn to produce the target, using both sequences.</p>
+  <div class="row" id="sentPick3" role="group" aria-label="Choose an example sentence"></div>
+  <div class="flow" id="trainFlow" style="margin-top:10px"></div>
+  <div class="row"><button class="btn" id="trPrev" type="button">&larr; Previous step</button><button class="btn primary" id="trNext" type="button">Next step &rarr;</button><span class="small muted" id="trLabel"></span></div>
+  <div class="card" style="margin-top:10px" id="trBody"></div>
+  <div class="callout tip"><b>Real numbers, honest caveat</b>The loss values below come from NLLB, which is <em>already trained</em>, so they are small. In real training the same numbers start large and shrink as gradients adjust the weights.</div>
+</section>
+
+<!-- ============ 4 INFERENCE ============ -->
+<section class="sec" id="inference">
+  <p class="eyebrow">Section 4</p>
+  <h2>Inference: writing the answer one word at a time</h2>
+  <p>When the model is used, there is no target sequence to hand to the decoder. It has to produce one. So it generates in a <b>loop</b>: start with just a start token, predict the next word, append it to the decoder input, predict again, and stop when it predicts an end token. At every step the <b>whole</b> output so far is fed back in, not only the last word. The encoder runs <b>once</b>, because the source never changes.</p>
+  <div class="row" id="sentPick4" role="group" aria-label="Choose an example sentence"></div>
+  <div class="card" style="margin-top:10px">
+    <div class="row"><button class="btn primary" id="infNext" type="button">Predict next token</button><button class="btn" id="infAuto" type="button">&#9654; Auto-play</button><button class="btn" id="infReset" type="button">Reset</button><label class="small" for="infLayer" style="margin-left:6px">Attention from layer</label><select id="infLayer" style="width:auto"></select><span class="pill t">REAL</span></div>
+    <div class="grid g3" style="margin-top:10px">
+      <div class="stat c"><b id="infEnc">1</b><span>encoder passes</span></div>
+      <div class="stat t"><b id="infDec">0</b><span>decoder passes so far</span></div>
+      <div class="stat v"><b id="infLen">0</b><span>tokens generated</span></div></div>
+    <h4>Decoder input so far</h4><div class="tokens kn" id="infPrefix"></div>
+    <div class="cols" style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; align-items:start" id="infCols">
+      <div><h4>Next-token probabilities (top 8 of the vocabulary)</h4><div class="bars" id="infBars"></div></div>
+      <div><h4>Where the decoder looked in the source (encoder–decoder attention)</h4><div class="bars" id="infAtt"></div><p class="small muted" id="infAttNote"></p></div></div>
+    <h4>Output so far</h4><div class="big kn" id="infOut" style="font-size:1.3rem"></div>
+  </div>
+  <h3>What if the first word were different?</h3>
+  <p>The decoder normally takes the most probable word. Here are the real continuations if it had started with its 2nd or 3rd choice instead.</p>
+  <div class="scroll"><table class="compact" id="branchTable"></table></div>
+</section>
+
+<!-- ============ 5 TEACHER FORCING ============ -->
+<section class="sec" id="forcing">
+  <p class="eyebrow">Section 5</p>
+  <h2>Teacher forcing</h2>
+  <p>In training, the decoder is <b>not</b> run in a loop. It is given the correct target sequence (shifted by one, with a start token in front) and asked to predict the next word at <b>every position at once</b>. Feeding the correct answer as the “hint” is called <b>teacher forcing</b>. Two reasons it is used:</p>
+  <ul><li><b>Errors do not pile up.</b> If the model guesses the first word wrongly, the second prediction is still based on the correct first word, so one mistake does not spoil the rest of the sentence.</li>
+  <li><b>Speed.</b> All positions are computed in one parallel pass instead of one pass per word.</li></ul>
+  <div class="row" id="sentPick5" role="group" aria-label="Choose an example sentence"></div>
+  <div class="card" style="margin-top:10px">
+    <div class="row"><span class="small">Free-running branch (own output fed back):</span><span id="tfBranchBtns" class="row"></span></div>
+    <div class="grid g2" style="margin-top:12px">
+      <div><h4>Teacher forcing <span class="pill t">REAL</span></h4><p class="small muted">Decoder input is the correct prefix at every position. One forward pass.</p><div id="tfLeft"></div></div>
+      <div><h4>Free-running <span class="pill t">REAL</span></h4><p class="small muted">Each input is the model’s own earlier output, one pass per token.</p><div id="tfRight"></div></div></div>
+    <div class="grid g3" style="margin-top:10px" id="tfStats"></div>
+  </div>
+  <div class="callout warn"><b>What to look for</b>Pick the 2nd or 3rd branch. Once the first word differs from the reference, everything after it is built on that different start, and the final sentence can drift or change meaning. Teacher forcing avoids this during training because the next input is always the correct word, even after a wrong guess.</div>
+</section>
+
+<!-- ============ 6 USES ============ -->
+<section class="sec" id="uses">
+  <p class="eyebrow">Section 6</p>
+  <h2>What are Transformers used for?</h2>
+  <p>Transformers handle most language tasks: language modelling, text classification, translation, summarisation, question answering, named-entity recognition and speech recognition. The <b>encoder layer</b> is the common building block; each application adds its own <b>head</b> on top, depending on the job.</p>
+  <div class="grid g4" id="taskGrid"></div>
+  <div class="card" style="margin-top:12px" id="taskInfo"></div>
+
+  <h3>Head 1: the classification head</h3>
+  <p>For sentiment analysis the Transformer reads a whole text and a <b>classification head</b> turns its output into class probabilities such as positive vs negative. Pick a real review sentence:</p>
+  <div class="card">
+    <div class="row" id="clsPick" role="group" aria-label="Review sentences"></div>
+    <div id="clsOut" style="margin-top:10px"></div>
+  </div>
+
+  <h3>Head 2: the language-model head</h3>
+  <p>A <b>language-model head</b> gives a probability for <em>every word in the vocabulary</em> as the next word. The highest-probability word can be chosen, or one can be sampled. Below are the real next-word probabilities of DistilGPT-2 (a decoder-only model).</p>
+  <div class="card">
+    <div class="row" id="lmPick" role="group" aria-label="Prompts"></div>
+    <div class="grid g2" style="margin-top:10px">
+      <div><label class="field" for="lmTemp">Temperature: <b id="lmTempV">1.0</b> <span class="small muted">(low = confident, high = adventurous)</span></label><input type="range" id="lmTemp" min="0.2" max="2.5" step="0.1" value="1"></div>
+      <div><label class="field" for="lmK">Consider only the top-k words: <b id="lmKV">40</b></label><input type="range" id="lmK" min="1" max="40" step="1" value="40"></div></div>
+    <div class="bars" id="lmBars" style="margin-top:8px"></div>
+    <div class="row" style="margin-top:8px"><button class="btn primary" id="lmGreedy" type="button">Pick the top word</button><button class="btn" id="lmSample" type="button">Sample 1 word</button><button class="btn" id="lmSample50" type="button">Sample 50 times</button><span class="pill t">REAL</span></div>
+    <div class="callout" style="margin:10px 0 0" id="lmOut"></div>
+  </div>
+</section>
+
+<!-- ============ 7 RNN ============ -->
+<section class="sec" id="rnn">
+  <p class="eyebrow">Section 7</p>
+  <h2>Why Transformers beat RNNs</h2>
+  <p>RNNs and their relatives (LSTMs, GRUs) were the standard for language until Transformers arrived. They worked well, and attention was first added to <em>improve</em> them. But they had two weaknesses:</p>
+  <ol><li><b>Long-range dependencies are hard.</b> Information between two far-apart words must survive many steps.</li><li><b>They are sequential.</b> Step <i>t</i> cannot start until step <i>t − 1</i> has finished, which makes training and inference slow.</li></ol>
+  <p>Convolutional networks (CNNs) compute in parallel, but only words inside the kernel window interact in one layer, so distant words need many layers. Transformers drop recurrence and rely on attention: <b>all words are processed in parallel</b> and the <b>distance between words does not matter</b>.</p>
+  <h3>Try it: how far must information travel?</h3>
+  <p>Click any two words in the sentence. The bars show how many steps (RNN), layers (CNN) or attention hops (Transformer) it takes for the two words to interact.</p>
+  <div class="card">
+    <div class="tokens" id="pathToks"></div>
+    <div class="row" style="margin-top:6px"><label class="small" for="kern">CNN kernel size: <b id="kernV">3</b></label><input type="range" id="kern" min="3" max="9" step="2" value="3" style="max-width:200px"></div>
+    <div class="bars" id="pathBars" style="margin-top:8px"></div>
+    <p class="small muted" id="pathNote"></p>
+  </div>
+  <h3>Try it: sequential vs parallel</h3>
+  <div class="card">
+    <label class="field" for="nTok">Sentence length: <b id="nTokV">20</b> tokens &nbsp;·&nbsp; layers L = 6</label>
+    <input type="range" id="nTok" min="4" max="128" value="20">
+    <div class="bars" id="seqBars" style="margin-top:8px"></div>
+    <div class="row" style="margin-top:8px"><button class="btn primary" id="seqRun" type="button">&#9654; Race them</button></div>
+    <div id="seqTrack" style="margin-top:8px"></div>
+    <p class="small muted" id="seqNote"></p>
+  </div>
+  <div class="callout warn"><b>An honest nuance</b>Parallel does not mean free. Attention compares every word with every other word, so its work grows with the <em>square</em> of the sentence length. That is fine for sentences and paragraphs, and is why long documents need special tricks. The win over RNNs is the short, direct path between words and the ability to compute all positions at once.</div>
+</section>
+
+<!-- ============ 8 CHECK ============ -->
+<section class="sec" id="check">
+  <p class="eyebrow">Section 8</p>
+  <h2>Check yourself, glossary and what next</h2>
+  <h3>Quiz</h3>
+  <div class="card"><div class="row" style="justify-content:space-between"><b id="quizProgress"></b><span class="muted small" id="quizBest"></span></div><div id="quizBody"></div></div>
+  <h3>Glossary</h3>
+  <input type="search" id="glossSearch" placeholder="Search terms…" aria-label="Search glossary" style="max-width:320px">
+  <div id="glossList" class="grid g2" style="margin-top:10px"></div>
+  <h3>Where to go next</h3>
+  <ul><li>Read the original article: <a href="https://towardsdatascience.com/transformers-explained-visually-part-1-overview-of-functionality-95a6dd460452/" target="_blank" rel="noopener">Transformers Explained Visually (Part 1)</a>, then Parts 2 to 4 of the same series for the step-by-step data flow, multi-head attention and why attention works so well.</li>
+  <li>The original paper: Vaswani et al. (2017), <i>Attention Is All You Need</i>.</li>
+  <li>Companion material from our project: the full interactive study guide and the project paper show these ideas measured on a real task (sentiment analysis) with ten models.</li></ul>
+  <h3>Sources and credits</h3>
+  <p class="credit">Structure and topics: Ketan Doshi, “Transformers Explained Visually (Part 1): Overview of Functionality”, Towards Data Science, 13 Dec 2020. Models used for the demos: <b>NLLB-200 distilled 600M</b> (Meta AI, translation), <b>DistilGPT-2</b> (Hugging Face, language modelling), <b>DistilBERT base uncased</b> (Hugging Face, attention). Kannada reference translations were written by the page author. Token strings are SentencePiece/WordPiece pieces; a leading “▁” marks the start of a word and is hidden. Everything else on this page is original.</p>
+  <p class="credit" id="modelFacts"></p>
+</section>

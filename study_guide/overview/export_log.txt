@@ -1,0 +1,26 @@
+loading facebook/nllb-200-distilled-600M
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/512 [00:00<?, ?it/s]Loading weights: 100%|██████████| 512/512 [00:00<00:00, 16710.63it/s]
+Where is the bus stand? -> ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ? | branches: ['ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ?', 'ಎಲ್ಲಿ ಬಸ್ ನಿಲ್ದಾಣ?', 'ಅಲ್ಲಿ ಬಸ್ ನಿಲ್ದಾಣ?'] | ref loss 0.94
+Thank you very much for your help. -> ನಿಮ್ಮ ಸಹಾಯಕ್ಕಾಗಿ ತುಂಬಾ ಧನ್ಯವಾದಗಳು. | branches: ['ನಿಮ್ಮ ಸಹಾಯಕ್ಕಾಗಿ ತುಂಬಾ ಧನ್ಯವಾದಗಳು.', 'ಸಹಾಯಕ್ಕಾಗಿ ತುಂಬಾ ಧನ್ಯವಾದಗಳು.', 'ನಿಮಗೆ ಸಹಾಯ ಮಾಡಿದ್ದಕ್ಕೆ ತುಂಬಾ ಧನ್ಯವಾದಗಳು.'] | ref loss 1.335
+I am going to Mysuru tomorrow. -> ನಾಳೆ ನಾನು ಮೈಸೂರಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ. | branches: ['ನಾಳೆ ನಾನು ಮೈಸೂರಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.', 'ನಾನು ನಾಳೆ ಮೈಸೂರಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.', 'ನನಗೆ ನಾಳೆ ಮೈಸೂರು ಹೋಗಬೇಕಿದೆ.'] | ref loss 0.859
+The film was good, but the ending was disappointing. -> ಚಿತ್ರವು ಉತ್ತಮವಾಗಿತ್ತು, ಆದರೆ ಅಂತ್ಯ ನಿರಾಶಾದಾಯಕವಾಗಿತ್ತು. | branches: ['ಚಿತ್ರವು ಉತ್ತಮವಾಗಿತ್ತು, ಆದರೆ ಅಂತ್ಯ ನಿರಾಶಾದಾಯಕವಾಗಿತ್ತು.', 'ಚಲನಚಿತ್ರವು ಉತ್ತಮವಾಗಿತ್ತು, ಆದರೆ ಅಂತ್ಯವು ನಿರಾಶಾದಾಯಕವಾಗಿತ್ತು.', 'ಸಿನಿಮಾ ಚೆನ್ನಾಗಿತ್ತು, ಆದರೆ ಅಂತ್ಯ ನಿರಾಶಾದಾಯಕವಾಗಿತ್ತು.'] | ref loss 1.492
+Loading weights:   0%|          | 0/76 [00:00<?, ?it/s]Loading weights:  14%|█▍        | 11/76 [00:00<00:00, 78.01it/s]Loading weights:  25%|██▌       | 19/76 [00:00<00:01, 51.50it/s]Loading weights: 100%|██████████| 76/76 [00:00<00:00, 209.53it/s]
+Bangalore is known as the -> [(' "', 0.0859), (' �', 0.05827), (" '", 0.03813), (' city', 0.03561), (' capital', 0.02598)]
+Thank you very much for your -> [(' support', 0.40274), (' help', 0.06388), (' continued', 0.03252), (' time', 0.02621), (' feedback', 0.0141)]
+The movie was great, but the ending was -> [(' a', 0.1043), (' so', 0.03269), (' too', 0.03259), (' terrible', 0.03109), (' very', 0.03089)]
+Loading weights:   0%|          | 0/100 [00:00<?, ?it/s]Loading weights:  10%|█         | 10/100 [00:00<00:00, 91.84it/s]Loading weights: 100%|██████████| 100/100 [00:00<00:00, 521.58it/s]
+[transformers] [1mDistilBertModel LOAD REPORT[0m from: distilbert-base-uncased
+Key                     | Status     |  | 
+------------------------+------------+--+-
+vocab_transform.bias    | UNEXPECTED |  | 
+vocab_layer_norm.weight | UNEXPECTED |  | 
+vocab_transform.weight  | UNEXPECTED |  | 
+vocab_layer_norm.bias   | UNEXPECTED |  | 
+vocab_projector.bias    | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+the trophy didn't fit in the suitcase because it was too big . top heads (it->trophy, it->suitcase, layer, head): [[0.203, 0.381, 4, 0], [0.265, 0.263, 4, 1], [0.199, 0.325, 2, 10]]
+the trophy didn't fit in the suitcase because it was too small . top heads (it->trophy, it->suitcase, layer, head): [[0.203, 0.366, 2, 10], [0.163, 0.386, 4, 0], [0.269, 0.239, 4, 1]]
+saved C:\Shashikanth_Data\VGTU\HomeWorks\NeuralNetwork\NLPTOPIC\Transformers-NLP\study_guide\overview\data.json 123 KB
