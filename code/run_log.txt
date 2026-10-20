@@ -1,0 +1,80 @@
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\tfidf_nb.json
+{
+  "model": "tfidf_nb",
+  "family": "classical",
+  "train_size": 65349,
+  "train_time_s": 1.7571533999871463,
+  "latency_ms_per_sample": 0.05301972477346522,
+  "parameters": 147112,
+  "accuracy": 0.8222477064220184,
+  "precision": 0.8277654504719896,
+  "recall": 0.8210301422918245,
+  "f1_macro": 0.8210614250744364
+}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\tfidf_logreg.json
+{
+  "model": "tfidf_logreg",
+  "family": "classical",
+  "train_size": 65349,
+  "train_time_s": 3.625782800023444,
+  "latency_ms_per_sample": 0.04858864676111181,
+  "parameters": 73556,
+  "accuracy": 0.8188073394495413,
+  "precision": 0.8219898078850296,
+  "recall": 0.8178622547781427,
+  "f1_macro": 0.8180021663892632
+}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\tfidf_svm.json
+{
+  "model": "tfidf_svm",
+  "family": "classical",
+  "train_size": 65349,
+  "train_time_s": 2.3162669999874197,
+  "latency_ms_per_sample": 0.055078210999629534,
+  "parameters": 73556,
+  "accuracy": 0.8291284403669725,
+  "precision": 0.8307316918088032,
+  "recall": 0.82846046981561,
+  "f1_macro": 0.8286721724143842
+}
+{'epoch': 1, 'train_loss': 0.44508298036009136, 'dev_accuracy': 0.8735}
+{'epoch': 2, 'train_loss': 0.2327452787385833, 'dev_accuracy': 0.8975}
+{'epoch': 3, 'train_loss': 0.15956294481442895, 'dev_accuracy': 0.909}
+{'epoch': 4, 'train_loss': 0.12084474033311766, 'dev_accuracy': 0.913}
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\bilstm.json
+{
+  "model": "bilstm",
+  "family": "recurrent",
+  "train_size": 65349,
+  "train_time_s": 380.0135666000424,
+  "latency_ms_per_sample": 0.4538401376312906,
+  "parameters": 1974786,
+  "accuracy": 0.8279816513761468,
+  "precision": 0.8316043374316939,
+  "recall": 0.8269975583059694,
+  "f1_macro": 0.8271633649760037
+}
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loading weights:   0%|          | 0/104 [00:00<?, ?it/s]Loading weights: 100%|██████████| 104/104 [00:00<00:00, 1093.10it/s]
+[saved] C:\Users\Admin\AppData\Local\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Roaming\Claude\scratch-workspaces\2aaffdd5-fbd4-4049-8aa6-e32bba69a22b\669660c5-f3ec-4f16-af76-3f5afbd01152\scratch-2026-10-20-95405c\code\results\pt_distilbert_sst2.json
+{
+  "model": "distilbert-base-uncased-finetuned-sst-2-english",
+  "family": "transformer-pretrained",
+  "train_size": 0,
+  "train_time_s": 0.0,
+  "latency_ms_per_sample": 44.5628267201705,
+  "parameters": 66955010,
+  "accuracy": 0.9105504587155964,
+  "precision": 0.9112916842549599,
+  "recall": 0.9101835480340154,
+  "f1_macro": 0.9104298356510746
+}
+Loading weights:   0%|          | 0/201 [00:00<?, ?it/s]Loading weights: 100%|██████████| 201/201 [00:00<00:00, 10685.11it/s]
+[transformers] [1mRobertaForSequenceClassification LOAD REPORT[0m from: cardiffnlp/twitter-roberta-base-sentiment-latest
+Key                         | Status     |  | 
+----------------------------+------------+--+-
+roberta.pooler.dense.weight | UNEXPECTED |  | 
+roberta.pooler.dense.bias   | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
