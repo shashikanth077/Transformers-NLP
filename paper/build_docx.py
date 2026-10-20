@@ -44,6 +44,7 @@ TITLE_EN = "TRANSFORMERS AND THEIR APPLICATION IN NATURAL LANGUAGE PROCESSING (N
 WORK_TYPE = "Group Project Paper"
 PROGRAMME = "Engineering of Artificial Intelligence study program, state code 6211BX023"
 FIELD = "Informatics"
+INCLUDE_ANNOTATION = False   # course project: no annotation page (text stays in paper/annotation.md)
 
 ACRONYMS = [
     ("AdamW", "Adam optimiser with decoupled weight decay"),
@@ -480,6 +481,16 @@ def front_matter(doc, annotation_paras):
                 t.text = ""
 
 
+def drop_annotation_page(doc):
+    """Remove the annotation page together with its section break, so the Contents page follows the
+    title page directly (the annotation sheet is only required for final theses)."""
+    body = doc.element.body
+    kids = list(body)
+    sect_idx = [i for i, e in enumerate(kids) if e.tag == W_NS + "p" and e.find(W_NS + "pPr/" + W_NS + "sectPr") is not None]
+    for e in kids[sect_idx[0] + 1:sect_idx[1] + 1]:
+        body.remove(e)
+
+
 def tidy_annotation_page(doc):
     """Remove empty filler paragraphs between the title page and the end of the annotation page."""
     body = doc.element.body
@@ -742,7 +753,10 @@ def build():
     annotation = [b.strip().replace("\n", " ") for b in
                   re.split(r"\n\s*\n", open(os.path.join(HERE, "annotation.md"), encoding="utf-8").read().strip())]
     front_matter(doc, annotation)
-    tidy_annotation_page(doc)
+    if INCLUDE_ANNOTATION:
+        tidy_annotation_page(doc)
+    else:
+        drop_annotation_page(doc)
     ref_num = strip_template_body(doc)
     unwrap_content_controls(doc)
     remove_comments(doc)

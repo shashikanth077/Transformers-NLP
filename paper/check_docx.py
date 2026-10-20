@@ -39,7 +39,8 @@ paras = [(p.style.name, p.text) for p in d.paragraphs]
 text = "\n".join(t for _, t in paras)
 
 print("Structure")
-check(len(d.sections) == 3, f"3 sections (title page / annotation / main text), found {len(d.sections)}")
+check(len(d.sections) == 2, f"2 sections (title page / contents and main text), found {len(d.sections)}")
+check(not any(t.strip() == "Annotation" for _, t in paras), "no annotation page (course project)")
 first_text = [t for _, t in paras[:30] if t.strip()]
 check(sum("VILNIUS GEDIMINAS" in t for _, t in paras) == 1, "university name appears exactly once (single title page)")
 check(any("Shashikanth" in t for t in first_text), "authors on the title page")
@@ -63,7 +64,7 @@ straight = text.count('"') + text.count("'")
 check(straight == 0, f"typographic quotes only ({straight} straight quotes left)")
 # consecutive empty paragraphs
 run = max_run = 0
-start = next(i for i, (_, t) in enumerate(paras) if t.strip() == "Annotation")   # title page spacing is part of the template
+start = next(i for i, (_, t) in enumerate(paras) if t.strip() == "Contents")   # title page spacing is part of the template
 for _, t in paras[start:]:
     run = run + 1 if not t.strip() else 0
     max_run = max(max_run, run)
