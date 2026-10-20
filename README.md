@@ -12,7 +12,7 @@ robustness on negation / contrast.
 
 | File | Description |
 |---|---|
-| `Transformers_in_NLP_Project_Paper.docx` / `.pdf` | Project paper (29 pages, VILNIUS TECH MFT template) |
+| `Transformers_in_NLP_Project_Paper.docx` / `.pdf` | Project paper (28 pages, VILNIUS TECH MFT template, English only) |
 | `Transformers_in_NLP_Presentation.pptx` | 11-slide presentation for a 7–10 minute talk, with speaker notes |
 
 ## Main results (SST-2 test set, 872 sentences)
@@ -37,7 +37,8 @@ code/     experiment (Python): 01_prepare_data.py ... 09_diagrams.py, run_all.sh
   results/  one JSON per model + summary CSVs (metrics, timings, predictions, statistics)
   figures/  all charts and diagrams
 paper/    chapter texts (*.md), build_docx.py (generates the paper from template/MFT_template_2025.docx),
-          word_finalize.ps1 (updates the table of contents and exports PDF with MS Word)
+          word_finalize.ps1 (updates the table of contents and exports PDF with MS Word),
+          check_docx.py (quality checks of the generated paper)
 slides/   build_deck.js (generates the presentation from the results)
 docs/     final paper and presentation
 ```

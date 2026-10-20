@@ -36,11 +36,10 @@ FIG = os.path.join(CODE, "figures")
 RES = os.path.join(CODE, "results")
 TEMPLATE = os.path.join(HERE, "template", "MFT_template_2025.docx")
 OUT = os.environ.get("PAPER_OUT", os.path.join(ROOT, "docs", "Transformers_in_NLP_Project_Paper.docx"))
-NUMERIC = re.compile(r"^[\d\s.,%+\-–<>\[\];/·⁻×kM*()]+$|^(yes|no|yes \(\d+k\))$")
+NUMERIC = re.compile(r"^[\d\s.,%+\-–<>\[\];/·⁰-₟×kM*()]+$|^(yes|no|yes \(\d+k\))$")
 MML2OMML = r"C:/Program Files/Microsoft Office/root/Office16/MML2OMML.XSL"
 
 AUTHORS = "Shashikanth Hosur Ramegowda, Shaeed Khan, Rimsha Tariq"
-TITLE_LT = "TRANSFORMERIAI IR JŲ TAIKYMAS NATŪRALIOSIOS KALBOS APDOROJIMO (NLP) UŽDUOTYSE"
 TITLE_EN = "TRANSFORMERS AND THEIR APPLICATION IN NATURAL LANGUAGE PROCESSING (NLP) TASKS"
 WORK_TYPE = "Group Project Paper"
 PROGRAMME = "Engineering of Artificial Intelligence study program, state code 6211BX023"
@@ -80,8 +79,8 @@ LATEX = {
     "ce": r"L_{CE}=-\frac{1}{N}\sum_{i=1}^{N}{\log P(y_{i}\mid x_{i})}",
     "adam1": r"m_{t}=\beta_{1}m_{t-1}+(1-\beta_{1})g_{t},\quad v_{t}=\beta_{2}v_{t-1}+(1-\beta_{2})g_{t}^{2}",
     "adam2": r"\theta_{t}=\theta_{t-1}-\eta_{t}\left(\frac{\hat{m}_{t}}{\sqrt{\hat{v}_{t}}+\epsilon}+\lambda\theta_{t-1}\right)",
-    "tfidf": r"\mathrm{tfidf}(t,d)=\left(1+\log \mathrm{tf}(t,d)\right)\cdot\left(\log\frac{1+N}{1+\mathrm{df}(t)}+1\right)",
-    "svm": r"\min_{w,b}\frac{1}{2}\|w\|^{2}+C\sum_{i}{\max\left(0,1-y_{i}(w^{T}x_{i}+b)\right)}",
+    "tfidf": r"\mathrm{tfidf}(t,d)=\left(1+\log\left(\mathrm{tf}(t,d)\right)\right)\cdot\left(\log\frac{1+N}{1+\mathrm{df}(t)}+1\right)",
+    "svm": r"\mathrm{min}_{w,b}\ \frac{1}{2}\|w\|^{2}+C\sum_{i}{\mathrm{max}\left(0,1-y_{i}(w^{T}x_{i}+b)\right)}",
     "lstm1": r"f_{t}=\sigma(W_{f}[h_{t-1},x_{t}]+b_{f}),\quad i_{t}=\sigma(W_{i}[h_{t-1},x_{t}]+b_{i}),\quad o_{t}=\sigma(W_{o}[h_{t-1},x_{t}]+b_{o})",
     "lstm2": r"\tilde{c}_{t}=\tanh(W_{c}[h_{t-1},x_{t}]+b_{c}),\quad c_{t}=f_{t}\odot c_{t-1}+i_{t}\odot\tilde{c}_{t},\quad h_{t}=o_{t}\odot\tanh(c_{t})",
     "nli": r"\hat{y}=\underset{c\in\{pos,neg\}}{\mathrm{arg\,max}}P(\mathrm{entailment}\mid x,h(c))",
@@ -253,8 +252,16 @@ def set_num(p, num_id, ilvl=0):
     pPr.insert(1 if pPr.find(qn("w:pStyle")) is not None else 0, numPr)
 
 
+def smart_quotes(text):
+    text = re.sub(r'(^|[\s(\[{–—-])"', lambda m: m.group(1) + "“", text)
+    text = text.replace('"', "”")
+    text = re.sub(r"(^|[\s(\[{])'", lambda m: m.group(1) + "‘", text)
+    return text.replace("'", "’")
+
+
 def add_runs(p, text, size=None, italic=None):
-    """Adds text with **bold** spans."""
+    """Adds text with **bold** spans (typographic quotes)."""
+    text = smart_quotes(text)
     for part in re.split(r"(\*\*[^*]+\*\*)", text):
         if not part:
             continue
@@ -328,7 +335,13 @@ def fill_sdts(doc):
         if txt.startswith("Student name"):
             value = AUTHORS
         elif txt.upper().startswith("TITLE OF THE FINAL THESIS IN LITHUANIAN"):
-            value = TITLE_LT
+            # English-only document: remove the Lithuanian title line completely
+            holder = sdt.getparent()
+            if holder.tag == W + "p":
+                holder.getparent().remove(holder)
+            else:
+                holder.remove(sdt)
+            continue
         elif txt.upper().startswith("TITLE OF THE FINAL THESIS IN ENGLISH"):
             value = TITLE_EN
         elif txt.startswith("Select study program"):
@@ -351,6 +364,58 @@ def fill_sdts(doc):
                 for child in list(rpr):
                     if child.tag in (W + "rStyle", W + "color", W + "i", W + "iCs"):
                         rpr.remove(child)
+
+
+W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
+
+
+def remove_second_cover(doc):
+    """The first page already carries university, faculty, authors and title; the template's second
+    (supervisor) page is not needed for a course project. Everything between the first page break and
+    the section break paragraph is removed; the section break itself stays."""
+    body = doc.element.body
+    kids = list(body)
+    i_break = next(i for i, e in enumerate(kids) if e.tag == W_NS + "p" and
+                   any(b.get(W_NS + "type") == "page" for b in e.iter(W_NS + "br")))
+    i_sect = next(i for i, e in enumerate(kids) if e.tag == W_NS + "p" and e.find(W_NS + "pPr/" + W_NS + "sectPr") is not None)
+    for e in kids[i_break:i_sect]:
+        body.remove(e)
+    # drop bookmarks whose partner was removed
+    starts = {b.get(W_NS + "id"): b for b in body.iter(W_NS + "bookmarkStart")}
+    ends = {b.get(W_NS + "id"): b for b in body.iter(W_NS + "bookmarkEnd")}
+    for i, b in starts.items():
+        if i not in ends:
+            b.getparent().remove(b)
+    for i, b in ends.items():
+        if i not in starts:
+            b.getparent().remove(b)
+
+
+def unwrap_content_controls(doc):
+    """Replace the template's form fields (content controls) by plain text."""
+    for sdt in reversed(list(doc.element.body.iter(W_NS + "sdt"))):
+        content = sdt.find(W_NS + "sdtContent")
+        parent = sdt.getparent()
+        idx = parent.index(sdt)
+        for child in list(content):
+            parent.insert(idx, child)
+            idx += 1
+        parent.remove(sdt)
+
+
+def remove_comments(doc):
+    """The template carries review comments of its author; they must not appear in the final document."""
+    body = doc.element.body
+    for tag in ("commentRangeStart", "commentRangeEnd"):
+        for e in list(body.iter(W_NS + tag)):
+            e.getparent().remove(e)
+    for e in list(body.iter(W_NS + "commentReference")):
+        run = e.getparent()
+        run.getparent().remove(run)
+    for rid, rel in list(doc.part.rels.items()):
+        t = rel.reltype.lower()
+        if "comment" in t or t.endswith("/people"):
+            doc.part.rels.pop(rid)
 
 
 def front_matter(doc, annotation_paras):
@@ -413,6 +478,18 @@ def front_matter(doc, annotation_paras):
             ts[0].text = val
             for t in ts[1:]:
                 t.text = ""
+
+
+def tidy_annotation_page(doc):
+    """Remove empty filler paragraphs between the title page and the end of the annotation page."""
+    body = doc.element.body
+    kids = list(body)
+    sect_idx = [i for i, e in enumerate(kids) if e.tag == W_NS + "p" and e.find(W_NS + "pPr/" + W_NS + "sectPr") is not None]
+    for e in kids[sect_idx[0] + 1:sect_idx[1]]:
+        has_content = e.find(".//" + W_NS + "t") is not None
+        special = e.find(".//" + W_NS + "br") is not None or e.find(".//" + W_NS + "drawing") is not None             or e.find(W_NS + "pPr/" + W_NS + "sectPr") is not None
+        if e.tag == W_NS + "p" and not has_content and not special:
+            body.remove(e)
 
 
 def strip_template_body(doc):
@@ -599,6 +676,8 @@ class Builder:
 
     def equation(self, key):
         self.eq_no += 1
+        if self.doc.paragraphs:
+            self.doc.paragraphs[-1].paragraph_format.keep_with_next = True
         p = self.doc.add_paragraph(style="BD_formule")
         p.paragraph_format.space_before = Pt(3)
         p.paragraph_format.space_after = Pt(6)
@@ -613,7 +692,7 @@ class Builder:
         p.paragraph_format.space_after = Pt(3)
         p.paragraph_format.left_indent = Cm(0.75)
         p.paragraph_format.first_line_indent = Cm(-0.75)
-        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        p.alignment = WD_ALIGN_PARAGRAPH.LEFT
         if self.ref_num:
             set_num(p, self.ref_num)
         add_runs(p, text, size=11)
@@ -658,17 +737,24 @@ def read_blocks():
 
 def build():
     doc = docx.Document(TEMPLATE)
+    remove_second_cover(doc)
     fill_sdts(doc)
     annotation = [b.strip().replace("\n", " ") for b in
                   re.split(r"\n\s*\n", open(os.path.join(HERE, "annotation.md"), encoding="utf-8").read().strip())]
     front_matter(doc, annotation)
+    tidy_annotation_page(doc)
     ref_num = strip_template_body(doc)
+    unwrap_content_controls(doc)
+    remove_comments(doc)
+    for h in list(doc.element.body.iter(W_NS + "highlight")):
+        h.getparent().remove(h)
     single_spacing(doc)
     fix_toc_fields(doc)
     Builder(doc, load_tables(), ref_num).run(read_blocks())
     cp = doc.core_properties
     cp.title = "Transformers and their application in NLP tasks"
     cp.author = AUTHORS
+    cp.last_modified_by = AUTHORS
     cp.subject = "Group project paper, VILNIUS TECH, Faculty of Fundamental Sciences"
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     doc.save(OUT)

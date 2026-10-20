@@ -28,6 +28,8 @@ Ten models were selected to represent four approaches that a practitioner can re
 
 [[TABLE models]]
 
+Note: * for the TF-IDF models the number is the number of n-gram weights, not the number of parameters of a neural network.
+
 The classical models represent the pre-neural approach and serve as strong, cheap baselines. The bidirectional LSTM represents the pre-Transformer neural approach, trained from scratch without pre-training. The three fine-tuned Transformers differ only in size (4.4, 29 and 67 million parameters), which allows us to observe how quality and cost scale with model size. BERT-tiny (2 layers, hidden size 128) and BERT-small (4 layers, hidden size 512) are compact BERT models pre-trained and released by Google together with the study of Turc et al. (2019); DistilBERT is the distilled version of BERT-base (Sanh et al., 2019). The three ready-made models represent the "use a public model as a service" scenario: a DistilBERT model that has already been fine-tuned on SST-2 by its authors (the best case of reuse), a RoBERTa model trained for sentiment on tweets (a different domain, Loureiro et al., 2022) and a zero-shot NLI model (Yin et al., 2019) that has never seen sentiment labels.
 
 ## Evaluation criteria
