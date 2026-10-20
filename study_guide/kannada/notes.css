@@ -1,0 +1,85 @@
+/* Kannada study notes: A4 print stylesheet. Rendered to PDF by Microsoft Edge (correct Kannada shaping). */
+@page { size: A4; margin: 17mm 15mm 18mm 15mm; @bottom-center { content: counter(page); font: 9pt "Nirmala UI", sans-serif; color: #666; } }
+@page :first { margin: 0; @bottom-center { content: none; } }
+:root { --navy: #16163f; --brand: #2e2a6b; --green: #159a6a; --blue: #2a78d6; --orange: #d9541f; --violet: #6250d6; --amber: #a86a00; --ink: #1d1d3a; --muted: #5a5977; --line: #d9dcef; --soft: #f3f4fb; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html { font-family: "Nirmala UI", "Noto Sans Kannada", "Segoe UI", sans-serif; }
+body { margin: 0; color: var(--ink); font-size: 10.8pt; line-height: 1.75; }
+p { margin: 0 0 .62em; orphans: 2; widows: 2; }
+b, strong { font-weight: 700; }
+.en { font-family: "Segoe UI", "Nirmala UI", sans-serif; font-size: .94em; }
+code { font-family: Consolas, "Cascadia Mono", monospace; font-size: .86em; background: var(--soft); padding: 0 .3em; border-radius: 4px; }
+
+/* cover */
+.cover { width: 210mm; height: 297mm; padding: 30mm 22mm 20mm; background: linear-gradient(160deg, #16163f 0%, #2e2a6b 62%, #3c3790 100%); color: #fff; position: relative; page-break-after: always; overflow: hidden; }
+.cover .tag { letter-spacing: .14em; text-transform: uppercase; font-size: 10pt; color: #b9b8e8; margin-bottom: 14mm; font-family: "Segoe UI", sans-serif; }
+.cover h1 { font-size: 40pt; line-height: 1.35; margin: 0 0 6mm; font-weight: 800; }
+.cover h2 { font-size: 19pt; font-weight: 500; line-height: 1.55; color: #dcdcf6; margin: 0 0 12mm; }
+.cover .sub { font-size: 12pt; color: #c8c8ee; line-height: 1.7; max-width: 150mm; }
+.cover .authors { position: absolute; left: 22mm; right: 22mm; bottom: 22mm; font-size: 12pt; line-height: 1.7; color: #e6e6fa; border-top: 1px solid rgba(255,255,255,.28); padding-top: 6mm; font-family: "Segoe UI", "Nirmala UI", sans-serif; }
+.cover svg { position: absolute; right: -10mm; top: 118mm; opacity: .95; }
+
+/* headings */
+h1.ch { font-size: 21pt; line-height: 1.4; color: #fff; background: var(--brand); margin: 9mm 0 5mm; padding: 4.5mm 7mm; border-radius: 3mm; page-break-after: avoid; break-after: avoid; }
+h1.ch { break-inside: avoid; }
+h1.ch.pb { page-break-before: always; break-before: page; margin-top: 0; }
+h2.pb { page-break-before: always; break-before: page; margin-top: 0; }
+h1.ch small { display: block; font-size: 10pt; font-weight: 500; color: #bdbce8; letter-spacing: .05em; font-family: "Segoe UI", sans-serif; }
+h1.ch.first { page-break-before: auto; margin-top: 0; }
+h2 { font-size: 14.5pt; color: var(--brand); margin: 7mm 0 2.5mm; line-height: 1.5; page-break-after: avoid; border-bottom: 2px solid var(--line); padding-bottom: 1mm; }
+h3 { font-size: 12.2pt; color: var(--violet); margin: 5mm 0 1.5mm; line-height: 1.5; page-break-after: avoid; }
+ul, ol { margin: 0 0 .7em; padding-left: 1.4em; }
+li { margin: 0 0 .25em; }
+
+/* boxes */
+.box { border-radius: 3mm; padding: 3.2mm 5mm 2.2mm; margin: 4mm 0; border: 1px solid var(--line); break-inside: avoid; }
+.box .bt { font-weight: 800; margin-bottom: .5mm; font-size: 11pt; }
+.box.kn { background: #e6f6ee; border-color: #a9dcc3; } .box.kn .bt { color: #0c7a4d; }
+.box.note { background: #fff3dc; border-color: #f0d49a; } .box.note .bt { color: #8a5600; }
+.box.exam { background: #ece9fd; border-color: #c9c1f4; } .box.exam .bt { color: var(--violet); }
+.box.warn { background: #fde8e6; border-color: #f2b9b3; } .box.warn .bt { color: #b3261e; }
+.box.info { background: #e8effd; border-color: #bccdf3; } .box.info .bt { color: #1f56b8; }
+.say { border-left: 4px solid var(--violet); background: var(--soft); padding: 2.4mm 4.5mm; margin: 3mm 0; border-radius: 0 3mm 3mm 0; break-inside: avoid; }
+
+/* tables */
+table { border-collapse: collapse; width: 100%; margin: 3mm 0 4mm; font-size: 9.8pt; line-height: 1.6; break-inside: auto; }
+thead th { background: var(--brand); color: #fff; text-align: left; padding: 2mm 2.6mm; font-weight: 700; }
+td { padding: 1.8mm 2.6mm; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr { break-inside: avoid; }
+tbody tr:nth-child(even) td { background: #f8f8fd; }
+td.num, th.num { text-align: right; white-space: nowrap; }
+td.c { text-align: center; }
+.hl td { background: #e6f6ee !important; font-weight: 700; }
+
+/* figures */
+figure { margin: 4mm 0; text-align: center; break-inside: avoid; }
+figure img { max-width: 100%; max-height: 95mm; border: 1px solid var(--line); border-radius: 2mm; background: #fff; }
+figure svg { max-width: 100%; height: auto; }
+figcaption { font-size: 9.6pt; color: var(--muted); margin-top: 1.5mm; line-height: 1.55; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+.card { border: 1px solid var(--line); border-radius: 3mm; padding: 3mm 4mm; background: #fff; break-inside: avoid; }
+.stat { text-align: center; border: 1px solid var(--line); border-radius: 3mm; padding: 2.4mm 1mm; background: #fff; break-inside: avoid; }
+.stat b { display: block; font-size: 17pt; line-height: 1.25; color: var(--green); font-family: "Segoe UI", sans-serif; }
+.stat.b b { color: var(--blue); } .stat.o b { color: var(--orange); } .stat.v b { color: var(--violet); }
+.stat span { font-size: 8.8pt; color: var(--muted); line-height: 1.4; display: block; }
+.grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3mm; margin: 3mm 0; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3mm; margin: 3mm 0; }
+.toc { list-style: none; padding: 0; counter-reset: c; }
+.toc li { display: flex; align-items: baseline; gap: 2mm; padding: 1.1mm 0; border-bottom: 1px dotted #c9cbe4; margin: 0; }
+.toc .t { flex: 1; } .toc .p { color: var(--muted); font-family: "Segoe UI", sans-serif; }
+.qa { break-inside: avoid; border: 1px solid var(--line); border-radius: 3mm; padding: 2.4mm 4.5mm 1.2mm; margin: 0 0 3mm; background: #fff; }
+.qa .q { font-weight: 800; color: var(--brand); margin-bottom: 1mm; }
+.qa .e { background: #ece9fd; border-radius: 2mm; padding: 1.2mm 3mm; margin: 1mm 0 2mm; font-size: 10pt; line-height: 1.6; font-family: "Segoe UI", sans-serif; }
+.qa .e b { color: var(--violet); }
+.chip { display: inline-block; padding: 0 2.4mm; border-radius: 99px; font-size: 9pt; font-weight: 700; line-height: 1.7; }
+.chip.g { background: #e2f5ec; color: #0c7a4d; } .chip.r { background: #fde8e6; color: #b3261e; } .chip.y { background: #fff3dc; color: #8a5600; }
+.mcq { break-inside: avoid; margin-bottom: 3mm; }
+.mcq .o { padding-left: 4mm; }
+.small { font-size: 9.6pt; color: var(--muted); line-height: 1.6; }
+.keep { break-inside: avoid; }
+
+.compact { font-size: 9.3pt; line-height: 1.5; }
+.compact .stat { padding: 1.6mm 1mm; } .compact .stat b { font-size: 13.5pt; } .compact .stat span { font-size: 8pt; }
+.compact .box { margin: 2mm 0; padding: 1.8mm 4mm .6mm; } .compact .bt { font-size: 9.6pt; }
+.compact .grid4 { margin: 2mm 0; gap: 2mm; } .compact .cols { gap: 2.5mm; } .compact .card { padding: 2mm 3mm; }
+.compact li { margin: 0 0 .1em; } .compact ol, .compact ul { margin-bottom: .3em; }
