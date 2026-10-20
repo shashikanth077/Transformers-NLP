@@ -14,6 +14,7 @@ robustness on negation / contrast.
 |---|---|
 | `Transformers_in_NLP_Project_Paper.docx` / `.pdf` | Project paper (28 pages, VILNIUS TECH MFT template, English only) |
 | `Transformers_in_NLP_Presentation.pptx` | 11-slide presentation for a 7–10 minute talk, with speaker notes |
+| `Project_Study_Guide.html` | **Interactive study guide** (open in any browser, works offline): real-world story, step-by-step pipeline, sentence lab with real attention maps, all 872 test sentences for every model, results explorer, Q&A, quiz, rehearsal timer |
 
 ## Main results (SST-2 test set, 872 sentences)
 
@@ -40,7 +41,9 @@ paper/    chapter texts (*.md), build_docx.py (generates the paper from template
           word_finalize.ps1 (updates the table of contents and exports PDF with MS Word),
           check_docx.py (quality checks of the generated paper)
 slides/   build_deck.js (generates the presentation from the results)
-docs/     final paper and presentation
+docs/     final paper, presentation and the interactive study guide
+study_guide/  export_data.py (collects the real results, TF-IDF weights and attention maps) and
+              build.py (writes docs/Project_Study_Guide.html from src/ and data.json)
 ```
 
 ## Reproduce

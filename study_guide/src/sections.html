@@ -1,0 +1,328 @@
+<!-- ============ 1. START ============ -->
+<section class="sec" id="start">
+  <p class="eyebrow">VILNIUS TECH · Group project</p>
+  <h1>Transformers in NLP: your interactive study guide</h1>
+  <p class="lead">Everything you need to understand, explain and defend this project: from the first question to the last number. Click, type, drag and compare. All results here are the <b>real outputs</b> of our experiment.</p>
+  <p class="muted">Team: Shashikanth Hosur Ramegowda · Shaeed Khan · Rimsha Tariq</p>
+
+  <div class="card">
+    <h3 style="margin-top:0">The project in 60 seconds</h3>
+    <ol>
+      <li><b>Question.</b> Everyone says Transformers (BERT, GPT, ChatGPT…) are the best NLP tools. But how much better are they than older methods <em>when you only have an ordinary laptop and a few thousand labelled examples</em>, and what do they cost?</li>
+      <li><b>Method.</b> We built a fair contest on one task, <b>sentiment analysis</b> (is a movie-review sentence positive or negative?). <b>10 models</b> from 4 families competed on the same <span data-k="n_test"></span> unseen sentences: classical word-counting models, a recurrent network (BiLSTM), Transformers we fine-tuned ourselves, and ready-made Transformers.</li>
+      <li><b>Answer.</b> A big enough pre-trained Transformer wins clearly (<b data-k="acc_ft_distilbert_8000"></b>% with only 8,000 training sentences vs <b data-k="best_cls_acc"></b>% for the best classical model trained on <span data-k="n_train"></span>), but it is 20–2,000× slower at inference. Pre-training makes it <em>data-efficient</em>, and a ready-made in-domain model needs no training at all (<b data-k="acc_pt_distilbert_sst2"></b>%).</li>
+    </ol>
+  </div>
+
+  <h3>Key numbers</h3>
+  <div id="keyNumbers" class="grid g4"></div>
+
+  <h3>How to use this guide</h3>
+  <div class="grid g2">
+    <div class="card flat"><b>Learn in this order</b><p class="muted small" style="margin:.3em 0 0">The real-world story → the pipeline step by step → how Transformers work → play in the Sentence Lab → explore the results → practise the defence.</p></div>
+    <div class="card flat"><b>Everything is interactive</b><p class="muted small" style="margin:.3em 0 0">Sliders, filters, a quiz, flashcards and a rehearsal timer. The sidebar ticks off sections you have visited (saved in your browser). <b>Print / Save PDF</b> gives a revision sheet.</p></div>
+  </div>
+
+  <h3>Numbers worth memorising</h3>
+  <p class="muted small">Click a card to flip it and self-test.</p>
+  <div id="flash" class="grid g3"></div>
+</section>
+
+<!-- ============ 2. STORY ============ -->
+<section class="sec" id="story">
+  <p class="eyebrow">Real-world example</p>
+  <h2>The story: ReviewRadar needs a model by Friday</h2>
+  <p class="lead">An imagined start-up that makes our experiment feel real. Everything it faces is what we tested.</p>
+  <div class="card">
+    <p><b>ReviewRadar</b> runs a cinema app. Thousands of comments arrive every day. The support manager wants every <em>negative</em> comment flagged within seconds so staff can react (“the sound was awful, I want a refund”). The team has <b>one office laptop (no GPU)</b>, <b>8,000 hand-labelled comments</b>, and <b>one afternoon</b>.</p>
+    <p>Three engineers propose three solutions. Our project is the fair contest that decides between them:</p>
+    <div class="row" id="engineerBtns" role="tablist" aria-label="Engineers"></div>
+    <div id="engineerPanel" class="card flat" style="margin-top:12px"></div>
+  </div>
+
+  <h3>Our five research questions, in business language</h3>
+  <div class="scroll"><table>
+    <thead><tr><th>#</th><th>Research question (paper)</th><th>ReviewRadar asks…</th><th>Where we answer it</th></tr></thead>
+    <tbody>
+      <tr><td>RQ1</td><td>How much more accurate are Transformers than classical and recurrent models?</td><td>“Is it worth abandoning the simple keyword model?”</td><td>Results explorer → accuracy chart</td></tr>
+      <tr><td>RQ2</td><td>What does that improvement cost in training time, latency and size?</td><td>“Will it run on our laptop, fast enough?”</td><td>Results explorer → cost chart</td></tr>
+      <tr><td>RQ3</td><td>How does the advantage depend on the number of labelled examples?</td><td>“What if we only had 500 labelled comments?”</td><td>Results explorer → learning curve</td></tr>
+      <tr><td>RQ4</td><td>How well do ready-made / zero-shot models perform?</td><td>“Can we just download a model and skip training?”</td><td>Model arena, Choose a model</td></tr>
+      <tr><td>RQ5</td><td>Are Transformers better on negation and contrast?</td><td>“Does it understand ‘not good’ and ‘great, but slow’?”</td><td>Sentence lab, Model arena</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Everyday analogies (use these when you explain)</h3>
+  <div id="analogies" class="grid g2"></div>
+</section>
+
+<!-- ============ 3. PIPELINE ============ -->
+<section class="sec" id="pipeline">
+  <p class="eyebrow">End to end</p>
+  <h2>The project, step by step</h2>
+  <p class="lead">Nine steps from the first question to the final presentation. For each: what happens, why, the code, what to say, and what an examiner may ask.</p>
+  <div id="stepper" class="stepper" role="tablist" aria-label="Pipeline steps"></div>
+  <div id="stepBody" class="card step-body" style="margin-top:12px"></div>
+  <div class="row" style="margin-top:12px; justify-content:space-between">
+    <button class="btn" id="stepPrev">&larr; Previous step</button>
+    <button class="btn primary" id="stepNext">Next step &rarr;</button>
+  </div>
+</section>
+
+<!-- ============ 4. THEORY ============ -->
+<section class="sec" id="theory">
+  <p class="eyebrow">Understanding</p>
+  <h2>How a Transformer works (without the fear)</h2>
+  <p class="lead">Five ideas, each with something to try. If you can explain these, you can answer most theory questions.</p>
+
+  <h3>Idea 1: Words become numbers (tokens)</h3>
+  <p>A computer cannot read words. The text is cut into <b>tokens</b> (pieces of words), each token gets an ID, and each ID is looked up in a table that gives a <b>vector</b> (a list of numbers, for example 768 numbers in DistilBERT). Rare words are split into known pieces, so nothing is ever “unknown”. These are real outputs of the DistilBERT tokenizer:</p>
+  <div id="tokenDemo" class="row"></div>
+  <div class="callout"><b>Why “##”?</b> A piece starting with <code>##</code> continues the previous piece. “unwatchable” = <code>un</code> + <code>##watch</code> + <code>##able</code>. The model can guess the meaning of a new word from its parts, like you can.</div>
+  <p>Then <b>positional encoding</b> adds the position of each token, because attention alone does not know word order (“dog bites man” vs “man bites dog”).</p>
+
+  <h3>Idea 2: Self-attention, each word looks at all the others</h3>
+  <p>For each word the model computes <b>how much attention it should pay to every other word</b>, then mixes their information accordingly. In the sentence <em>“the plot was <b>not</b> good”</em>, the word “good” should pay attention to “not”. The recipe is one formula:</p>
+  <div class="formula">Attention(Q, K, V) = softmax( Q·Kᵀ / √d<sub>k</sub> ) · V</div>
+  <ul>
+    <li><b>Q (query)</b>: “what am I looking for?” &nbsp; <b>K (key)</b>: “what do I contain?” &nbsp; <b>V (value)</b>: “what do I hand over if you pick me”.</li>
+    <li>Q·Kᵀ = a similarity score for every pair of words. <b>softmax</b> turns scores into percentages that add up to 100%.</li>
+    <li>The output for a word = the <b>weighted average</b> of all the values, using those percentages.</li>
+  </ul>
+  <div class="card">
+    <h4 style="margin-top:0">Try it: attention calculator</h4>
+    <p class="muted small">Imagine the word <b>“good”</b> asking: “which words matter for me?” Drag the similarity scores (higher = more relevant). Watch softmax turn them into attention weights.</p>
+    <div class="grid g2">
+      <div id="attnSliders"></div>
+      <div>
+        <div id="attnBars" class="bars"></div>
+        <label class="field"><input type="checkbox" id="attnScale" checked> divide by √d<sub>k</sub> &nbsp; (d<sub>k</sub> = <b id="dkVal">64</b>)</label>
+        <input type="range" id="attnDk" min="1" max="512" value="64" aria-label="d_k">
+        <p class="small muted" id="attnNote"></p>
+      </div>
+    </div>
+  </div>
+  <div class="callout tip"><b>Why divide by √d<sub>k</sub>?</b> With larger vectors the dot products grow (roughly like √d<sub>k</sub>). Unscaled, softmax becomes extremely peaked (one word gets ~100%, the rest ~0%) and learning almost stops. Untick the box and raise d<sub>k</sub> to see it happen.</div>
+
+  <h3>Idea 3: Many heads, many layers (the architecture)</h3>
+  <p>One attention is not enough, so the model runs several <b>heads</b> in parallel (each can look for a different relation: negation, grammar, who-did-what). Each <b>layer</b> adds a feed-forward network, residual shortcuts and layer normalisation; layers are stacked. Click a block:</p>
+  <div class="arch">
+    <div class="arch-col" id="archCol"></div>
+    <div class="card" id="archInfo"></div>
+  </div>
+
+  <h3>Idea 4: Why is it better than a recurrent network?</h3>
+  <p>A BiLSTM reads <b>one word at a time</b> and must squeeze everything into a small memory. A Transformer reads <b>all words at once</b>, and every word has a direct line to every other word.</p>
+  <div class="card">
+    <div class="row"><button class="btn primary" id="parRun">&#9654; Run the animation</button><span class="muted small" id="parNote">Sentence: “the plot was not good , but the acting was brilliant”</span></div>
+    <div class="lane rnn" id="laneRnn"><span class="lbl">BiLSTM (sequential)</span></div>
+    <div class="lane" id="laneTr"><span class="lbl">Transformer (parallel)</span></div>
+    <p class="small muted" id="parSteps"></p>
+  </div>
+  <div class="callout warn"><b>But there is a price.</b> Attention compares every pair of words, so its cost grows with the <em>square</em> of the sentence length (O(n²·d)). For long documents this is a problem (efficient Transformer variants exist). On our short sentences it is fine, and our measurements show where the real cost is: <b>size and speed</b> (see Results explorer).</div>
+
+  <h3>Idea 5: Pre-train once, fine-tune cheaply</h3>
+  <div class="grid g3">
+    <div class="card flat"><b>1 · Pre-training</b><p class="small muted">Done by Google/Hugging Face on huge unlabelled text for days on many GPUs. Task: guess hidden words (masked language modelling: 15% of words hidden). The model learns grammar, facts, style. <b>We did not do this. We downloaded the result.</b></p></div>
+    <div class="card flat"><b>2 · Fine-tuning</b><p class="small muted">We add a tiny classifier on top of the <code>[CLS]</code> vector and train the whole network on our labelled sentences for 2–3 epochs. This is the cheap part (minutes to hours on a CPU) and what we measured.</p></div>
+    <div class="card flat"><b>3 · Using it</b><p class="small muted">Feed a sentence, get P(positive) and P(negative). Or skip step 2 entirely: <em>ready-made</em> models were already fine-tuned by someone else; <em>zero-shot</em> models are asked with a question instead of training.</p></div>
+  </div>
+  <div class="say">Pre-training is like a student who has read millions of pages before our exam. Fine-tuning is a short course on our exam’s topic. That is why a Transformer with 500 labels beats a keyword model with 500 labels by 14 points.</div>
+</section>
+
+<!-- ============ 5. LAB ============ -->
+<section class="sec" id="lab">
+  <p class="eyebrow">Hands-on</p>
+  <h2>Sentence lab: follow one sentence through every model</h2>
+  <p class="lead">Pick a real test sentence. See the truth, what all 10 models said, <em>why</em> the word-counting model decided as it did (its real weights), and where the Transformer looked.</p>
+  <div class="grid" style="grid-template-columns: minmax(0, 330px) minmax(0, 1fr); align-items: start" id="labGrid">
+    <div class="sentence-pick" id="labPick" role="listbox" aria-label="Test sentences"></div>
+    <div>
+      <div class="card" id="labHead"></div>
+      <h3>1 · What did the 10 models say?</h3>
+      <div class="verdicts" id="labVerdicts"></div>
+      <h3>2 · Why the word-counting model decided that</h3>
+      <p class="muted small">This is the <b>real</b> TF-IDF + logistic regression model of the project (all <span data-k="lr_features"></span> word/bigram weights). Each word adds or subtracts evidence. Green pushes towards <em>positive</em>, orange towards <em>negative</em>. The model has no idea of word order beyond pairs of neighbours.</p>
+      <div id="labBow" class="card flat"></div>
+      <h3>3 · Where did the Transformer look?</h3>
+      <p class="muted small">Real attention weights of DistilBERT-SST2 (6 layers × 12 heads). Click a word: the other words glow in proportion to the attention it pays them. <code>[CLS]</code> is the special summary token; <code>[SEP]</code> marks the end.</p>
+      <div class="card flat" id="labAtt"></div>
+    </div>
+  </div>
+
+  <h3>Try your own sentence (word-counting model)</h3>
+  <div class="card">
+    <textarea id="ownText" rows="2" aria-label="Your sentence">the plot was not good but the acting was brilliant</textarea>
+    <div id="ownResult" style="margin-top:12px"></div>
+    <p class="muted small">Transformers are too big to run inside a web page, so only the word-counting model runs live here. Try “good” vs “not good” vs “not bad”, and compare with the Transformer results in the arena below.</p>
+  </div>
+</section>
+
+<!-- ============ 6. ARENA ============ -->
+<section class="sec" id="arena">
+  <p class="eyebrow">All 872 test sentences</p>
+  <h2>Model arena</h2>
+  <p class="lead">Every unseen test sentence with the verdict of every model. Filter to see <em>where</em> the models differ. The bars show each model’s accuracy on the current filter.</p>
+  <div class="row" id="arenaFilters" role="group" aria-label="Filters"></div>
+  <div class="row" style="margin:10px 0"><input type="search" id="arenaSearch" placeholder="Search sentences (e.g. 'not', 'but', 'boring')" aria-label="Search sentences" style="max-width:420px"><span class="muted small" id="arenaCount"></span></div>
+  <div class="card flat"><div id="arenaBars" class="bars"></div></div>
+  <div class="legend" id="arenaLegend"></div>
+  <div class="scroll" style="max-height: 640px"><table id="arenaTable"><thead><tr><th style="width:44%">Sentence</th><th>Truth</th><th>Models (✓ right · ✗ wrong)</th></tr></thead><tbody></tbody></table></div>
+  <div class="row" style="margin-top:10px; justify-content:space-between"><button class="btn" id="arenaPrev">&larr; Previous</button><span class="small muted" id="arenaPage"></span><button class="btn" id="arenaNext">Next &rarr;</button></div>
+</section>
+
+<!-- ============ 7. RESULTS ============ -->
+<section class="sec" id="results">
+  <p class="eyebrow">The evidence</p>
+  <h2>Results explorer</h2>
+  <p class="lead">The five research questions, answered with charts you can interrogate.</p>
+
+  <h3>RQ1: Accuracy of all models (with 95% confidence intervals)</h3>
+  <div class="legend"><span><i class="dot classical"></i>Classical (TF-IDF)</span><span><i class="dot recurrent"></i>Recurrent (BiLSTM)</span><span><i class="dot transformer"></i>Transformer</span><span>Whisker = 95% bootstrap interval</span></div>
+  <div class="card"><div id="chartAcc"></div></div>
+  <p class="small muted">Read it like this: the whiskers show how much the accuracy could move if we had drawn a different set of 872 sentences. Overlapping whiskers → differences may be luck. Use the McNemar tool below to test any pair.</p>
+
+  <h3>All numbers (click a column to sort)</h3>
+  <div class="scroll"><table id="resTable"></table></div>
+
+  <h3>RQ2: What does it cost? Accuracy vs inference speed</h3>
+  <div class="card"><div id="chartCost"></div></div>
+  <p class="small muted">Hover a bubble. X-axis is logarithmic: each gridline is 10× slower. Bubble area ∝ number of parameters. Top-left would be the dream (accurate and fast); nobody is there. That is the trade-off.</p>
+
+  <h3>RQ3: How many labels do you need? (learning curve)</h3>
+  <div class="card">
+    <div id="chartLC"></div>
+    <label class="field">Labelled sentences you have: <b id="lcValue"></b></label>
+    <input type="range" id="lcSlider" min="0" max="100" value="60" aria-label="Number of labelled sentences">
+    <div id="lcReadout" class="grid g3" style="margin-top:10px"></div>
+    <p class="small muted">Between the measured points (500, 1,000, 2,000, 4,000, 8,000) the values are interpolated on a log scale.</p>
+  </div>
+
+  <h3>RQ5: Negation and contrast</h3>
+  <p>We split the test set by simple keyword rules: sentences with <b>negation</b> (not, no, never, n’t…) and with <b>contrast</b> (but, although, though, yet, however).</p>
+  <div class="card"><div class="tabs" id="subsetTabs"></div><div id="chartSub"></div></div>
+
+  <h3>Training curves</h3>
+  <div class="card"><div id="chartDev"></div><p class="small muted">Dev-set accuracy after each epoch (the epoch with the best dev accuracy is kept). Note the BiLSTM’s dev accuracy (~91%) is much higher than its test accuracy (82.8%). The dev set comes from the training distribution (short phrases), the test set has full sentences.</p></div>
+
+  <h3>Is a difference real? McNemar test (any two models)</h3>
+  <div class="card">
+    <div class="grid g2"><div><label class="field" for="mnA">Model A</label><select id="mnA"></select></div><div><label class="field" for="mnB">Model B</label><select id="mnB"></select></div></div>
+    <div id="mnOut" style="margin-top:12px"></div>
+    <div class="callout"><b>How it works.</b> Both models classify the same 872 sentences. Count the sentences where <em>only A</em> is right (b) and where <em>only B</em> is right (c). If the models were equally good, b and c would be about equal. The exact binomial test asks: how surprising is this split? A small p-value (&lt; 0.05) means the difference is unlikely to be luck.</div>
+  </div>
+</section>
+
+<!-- ============ 8. CHOOSE ============ -->
+<section class="sec" id="choose">
+  <p class="eyebrow">Apply it</p>
+  <h2>Which model would you choose?</h2>
+  <p class="lead">Describe a situation. The guide ranks the models we actually measured. Use it to practise the “so what?” of the project.</p>
+  <div class="row" id="scenarioBtns"></div>
+  <div class="card" style="margin-top:12px">
+    <div class="grid g2">
+      <div>
+        <label class="field" for="chLabels">Labelled sentences you have</label>
+        <select id="chLabels"><option value="0">0 (none)</option><option value="500">500</option><option value="1000">1,000</option><option value="2000">2,000</option><option value="4000">4,000</option><option value="8000" selected>8,000</option><option value="65349">65,349 (everything)</option></select>
+        <label class="field" for="chLat">Max time per sentence: <b id="chLatVal"></b></label>
+        <input type="range" id="chLat" min="0" max="100" step="0.1" value="75" aria-label="Maximum latency">
+        <label class="field" for="chTrain">Max training time you can wait: <b id="chTrainVal"></b></label>
+        <input type="range" id="chTrain" min="0" max="100" step="0.1" value="100" aria-label="Maximum training time">
+      </div>
+      <div>
+        <label class="field"><input type="checkbox" id="chIn"> A public model fine-tuned on <b>my kind of text</b> exists</label>
+        <label class="field"><input type="checkbox" id="chRel" checked> A public model for a <b>related</b> domain exists</label>
+        <p class="small muted">Hardware is a CPU-only laptop, as in our experiment. Latency is per sentence on that CPU.</p>
+        <div class="callout" id="chNote" hidden></div>
+      </div>
+    </div>
+    <div id="chOut" style="margin-top:12px"></div>
+  </div>
+</section>
+
+<!-- ============ 9. LIT ============ -->
+<section class="sec" id="lit">
+  <p class="eyebrow">Background</p>
+  <h2>Literature review and the Lithuanian context</h2>
+  <div class="grid g2">
+    <div class="card flat"><b>How the literature was searched</b><p class="small">Google Scholar and Web of Science (plus ACL Anthology and arXiv). Core query:</p><pre style="white-space:pre-wrap">("transformer" OR "BERT" OR "self-attention" OR "pre-trained language model") AND ("natural language processing" OR "text classification" OR "sentiment analysis")</pre><p class="small muted" style="margin-top:8px">For Lithuania the query was narrowed with “Lithuanian” OR “Baltic languages”. About 40 works were kept; seminal ones were added by citation tracking.</p></div>
+    <div class="card flat"><b>The gap we address</b><ul class="small"><li>Almost all results are reported on <b>GPUs</b> with the <b>full training set</b>.</li><li><b>Cost</b> (CPU time, latency, size) is rarely reported next to accuracy.</li><li>Lithuanian work shows deep nets <em>without</em> pre-training do not beat classical methods; <b>data efficiency of compact pre-trained models</b> is insufficiently studied.</li><li>Ready-made vs fine-tuned models are rarely compared under one protocol.</li></ul></div>
+  </div>
+  <h3>Key works</h3>
+  <div class="row"><input type="search" id="litSearch" placeholder="Filter works (author, method, task…)" aria-label="Filter literature" style="max-width:380px"><div class="pill-row" id="litTags"></div></div>
+  <div class="scroll" style="margin-top:10px"><table id="litTable"></table></div>
+  <h3>Lithuanian research, in four steps</h3>
+  <div id="ltTimeline" class="grid g4"></div>
+  <div class="callout"><b>Why did we not use Lithuanian data?</b> A comparable public Lithuanian benchmark with a fixed test set, the same CPU budget and ready-made models for every family was not available for a fair 10-model contest within the course. The method is language-independent: replace SST-2 with a Lithuanian review set and the English models with <b>LitLat BERT</b> (Ulčar &amp; Robnik-Šikonja, 2021) or XLM-R. Say this openly: it is the natural next step, not a hidden weakness.</div>
+</section>
+
+<!-- ============ 10. DEFEND ============ -->
+<section class="sec" id="defend">
+  <p class="eyebrow">Be ready</p>
+  <h2>Defence prep: questions, answers and a quiz</h2>
+  <h3>Flashcards: likely questions</h3>
+  <div class="row"><input type="search" id="qaSearch" placeholder="Search questions…" aria-label="Search questions" style="max-width:340px"><div class="pill-row" id="qaCats"></div></div>
+  <p class="muted small" style="margin-top:8px"><span id="qaCount"></span> Tip: first answer out loud, then open the card.</p>
+  <div id="qaList"></div>
+
+  <h3>Quiz: test yourself</h3>
+  <div class="card">
+    <div class="row" style="justify-content:space-between"><b id="quizProgress"></b><span class="muted small" id="quizBest"></span></div>
+    <div id="quizBody"></div>
+  </div>
+
+  <h3>Be honest about the limitations</h3>
+  <p class="muted">Examiners respect students who know the weak points of their own work. Say these <em>before</em> they ask:</p>
+  <div id="limits" class="grid g2"></div>
+</section>
+
+<!-- ============ 11. PRESENT ============ -->
+<section class="sec" id="present">
+  <p class="eyebrow">Delivery</p>
+  <h2>Presentation coach (7–10 minutes)</h2>
+  <p class="lead">11 slides, three speakers, a plan of 9:00. Rehearse with the timer: it shows who should be speaking and warns you when you run over.</p>
+  <div class="timeline" id="timeline" aria-label="Time plan"></div>
+  <div class="legend"><span><i class="dot" style="background:#2e2a6b"></i>Shashikanth</span><span><i class="dot" style="background:#159a6a"></i>Shaeed</span><span><i class="dot" style="background:#d9541f"></i>Rimsha</span></div>
+  <div class="grid g2" style="margin-top:10px">
+    <div class="card">
+      <div class="big-time" id="clock">0:00</div>
+      <div class="row"><button class="btn primary" id="clockStart">Start</button><button class="btn" id="clockNext">Next slide</button><button class="btn" id="clockReset">Reset</button></div>
+      <p id="clockMsg" class="muted" style="margin-top:10px">Press Start and speak. “Next slide” records your own pace.</p>
+    </div>
+    <div class="card"><b>Who answers what</b>
+      <table style="margin-top:6px"><tbody>
+        <tr><td><b>Shashikanth</b></td><td>Problem formulation, experiment design, fine-tuning program, practical part (results, costs), presentation</td></tr>
+        <tr><td><b>Shaeed</b></td><td>Literature search and review, classical and BiLSTM baselines, references, literature questions</td></tr>
+        <tr><td><b>Rimsha</b></td><td>Introduction, Transformer theory and mathematics, ready-made models, error analysis, conclusions</td></tr>
+      </tbody></table>
+      <p class="small muted" style="margin-bottom:0">Everyone should still be able to explain the whole pipeline in 60 seconds.</p>
+    </div>
+  </div>
+  <div id="slideRows" style="margin-top:12px"></div>
+  <h3>Before you walk in</h3>
+  <div class="card"><ul id="checklist" style="list-style:none; padding:0; margin:0"></ul></div>
+</section>
+
+<!-- ============ 12. FILES ============ -->
+<section class="sec" id="files">
+  <p class="eyebrow">Under the hood</p>
+  <h2>Code and files</h2>
+  <p>Repository: <a href="https://github.com/shashikanth077/Transformers-NLP" target="_blank" rel="noopener">github.com/shashikanth077/Transformers-NLP</a>. Click a file to see what it does.</p>
+  <div class="grid" style="grid-template-columns: minmax(0, 420px) minmax(0, 1fr); align-items: start" id="filesGrid">
+    <div class="card flat tree" id="tree"></div>
+    <div class="card" id="fileInfo"></div>
+  </div>
+  <h3>Run it yourself</h3>
+  <div id="cmds"></div>
+  <h3>Where each part is in the paper</h3>
+  <div class="scroll"><table id="paperMap"></table></div>
+</section>
+
+<!-- ============ 13. GLOSSARY ============ -->
+<section class="sec" id="glossary">
+  <p class="eyebrow">Reference</p>
+  <h2>Glossary</h2>
+  <input type="search" id="glossSearch" placeholder="Search terms…" aria-label="Search glossary" style="max-width:340px">
+  <div id="glossList" class="grid g2" style="margin-top:12px"></div>
+  <p class="muted small" style="margin-top:30px">Generated from the project repository. Numbers come from <code>code/results</code>. Rebuild with <code>python study_guide/export_data.py &amp;&amp; python study_guide/build.py</code>.</p>
+</section>
