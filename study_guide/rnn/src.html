@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RNN, LSTM and GRU Explained: Sequence Models Step by Step</title>
+<meta name="description" content="An interactive, offline guide to recurrent neural networks, LSTM and GRU: the maths, step-by-step walkthroughs with real trained models, vanishing gradients and a live training lab.">
+<style>
+:root { --bg:#f6f7fc; --surface:#fff; --surface2:#eef0fa; --ink:#1d1d3a; --muted:#5a5977; --line:#d9dcef; --brand:#2e2a6b; --brand-ink:#fff;
+  --pos:#6250d6; --neg:#d9541f; --good:#0c7a4d; --good-bg:#e2f5ec; --bad:#b3261e; --bad-bg:#fde8e6; --info-bg:#e8effd; --warn-bg:#fff3dc; --green:#159a6a; --blue:#2a78d6; --amber:#a86a00;
+  --c-rnn:#d9541f; --c-lstm:#2a78d6; --c-gru:#159a6a; --radius:14px; --shadow:0 1px 3px rgba(30,30,70,.08); --mono:Consolas,"Cascadia Mono",monospace; }
+:root[data-theme="dark"] { --bg:#11121f; --surface:#1a1b2e; --surface2:#23243b; --ink:#ecebff; --muted:#a6a5c6; --line:#34365a; --brand:#7c70ff; --brand-ink:#0d0d1e;
+  --pos:#9c8fff; --neg:#ee7a4b; --good:#52d6a0; --good-bg:#123a2c; --bad:#ff8d84; --bad-bg:#44201f; --info-bg:#1d2a4a; --warn-bg:#3d3115; --green:#2fc08f; --blue:#4c92ea; --amber:#f0b44c; --c-rnn:#ee7a4b; --c-lstm:#4c92ea; --c-gru:#2fc08f; --shadow:none; }
+@media (prefers-color-scheme: dark) { :root[data-theme="auto"] { --bg:#11121f; --surface:#1a1b2e; --surface2:#23243b; --ink:#ecebff; --muted:#a6a5c6; --line:#34365a; --brand:#7c70ff; --brand-ink:#0d0d1e;
+  --pos:#9c8fff; --neg:#ee7a4b; --good:#52d6a0; --good-bg:#123a2c; --bad:#ff8d84; --bad-bg:#44201f; --info-bg:#1d2a4a; --warn-bg:#3d3115; --green:#2fc08f; --blue:#4c92ea; --amber:#f0b44c; --c-rnn:#ee7a4b; --c-lstm:#4c92ea; --c-gru:#2fc08f; --shadow:none; } }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-padding-top:70px; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 system-ui,"Segoe UI",Roboto,"Nirmala UI",sans-serif; }
+button,input,select { font:inherit; color:inherit; } button { cursor:pointer; } a { color:var(--pos); }
+.top { position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+.top .in { max-width:1060px; margin:0 auto; padding:8px 16px; display:flex; gap:10px; align-items:center; } .top b { white-space:nowrap; }
+.chips { display:flex; gap:6px; overflow-x:auto; flex:1; scrollbar-width:thin; padding:2px 0; }
+.chips a { white-space:nowrap; text-decoration:none; color:var(--ink); border:1px solid var(--line); background:var(--surface); border-radius:99px; padding:3px 11px; font-size:.82rem; font-weight:600; }
+.chips a.on { background:var(--brand); color:var(--brand-ink); border-color:var(--brand); }
+main { max-width:1060px; margin:0 auto; padding:0 16px 80px; }
+section { padding:46px 0 12px; border-bottom:1px solid var(--line); }
+.eyebrow { text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; font-weight:700; color:var(--pos); margin:0 0 .3em; }
+h1 { font-size:clamp(1.9rem,4.4vw,2.8rem); line-height:1.15; margin:.1em 0 .4em; letter-spacing:-.02em; } h2 { font-size:1.75rem; line-height:1.2; margin:0 0 .5em; } h3 { font-size:1.12rem; margin:1.6em 0 .4em; } h4 { margin:1em 0 .3em; font-size:.98rem; }
+p { margin:.6em 0; max-width:76ch; } .lead { font-size:1.12rem; color:var(--muted); max-width:70ch; } .muted { color:var(--muted); } .small { font-size:.86rem; }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); margin:12px 0; }
+.grid { display:grid; gap:12px; } .g2 { grid-template-columns:repeat(2,minmax(0,1fr)); } .g3 { grid-template-columns:repeat(3,minmax(0,1fr)); } .g4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.btn { border:1px solid var(--line); background:var(--surface); padding:7px 13px; border-radius:10px; font-weight:600; font-size:.9rem; } .btn:hover { background:var(--surface2); }
+.btn.on,.btn.primary { background:var(--brand); color:var(--brand-ink); border-color:var(--brand); } .btn.small { padding:3px 10px; font-size:.8rem; } .btn:disabled { opacity:.5; cursor:default; }
+.callout { border-radius:12px; padding:12px 16px; margin:14px 0; background:var(--info-bg); border:1px solid var(--line); max-width:80ch; } .callout.tip { background:var(--good-bg); } .callout.warn { background:var(--warn-bg); } .callout > b:first-child { display:block; margin-bottom:2px; }
+.plain,.analogy,.maths { border-left:5px solid var(--pos); border-radius:0 12px 12px 0; padding:10px 16px; margin:14px 0; background:var(--surface); max-width:80ch; }
+.plain { border-color:var(--green); } .analogy { border-color:var(--neg); } .maths { border-color:var(--pos); max-width:90ch; }
+.plain::before,.analogy::before,.maths::before { display:block; font-size:.72rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin-bottom:2px; }
+.plain::before { content:"In plain words"; color:var(--green); } .analogy::before { content:"Real-world picture"; color:var(--neg); } .maths::before { content:"The maths"; color:var(--pos); }
+.formula { font-family:"Cambria Math",Cambria,"Times New Roman",serif; font-size:1.1rem; background:var(--surface2); border-radius:10px; padding:8px 14px; margin:8px 0; overflow-x:auto; line-height:1.95; } .formula i { font-style:italic; }
+code { font-family:var(--mono); font-size:.88em; background:var(--surface2); padding:0 .3em; border-radius:4px; }
+.kn { font-family:"Nirmala UI","Noto Sans Kannada",system-ui,sans-serif; }
+.tokens { display:flex; flex-wrap:wrap; gap:5px; margin:6px 0; } .tok { border:1px solid var(--line); background:var(--surface); padding:3px 10px; border-radius:9px; font-family:var(--mono); font-size:.92rem; }
+button.tok:hover { background:var(--surface2); } .tok.now { background:var(--brand); color:var(--brand-ink); border-color:var(--brand); } .tok.past { opacity:.55; } .tok.nxt { opacity:.35; }
+.tbl { border-collapse:collapse; font-size:.85rem; } .tbl th,.tbl td { padding:5px 10px; border:1px solid var(--line); text-align:center; font-variant-numeric:tabular-nums; } .tbl th { background:var(--surface2); font-weight:700; } .tbl td.lbl,.tbl th.lbl { text-align:left; white-space:nowrap; }
+table.t { border-collapse:collapse; font-size:.88rem; width:100%; } table.t th,table.t td { padding:6px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } table.t th { background:var(--surface2); }
+.scroll { overflow:auto; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+.arith { font-family:var(--mono); font-size:.8rem; background:var(--surface2); border-radius:8px; padding:6px 10px; margin:5px 0; overflow-x:auto; white-space:nowrap; } .arith b { color:var(--pos); }
+.stat { padding:12px 14px; border-radius:12px; background:var(--surface); border:1px solid var(--line); } .stat b { display:block; font-size:1.6rem; line-height:1.15; } .stat span { color:var(--muted); font-size:.84rem; }
+.bars { display:grid; gap:5px; } .bar { display:grid; grid-template-columns:120px 1fr 64px; gap:8px; align-items:center; font-size:.86rem; } .bar .track { height:13px; background:var(--surface2); border-radius:99px; position:relative; overflow:hidden; } .bar .fill { position:absolute; top:0; bottom:0; border-radius:99px; background:var(--green); } .bar b { text-align:right; font-variant-numeric:tabular-nums; }
+.pill { display:inline-block; padding:1px 9px; border-radius:99px; font-size:.75rem; font-weight:700; background:var(--surface2); } .pill.ok { background:var(--good-bg); color:var(--good); } .pill.no { background:var(--bad-bg); color:var(--bad); }
+label.f { display:block; font-size:.85rem; font-weight:600; margin:8px 0 3px; } input[type=range] { width:100%; max-width:340px; accent-color:var(--pos); } select { padding:4px 8px; border-radius:8px; border:1px solid var(--line); background:var(--surface); }
+.quiz-opt { display:block; width:100%; text-align:left; margin:6px 0; padding:9px 14px; border-radius:10px; border:1px solid var(--line); background:var(--surface); } .quiz-opt.right { background:var(--good-bg); border-color:var(--good); } .quiz-opt.wrong { background:var(--bad-bg); border-color:var(--bad); }
+.flow { display:flex; flex-wrap:wrap; gap:8px; align-items:stretch; } .flow a { flex:1 1 140px; text-decoration:none; color:inherit; border:2px solid var(--line); border-radius:12px; padding:8px 10px; background:var(--surface); } .flow a:hover { border-color:var(--pos); } .flow b { display:block; } .flow span { font-size:.78rem; color:var(--muted); line-height:1.35; display:block; }
+svg text { fill:var(--ink); font-size:12px; } svg .m text { fill:var(--muted); } svg .box { fill:var(--surface); stroke:var(--ink); stroke-width:1.6; } svg .ln { stroke:var(--ink); stroke-width:1.6; fill:none; } svg .cl { stroke:var(--pos); stroke-width:3; fill:none; }
+.dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+@media (max-width:760px) { .g3,.g4 { grid-template-columns:repeat(2,minmax(0,1fr)); } .bar { grid-template-columns:90px 1fr 56px; } .top b { display:none; } }
+@media (max-width:520px) { .g2,.g3,.g4 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><b>RNN · LSTM · GRU</b><nav class="chips" id="chips" aria-label="Sections"></nav><button class="btn small" id="themeBtn" type="button">Light / dark</button></div></div>
+<main>
+
+<!-- ================= 0 INTRO ================= -->
+<section id="s0">
+  <p class="eyebrow">Sequence models · end to end</p>
+  <h1>RNN, LSTM and GRU: networks with memory</h1>
+  <p class="lead">Language, speech, music, sensor readings and bank transactions all arrive as <b>sequences</b>: order matters, and what happened earlier changes what later items mean. Recurrent networks read a sequence one step at a time while carrying a memory forward. This page explains the plain <b>RNN</b>, then the two gated fixes, <b>LSTM</b> and <b>GRU</b>, with the maths, step-by-step walkthroughs and a live lab. The numbers are computed in your browser from real, trained models.</p>
+  <div class="card"><h3 style="margin-top:0">The running example: “the movie was <u>not</u> very good”</h3><p>A review reads <i>not … good</i>. Counting positive and negative words gets this wrong (“good” is positive!). A model must <b>remember</b> that “not” appeared, and keep remembering it through the filler word “very”, until it meets “good”. That is exactly the job of a recurrent network, and it is also the job that separates the plain RNN from the LSTM and GRU. We also use a Kannada example in section 1.</p></div>
+  <h3>The roadmap</h3>
+  <div class="flow" id="flow"></div>
+  <div class="grid g2" style="margin-top:12px"><div class="callout"><b>How to use this page</b>Pick a sentence once; the walkthroughs for RNN, LSTM and GRU all follow it. Use Next to move word by word and open the arithmetic of any hidden unit. In the lab (section 7) you train all three yourself.</div>
+    <div class="callout warn"><b>Honest scale note</b>The walkthrough models have 4 hidden units (29 to 89 numbers each). Real systems use hundreds of units and many layers. Tiny models are used here so every number can be shown and checked.</div></div>
+  <h3>A short history</h3>
+  <div class="scroll"><table class="t"><thead><tr><th>Year</th><th>Idea</th><th>Why it mattered</th></tr></thead><tbody>
+    <tr><td>1990</td><td>Simple recurrent network (Elman)</td><td>A hidden state fed back at every step gives the network a memory.</td></tr>
+    <tr><td>1994</td><td>Vanishing gradients analysed (Bengio and others)</td><td>Showed why plain RNNs struggle to learn long-range links.</td></tr>
+    <tr><td>1997</td><td>LSTM (Hochreiter and Schmidhuber)</td><td>A protected memory cell with gates; later given a forget gate (Gers and others).</td></tr>
+    <tr><td>2014</td><td>GRU (Cho and others); sequence-to-sequence models</td><td>A lighter gated cell; LSTM/GRU networks become the standard for translation and speech.</td></tr>
+    <tr><td>2017</td><td>Transformer (Vaswani and others)</td><td>Attention replaces recurrence in most large language models; recurrent ideas live on in time series and small devices.</td></tr></tbody></table></div>
+</section>
+
+<!-- ================= 1 MEMORY ================= -->
+<section id="s1">
+  <p class="eyebrow">Part 1</p><h2>Why a network needs memory</h2>
+  <div class="plain">An ordinary neural network treats each input independently: it sees one picture or one list of numbers and answers. For a sequence, the meaning of the current item depends on earlier items. A recurrent network therefore keeps a <b>hidden state</b>, a short vector of numbers that summarises everything read so far, and updates it at every step.</div>
+  <div class="grid g3">
+    <div class="card"><b>Many to one</b><p class="small muted">A whole sequence in, one answer out.<br>Sentiment of a review, “is this UPI transaction history fraudulent?”</p></div>
+    <div class="card"><b>One to many</b><p class="small muted">One input, a sequence out.<br>Describe a photo in words; generate a melody from a mood.</p></div>
+    <div class="card"><b>Many to many</b><p class="small muted">Sequence in, sequence out.<br>Translate English to Kannada; turn speech into text; tag every word.</p></div></div>
+  <h3>Real-world example: a Kannada sentence that must remember its subject</h3>
+  <p>In Kannada the ending of the verb depends on the subject, and the verb comes <b>last</b>. To write the right ending, a model has to remember who the subject was from the first word. Pick a subject and read the sentence word by word.</p>
+  <div class="card">
+    <div class="row" id="knSubj"></div>
+    <div style="margin-top:10px" class="kn"><div class="tokens" id="knToks" style="font-size:1.25rem"></div></div>
+    <div class="row"><button class="btn small" id="knPrev" type="button">&larr; Back</button><button class="btn small primary" id="knNext" type="button">Read next word &rarr;</button><span class="pill">ILLUSTRATIVE: hand-made picture of what a memory must do</span></div>
+    <div class="grid g2" style="margin-top:10px"><div class="stat"><b id="knMem">–</b><span>what the memory must still hold</span></div><div class="stat"><b id="knEnd" class="kn">–</b><span id="knEndCap">verb ending needed</span></div></div>
+    <p class="small muted" id="knNote"></p></div>
+  <div class="callout"><b>Why this is hard for a network</b>Between the subject and the verb there can be many words, and nothing in the last word “ಹೋಗು…” alone tells the model the ending. The information must survive the whole journey. Plain RNNs lose it as the distance grows; LSTM and GRU were designed to keep it. You will measure this in the lab.</div>
+</section>
+
+<!-- ================= 2 RNN ================= -->
+<section id="s2">
+  <p class="eyebrow">Part 2</p><h2>The plain RNN</h2>
+  <div class="plain">At each step the RNN does the same small calculation: it mixes the <b>new word</b> with its <b>previous memory</b> and squashes the result, producing the <b>new memory</b>. The same weights are reused at every step. Unrolled over time it looks like a chain of identical boxes passing a message along.</div>
+  <div class="analogy">A person reading a review aloud and keeping a running impression in their head. After each word, the impression is updated from the old impression plus the word just read. There is no notebook; only the current impression.</div>
+  <svg viewBox="0 0 700 215" style="width:100%;max-width:760px" role="img" aria-label="Unrolled RNN diagram">
+    <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--ink)"/></marker></defs>
+    <g><rect class="box" x="75" y="80" width="120" height="50" rx="10"/><rect class="box" x="225" y="80" width="120" height="50" rx="10"/><rect class="box" x="375" y="80" width="120" height="50" rx="10"/><rect class="box" x="525" y="80" width="120" height="50" rx="10"/></g>
+    <g class="ln" marker-end="url(#ah)"><path d="M15 105h58"/><path d="M195 105h28"/><path d="M345 105h28"/><path d="M495 105h28"/>
+      <path d="M135 175v-43"/><path d="M285 175v-43"/><path d="M435 175v-43"/><path d="M585 175v-43"/><path d="M585 80v-40"/></g>
+    <g text-anchor="middle"><text x="135" y="110">tanh cell</text><text x="285" y="110">tanh cell</text><text x="435" y="110">tanh cell</text><text x="585" y="110">tanh cell</text>
+      <text x="135" y="195">x₁ “the”</text><text x="285" y="195">x₂ “movie”</text><text x="435" y="195">x₃ “not”</text><text x="585" y="195">x₄ “good”</text>
+      <text x="210" y="97" font-size="11">h₁</text><text x="360" y="97" font-size="11">h₂</text><text x="510" y="97" font-size="11">h₃</text><text x="40" y="97" font-size="11">h₀ = 0</text>
+      <text x="585" y="30">h₄ → read-out → prediction</text></g>
+  </svg>
+  <p class="small muted">The same weights W are used in all four boxes (weight sharing through time).</p>
+  <div class="maths"><b>One step.</b> With input <i>x<sub>t</sub></i> (a vector of D numbers) and previous hidden state <i>h<sub>t−1</sub></i> (H numbers):
+    <div class="formula"><i>h<sub>t</sub></i> = tanh( <i>W<sub>x</sub></i> <i>x<sub>t</sub></i> + <i>W<sub>h</sub></i> <i>h<sub>t−1</sub></i> + <i>b</i> ) &nbsp;&nbsp; <i>h</i><sub>0</sub> = 0</div>
+    <i>W<sub>x</sub></i> is H×D, <i>W<sub>h</sub></i> is H×H, <i>b</i> has H numbers: H(D + H + 1) learnable numbers, no matter how long the sequence. tanh squashes each value into (−1, 1), so the memory cannot blow up in one step. For a yes/no answer, a final read-out turns the last state into a probability:
+    <div class="formula"><i>p</i> = σ( <i>R</i> · <i>h<sub>T</sub></i> + <i>r</i> ), &nbsp; σ(<i>a</i>) = 1/(1 + e<sup>−<i>a</i></sup>), &nbsp; loss <i>L</i> = −[ <i>y</i> ln <i>p</i> + (1 − <i>y</i>) ln(1 − <i>p</i>) ]</div></div>
+  <h3>Step-by-step walkthrough with a real trained RNN</h3>
+  <p>These are the actual weights of a 4-unit RNN trained on a toy review task: each word is described by two numbers, <b>polarity</b> (good = +1, bad = −1) and <b>negation</b> (not = 1); every other word is (0, 0). The label is positive if the polarity is positive and no “not” appeared, or if both flip. Trained on sentences of 4 to 8 words; it gets all 300 unseen test sentences right.</p>
+  <div class="row" id="sentPick2"></div>
+  <div id="walk-rnn"></div>
+  <div class="maths"><b>Learning: backpropagation through time (BPTT).</b> Unrolling turns the RNN into a deep network whose layers share weights, so we backpropagate through the chain. The gradient reaching the memory at step <i>t</i> comes from the loss and from step <i>t+1</i>:
+    <div class="formula">∂<i>L</i>/∂<i>h<sub>t</sub></i> = ∂<i>L</i>/∂<i>h<sub>t</sub></i>|<sub>direct</sub> + <i>W<sub>h</sub></i><sup>T</sup> [ (1 − <i>h<sub>t+1</sub></i>²) ⊙ ∂<i>L</i>/∂<i>h<sub>t+1</sub></i> ]</div>
+    The weights’ gradients are the <b>sum</b> over all time steps of each step’s contribution, e.g. ∂<i>L</i>/∂<i>W<sub>h</sub></i> = Σ<sub><i>t</i></sub> [ (1 − <i>h<sub>t</sub></i>²) ⊙ ∂<i>L</i>/∂<i>h<sub>t</sub></i> ] · <i>h<sub>t−1</sub></i><sup>T</sup>. The page’s code does exactly this and has been checked against numerical gradients (agreement to better than 10<sup>−5</sup> relative error for all three models).</div>
+  <div class="callout warn"><b>The weakness</b>Each step back multiplies the gradient by <i>W<sub>h</sub></i><sup>T</sup> and by a tanh slope (1 − <i>h</i>²) ≤ 1. Over many steps the signal shrinks towards 0 (<b>vanishing gradient</b>) or, with large weights, blows up (<b>exploding gradient</b>). Then the early words cannot influence learning. Section 6 shows this with real numbers.</div>
+</section>
+
+<!-- ================= 3 LSTM ================= -->
+<section id="s3">
+  <p class="eyebrow">Part 3</p><h2>LSTM: a memory cell with gates</h2>
+  <div class="plain">An LSTM (long short-term memory) keeps a separate <b>cell state</b> <i>c</i>, like a conveyor belt running straight through time. Three <b>gates</b>, each a number between 0 and 1 per memory slot, decide what happens to it: the <b>forget gate</b> erases old content, the <b>input gate</b> lets new content in, and the <b>output gate</b> decides how much of the memory to reveal as the hidden state <i>h</i>.</div>
+  <div class="analogy">A notebook with a clerk. At each word the clerk asks: “Should I <b>rub out</b> something old?” (forget), “Should I <b>write</b> this new fact?” (input), and “Which notes should I <b>read out</b> now?” (output). “not” can be written once and left alone through “very” until “good” arrives, because the forget gate stays near 1 for that slot.</div>
+  <svg viewBox="0 0 640 290" style="width:100%;max-width:760px" role="img" aria-label="LSTM cell schematic">
+    <defs><marker id="ah2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--ink)"/></marker><marker id="ah2p" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--pos)"/></marker></defs>
+    <path class="cl" d="M10 40H610" marker-end="url(#ah2p)"/><text x="10" y="20" class="m">cell state c<tspan dy="3" font-size="9">t−1</tspan></text><text x="590" y="20">c<tspan dy="3" font-size="9">t</tspan></text>
+    <g class="ln"><path d="M100 150V53"/><path d="M190 150V112H255"/><path d="M320 150V112H255"/><path d="M255 112V53"/><path d="M440 40V62"/><path d="M440 88V99"/><path d="M440 150V125"/><path d="M453 112H600" marker-end="url(#ah2)"/></g>
+    <g><circle class="box" cx="100" cy="40" r="13"/><circle class="box" cx="255" cy="40" r="13"/><circle class="box" cx="440" cy="112" r="13"/></g>
+    <g text-anchor="middle" font-size="16"><text x="100" y="46">×</text><text x="255" y="46">+</text><text x="440" y="118">×</text></g>
+    <text x="266" y="104" font-size="11" style="fill:var(--muted)">i × g</text>
+    <g><rect class="box" x="55" y="150" width="90" height="38" rx="8"/><rect class="box" x="145" y="150" width="90" height="38" rx="8"/><rect class="box" x="265" y="150" width="110" height="38" rx="8"/><rect class="box" x="395" y="150" width="90" height="38" rx="8"/><rect class="box" x="410" y="62" width="60" height="26" rx="8"/></g>
+    <g text-anchor="middle"><text x="100" y="173">forget f (σ)</text><text x="190" y="173">input i (σ)</text><text x="320" y="173">candidate g (tanh)</text><text x="440" y="173">output o (σ)</text><text x="440" y="79" font-size="11">tanh</text><text x="606" y="106" text-anchor="end">h<tspan dy="3" font-size="9">t</tspan></text></g>
+    <rect class="box" x="30" y="236" width="500" height="34" rx="8"/><text x="280" y="258" text-anchor="middle">x<tspan dy="3" font-size="9">t</tspan><tspan dy="-3"> (new word)  and  h</tspan><tspan dy="3" font-size="9">t−1</tspan><tspan dy="-3"> (previous output)</tspan></text>
+    <g class="ln"><path d="M100 236V188"/><path d="M190 236V188"/><path d="M320 236V188"/><path d="M440 236V188"/></g>
+  </svg>
+  <p class="small muted">Schematic. Left to right on the belt: the forget gate scales the old memory, then the gated new content (input gate × candidate) is added; the result passes through tanh and the output gate to give the hidden state.</p>
+  <div class="maths"><b>One LSTM step.</b> Let <i>v<sub>t</sub></i> = [ <i>x<sub>t</sub></i> ; <i>h<sub>t−1</sub></i> ] (the two vectors joined). σ is the logistic function (0 to 1), ⊙ is element-wise multiplication.
+    <div class="formula"><i>f<sub>t</sub></i> = σ( <i>W<sub>f</sub></i> <i>v<sub>t</sub></i> + <i>b<sub>f</sub></i> ) &nbsp; <i>(forget gate)</i><br><i>i<sub>t</sub></i> = σ( <i>W<sub>i</sub></i> <i>v<sub>t</sub></i> + <i>b<sub>i</sub></i> ) &nbsp; <i>(input gate)</i><br><i>g<sub>t</sub></i> = tanh( <i>W<sub>g</sub></i> <i>v<sub>t</sub></i> + <i>b<sub>g</sub></i> ) &nbsp; <i>(candidate content)</i><br><i>o<sub>t</sub></i> = σ( <i>W<sub>o</sub></i> <i>v<sub>t</sub></i> + <i>b<sub>o</sub></i> ) &nbsp; <i>(output gate)</i><br><i>c<sub>t</sub></i> = <i>f<sub>t</sub></i> ⊙ <i>c<sub>t−1</sub></i> + <i>i<sub>t</sub></i> ⊙ <i>g<sub>t</sub></i><br><i>h<sub>t</sub></i> = <i>o<sub>t</sub></i> ⊙ tanh( <i>c<sub>t</sub></i> )</div>
+    Four weight matrices instead of one: 4H(D + H + 1) numbers, four times the RNN. <b>Why it helps:</b> along the cell path, ∂<i>c<sub>t</sub></i>/∂<i>c<sub>t−1</sub></i> = <i>f<sub>t</sub></i>. If the network learns <i>f<sub>t</sub></i> ≈ 1 for a slot, the gradient passes back unchanged instead of being multiplied by a weight matrix at every step. In practice the forget-gate bias is initialised to 1 so memories start out kept; this page does that.</div>
+  <h3>Step-by-step walkthrough with a real trained LSTM</h3>
+  <p>Same task, same sentences, 4 memory slots. Watch the cell row <i>c<sub>t</sub></i>: when “not” arrives, is anything written, and does it survive “very”?</p>
+  <div class="row" id="sentPick3"></div>
+  <div id="walk-lstm"></div>
+  <div class="maths"><b>BPTT for the LSTM</b> follows the same pattern with two gradient streams (∂<i>L</i>/∂<i>h</i> and ∂<i>L</i>/∂<i>c</i>). Key lines, with <i>δh<sub>t</sub></i> and <i>δc<sub>t</sub></i> the gradients arriving at step <i>t</i>:
+    <div class="formula"><i>δc<sub>t</sub></i> = <i>δc</i><sub>t+1</sub> ⊙ <i>f</i><sub>t+1</sub> + <i>δh<sub>t</sub></i> ⊙ <i>o<sub>t</sub></i> ⊙ (1 − tanh²(<i>c<sub>t</sub></i>))<br>gate gradients: ∂<i>L</i>/∂<i>f<sub>t</sub></i> = <i>δc<sub>t</sub></i> ⊙ <i>c<sub>t−1</sub></i>, &nbsp; ∂<i>L</i>/∂<i>i<sub>t</sub></i> = <i>δc<sub>t</sub></i> ⊙ <i>g<sub>t</sub></i>, &nbsp; ∂<i>L</i>/∂<i>g<sub>t</sub></i> = <i>δc<sub>t</sub></i> ⊙ <i>i<sub>t</sub></i></div>
+    The term <i>δc</i><sub>t+1</sub> ⊙ <i>f</i><sub>t+1</sub> is the cheap highway for gradients.</div>
+</section>
+
+<!-- ================= 4 GRU ================= -->
+<section id="s4">
+  <p class="eyebrow">Part 4</p><h2>GRU: gating with fewer parts</h2>
+  <div class="plain">The GRU (gated recurrent unit) keeps the idea of gates but drops the separate cell state: there is a single hidden state <i>h</i>. An <b>update gate</b> <i>z</i> decides how much of the old state to keep versus replace, and a <b>reset gate</b> <i>r</i> decides how much of the old state to use when proposing the new content.</div>
+  <div class="analogy">A shop-floor whiteboard that one person keeps updating. For each item, a rule says “keep what is written” or “replace it with the new note” (update gate), and when drafting the new note, “how much of the old board should I look at?” (reset gate). No separate notebook, so fewer parts and quicker to train.</div>
+  <svg viewBox="0 0 640 270" style="width:100%;max-width:760px" role="img" aria-label="GRU cell schematic">
+    <defs><marker id="ah3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--pos)"/></marker><marker id="ah3k" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--ink)"/></marker></defs>
+    <path class="cl" d="M10 40H620" marker-end="url(#ah3)"/><text x="10" y="20" class="m">state h<tspan dy="3" font-size="9">t−1</tspan></text><text x="598" y="20">h<tspan dy="3" font-size="9">t</tspan></text>
+    <g class="ln"><path d="M150 150V100H120V53"/><path d="M150 100H407"/><path d="M420 150V113"/><path d="M433 100H480V53"/><path d="M280 150V132H385V148" marker-end="url(#ah3k)"/></g>
+    <g><circle class="box" cx="120" cy="40" r="13"/><circle class="box" cx="480" cy="40" r="13"/><circle class="box" cx="420" cy="100" r="13"/></g>
+    <g text-anchor="middle" font-size="16"><text x="120" y="46">×</text><text x="480" y="46">+</text><text x="420" y="106">×</text></g>
+    <g><rect class="box" x="100" y="150" width="100" height="38" rx="8"/><rect class="box" x="230" y="150" width="100" height="38" rx="8"/><rect class="box" x="355" y="150" width="130" height="38" rx="8"/></g>
+    <g text-anchor="middle"><text x="150" y="173">update z (σ)</text><text x="280" y="173">reset r (σ)</text><text x="420" y="173">candidate h̃ (tanh)</text></g>
+    <text x="136" y="80" font-size="11" style="fill:var(--muted)">scale by (1 − z)</text><text x="500" y="92" font-size="11" style="fill:var(--muted)">scale by z</text><text x="150" y="128" font-size="11" style="fill:var(--muted)" dx="0"></text><text x="238" y="125" font-size="11" style="fill:var(--muted)">r: how much old state to use</text>
+    <rect class="box" x="60" y="214" width="480" height="34" rx="8"/><text x="300" y="236" text-anchor="middle">x<tspan dy="3" font-size="9">t</tspan><tspan dy="-3"> (new word)  and  h</tspan><tspan dy="3" font-size="9">t−1</tspan><tspan dy="-3"> (previous state)</tspan></text>
+    <g class="ln"><path d="M150 214V188"/><path d="M280 214V188"/><path d="M420 214V188"/></g>
+  </svg>
+  <p class="small muted">Schematic, simplified: the update gate blends the old state (weight 1 − z) with the candidate (weight z); the reset gate scales the old state before it is used inside the candidate.</p>
+  <div class="maths"><b>One GRU step</b> (with <i>v<sub>t</sub></i> = [ <i>x<sub>t</sub></i> ; <i>h<sub>t−1</sub></i> ]):
+    <div class="formula"><i>z<sub>t</sub></i> = σ( <i>W<sub>z</sub></i> <i>v<sub>t</sub></i> + <i>b<sub>z</sub></i> ) &nbsp; <i>(update gate)</i><br><i>r<sub>t</sub></i> = σ( <i>W<sub>r</sub></i> <i>v<sub>t</sub></i> + <i>b<sub>r</sub></i> ) &nbsp; <i>(reset gate)</i><br><i>h̃<sub>t</sub></i> = tanh( <i>W<sub>x</sub></i> <i>x<sub>t</sub></i> + <i>U<sub>h</sub></i> ( <i>r<sub>t</sub></i> ⊙ <i>h<sub>t−1</sub></i> ) + <i>b<sub>h</sub></i> ) &nbsp; <i>(candidate)</i><br><i>h<sub>t</sub></i> = ( 1 − <i>z<sub>t</sub></i> ) ⊙ <i>h<sub>t−1</sub></i> + <i>z<sub>t</sub></i> ⊙ <i>h̃<sub>t</sub></i></div>
+    Parameters: 3H(D + H + 1), three quarters of an LSTM. The last line is a <b>leaky average</b>: with <i>z</i> ≈ 0 the old state is copied unchanged, so ∂<i>h<sub>t</sub></i>/∂<i>h<sub>t−1</sub></i> ≈ 1 along that path, the same highway idea as the LSTM’s forget gate. (Some libraries swap the roles of <i>z</i> and 1 − <i>z</i>; the models are equivalent.)</div>
+  <h3>Step-by-step walkthrough with a real trained GRU</h3>
+  <div class="row" id="sentPick4"></div>
+  <div id="walk-gru"></div>
+</section>
+
+<!-- ================= 5 COMPARE ================= -->
+<section id="s5">
+  <p class="eyebrow">Part 5</p><h2>Side by side</h2>
+  <div class="scroll"><table class="t"><thead><tr><th></th><th><span class="dot" style="background:var(--c-rnn)"></span>RNN</th><th><span class="dot" style="background:var(--c-lstm)"></span>LSTM</th><th><span class="dot" style="background:var(--c-gru)"></span>GRU</th></tr></thead><tbody>
+    <tr><th>State carried</th><td>h</td><td>h and c</td><td>h</td></tr>
+    <tr><th>Gates</th><td>none</td><td>forget, input, output</td><td>update, reset</td></tr>
+    <tr><th>Weight matrices</th><td>1 set</td><td>4 sets</td><td>3 sets</td></tr>
+    <tr><th>Parameters</th><td>H(D+H+1)</td><td>4H(D+H+1)</td><td>3H(D+H+1)</td></tr>
+    <tr><th>Long-range memory</th><td>weak: gradient shrinks at every step</td><td>strong: cell highway (f ≈ 1)</td><td>strong: leaky average (z ≈ 0)</td></tr>
+    <tr><th>Speed and size</th><td>fastest, smallest</td><td>slowest of the three</td><td>in between</td></tr>
+    <tr><th>Typical use</th><td>very short dependencies, teaching</td><td>long sequences, speech, translation (historically)</td><td>when you want LSTM-like power with less compute</td></tr></tbody></table></div>
+  <h3>How many numbers does each need?</h3>
+  <div class="grid g2"><div class="card"><label class="f" for="pD">Input size D: <b id="pDv">300</b> (e.g. a 300-number word vector)</label><input type="range" id="pD" min="1" max="512" value="300"><label class="f" for="pH">Hidden size H: <b id="pHv">256</b></label><input type="range" id="pH" min="1" max="512" value="256"></div>
+    <div class="card" id="pOut"></div></div>
+  <div class="callout"><b>Which should I use?</b>LSTM and GRU usually perform similarly; GRU is smaller and faster, LSTM is the safer default when sequences are long and data is plentiful. Try both on your problem. Plain RNNs are mainly for understanding, or for very short sequences. Many other practical choices matter more: <b>bidirectional</b> reading (a second network reads backwards), <b>stacked</b> layers, dropout and gradient clipping.</div>
+</section>
+
+<!-- ================= 6 GRADIENTS ================= -->
+<section id="s6">
+  <p class="eyebrow">Part 6</p><h2>Why plain RNNs forget: vanishing and exploding gradients</h2>
+  <div class="plain">To learn that the word at step 1 matters, the error at the end must travel back through every step in between. Each step multiplies the signal by a number. If those numbers are below 1 the signal fades to nothing (<b>vanishing</b>); if above 1 it grows without bound (<b>exploding</b>). An LSTM or GRU gives the signal a path whose multiplier can sit near 1.</div>
+  <div class="maths"><div class="formula">∂<i>h<sub>T</sub></i>/∂<i>h<sub>T−k</sub></i> = Π<sub><i>j</i>=T−k+1..T</sub> diag(1 − <i>h<sub>j</sub></i>²) · <i>W<sub>h</sub></i> &nbsp;&nbsp; (RNN)</div>
+    The size of a product of <i>k</i> matrices grows or shrinks roughly like (largest singular value)<sup><i>k</i></sup>. Shrinking tanh slopes (≤ 1) push towards vanishing. For the LSTM cell path, ∂<i>c<sub>t</sub></i>/∂<i>c<sub>t−1</sub></i> = <i>f<sub>t</sub></i>, so the product over <i>k</i> steps is just <i>f</i><sup><i>k</i></sup> when the gate is steady.</div>
+  <h3>Try it: gradient strength against distance</h3>
+  <div class="grid g2"><div class="card"><label class="f" for="gS">RNN recurrent weight scale: <b id="gSv">0.9</b> <span class="muted small">(about the largest eigenvalue of W<sub>h</sub>)</span></label><input type="range" id="gS" min="0.3" max="2" step="0.05" value="0.9"><label class="f" for="gF">LSTM forget-gate value f: <b id="gFv">0.95</b></label><input type="range" id="gF" min="0.5" max="1" step="0.01" value="0.95"><p class="small muted">The RNN line is computed from real Jacobian products of an 8-unit tanh RNN with random weights (fixed seed). The LSTM line is f<sup>k</sup>.</p></div>
+    <div class="card"><svg id="gChart" viewBox="0 0 400 230" width="100%" role="img" aria-label="Gradient magnitude against distance"></svg></div></div>
+  <div class="callout"><b>Read the chart</b>Vertical axis: log₁₀ of how much of a change at an early step still reaches the end (0 = fully preserved, −3 = one thousandth). With the scale below about 1 the RNN line plunges; near 1 it is fragile; well above 1 it explodes. Practitioners use <b>gradient clipping</b> (cap the gradient’s length) against explosions, and gated cells against vanishing.</div>
+</section>
+
+<!-- ================= 7 LAB ================= -->
+<section id="s7">
+  <p class="eyebrow">Part 7</p><h2>Training lab: watch all three learn</h2>
+  <div class="plain">Same data, same optimiser (Adam, learning rate 0.03, gradient clipping at 1), 4 hidden units each, trained live by backpropagation through time. The task is the negation-sentiment toy from the walkthroughs but with a <b>sentence length you choose</b>. Longer sentences put more filler between “not” and “good”, so the memory has to last longer.</div>
+  <div class="grid g2"><div class="card"><label class="f" for="lT">Sentence length T: <b id="lTv">20</b> words</label><input type="range" id="lT" min="4" max="30" value="20"><label class="f" for="lSteps">Training steps: <b id="lStepsv">400</b> (16 sentences each)</label><input type="range" id="lSteps" min="100" max="800" step="100" value="400">
+    <div class="row" style="margin-top:10px"><button class="btn primary" id="lGo" type="button">Train all three</button><button class="btn" id="lSeed" type="button">New random seed</button><span class="small muted" id="lInfo"></span></div></div>
+    <div class="card"><div class="scroll"><table class="t" id="lTable"></table></div></div></div>
+  <div class="grid g2"><div class="card"><h4 style="margin-top:0">Test accuracy while training <span class="muted small">(200 unseen sentences; 50% = guessing)</span></h4><svg id="lAcc" viewBox="0 0 400 200" width="100%" role="img" aria-label="Accuracy during training"></svg></div>
+    <div class="card"><h4 style="margin-top:0">Gradient reaching each word <span class="muted small">(log₁₀, relative to the last word)</span></h4><div class="row" style="margin-bottom:4px"><button class="btn small on" id="lgInit" type="button">At the start of training</button><button class="btn small" id="lgEnd" type="button">After training</button></div><svg id="lGrad" viewBox="0 0 400 200" width="100%" role="img" aria-label="Gradient flow after training"></svg></div></div>
+  <p class="small muted" style="max-width:90ch">About the gradient chart: <b>at the start of training</b> it shows whether the learning signal can reach early words before anything is learned (all models fade with distance, the LSTM least); the gates then let LSTM and GRU <em>learn</em> to open a path. <b>After training</b> a model that has solved the task is confident and its gradients are tiny and saturated, so that view is less informative about difficulty.</p>
+  <div class="callout" id="lVerdict"><b>What to expect</b>Press the button. At short lengths all three usually succeed. As T grows, the plain RNN typically drops to chance while LSTM and GRU keep working; the gradient chart shows the RNN’s signal from early words fading away. Results depend on the random seed (try New random seed): a single run can fail for any model, so judge by repeating.</div>
+</section>
+
+<!-- ================= 8 USES ================= -->
+<section id="s8">
+  <p class="eyebrow">Part 8</p><h2>In the real world</h2>
+  <div class="scroll"><table class="t"><thead><tr><th>Application</th><th>Shape</th><th>How a recurrent model is used</th></tr></thead><tbody>
+    <tr><td>Phone keyboard next-word suggestion</td><td>many → one (repeated)</td><td>Reads the words typed so far and outputs probabilities for the next word.</td></tr>
+    <tr><td>Speech to text (including Kannada voice typing)</td><td>many → many</td><td>Reads audio frames in order, writes characters or words; LSTM-based models were standard in the mid-2010s.</td></tr>
+    <tr><td>Machine translation</td><td>many → many</td><td>An encoder reads the source sentence into a state; a decoder writes the target. LSTM/GRU encoder-decoders preceded Transformers.</td></tr>
+    <tr><td>Electricity-demand or rainfall forecasting</td><td>many → one / many</td><td>Reads past readings and predicts the next hours or days; common where data is a numeric time series.</td></tr>
+    <tr><td>Fraud detection on transaction histories</td><td>many → one</td><td>Reads a customer’s sequence of transactions and scores risk, remembering unusual earlier events.</td></tr>
+    <tr><td>Handwriting and music</td><td>many → many</td><td>Predicts the next pen movement or note from what came before.</td></tr></tbody></table></div>
+  <h3>Practical tricks you will meet</h3>
+  <div class="grid g2">
+    <div class="card"><b>Embeddings</b><p class="small muted">Words are turned into vectors <i>x<sub>t</sub></i> (learned or pre-trained) before entering the network. In our toy we used two hand-made numbers per word.</p></div>
+    <div class="card"><b>Padding and masking</b><p class="small muted">A batch needs equal-length sequences, so short ones are padded and the padded steps are ignored.</p></div>
+    <div class="card"><b>Truncated BPTT</b><p class="small muted">For very long sequences, backpropagate only through the last k steps at a time to save memory.</p></div>
+    <div class="card"><b>Teacher forcing</b><p class="small muted">When training a model that writes text, feed it the correct previous word instead of its own guess (the same idea used in Transformers).</p></div>
+    <div class="card"><b>Gradient clipping</b><p class="small muted">Rescale the gradient if its length exceeds a threshold (1 in our lab) to stop explosions.</p></div>
+    <div class="card"><b>Why Transformers took over</b><p class="small muted">Recurrence is sequential: step t must wait for step t−1. Attention compares all positions at once, which trains faster on large hardware and links distant words directly. Recurrent models remain useful for streaming data and small devices.</p></div></div>
+  <h3>Check yourself</h3>
+  <div class="card"><div class="row" style="justify-content:space-between"><b id="qProg"></b><span class="muted small" id="qBest"></span></div><div id="qBody"></div></div>
+  <h3>Glossary</h3><div class="grid g2" id="gloss"></div>
+</section>
+</main>
+
+<script>
+"use strict";
+/*__ENGINE__*/
+const WEIGHTS = /*__WEIGHTS__*/;
+
+const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+const store = { get(k, d) { try { const v = localStorage.getItem("rnn:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("rnn:" + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } } };
+const f2 = (v, d = 2) => v.toFixed(d), pc = (p, d = 0) => (p * 100).toFixed(d) + "%", esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const KINDS = ["rnn", "lstm", "gru"], KNAME = { rnn: "RNN", lstm: "LSTM", gru: "GRU" }, KCLR = { rnn: "var(--c-rnn)", lstm: "var(--c-lstm)", gru: "var(--c-gru)" };
+const D = 2, H = 4;
+
+/* ---------- trained walkthrough models ---------- */
+const MODEL = {}; KINDS.forEach(k => { const P = {}; for (const n in WEIGHTS[k].P) P[n] = Float64Array.from(WEIGHTS[k].P[n]); MODEL[k] = { P, acc: WEIGHTS[k].acc }; });
+const WORD = { good: [1, 0], bad: [-1, 0], not: [0, 1] };
+const SENTS = [["the movie was not very good", 0], ["the movie was very good", 1], ["the food was not bad", 1], ["the delivery was bad", 0], ["not good", 0], ["i did not think the food was good", 0]];
+const enc = s => s.split(" ").map(w => Float64Array.from(WORD[w] || [0, 0]));
+let si = store.get("sent", 0), tt = 0; if (!(si >= 0 && si < SENTS.length)) si = 0;
+const FR = () => { const xs = enc(SENTS[si][0]); return Object.fromEntries(KINDS.map(k => [k, run(k, MODEL[k].P, xs, D, H)])); };
+
+/* ---------- display helpers ---------- */
+const heatC = (v, mx) => { const t = Math.min(1, Math.abs(v) / (mx || 1)); return v >= 0 ? `rgba(98,80,214,${(t * .75).toFixed(3)})` : `rgba(217,84,31,${(t * .75).toFixed(3)})`; };
+function vecRows(rows, mx = 1) { return `<div class="scroll"><table class="tbl"><thead><tr><th class="lbl"></th>${[1, 2, 3, 4].map(u => `<th>unit ${u}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr><td class="lbl">${r[0]}</td>${Array.from(r[1], v => `<td style="background:${heatC(v, r[2] || mx)}">${f2(v)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`; }
+function dotLine(row, vec, b, names) {
+  const terms = []; row.forEach((w, j) => { if (vec[j] !== 0) terms.push(`${f2(w)}×${f2(vec[j])}`); });
+  return (terms.length ? terms.join(" + ") : "0") + ` + b(${f2(b)})`;
+}
+const sumDot = (row, vec, b) => row.reduce((s, w, j) => s + w * vec[j], b);
+const sl = (arr, k, n) => Array.from(arr.slice(k * n, k * n + n));
+const sigS = x => 1 / (1 + Math.exp(-x));
+function sentPickers() {
+  $$("[id^=sentPick]").forEach(box => {
+    box.innerHTML = SENTS.map((s, i) => `<button class="btn small ${i === si ? "on" : ""}" type="button" data-i="${i}">${s[0]}</button>`).join("");
+    $$("button", box).forEach(b => b.addEventListener("click", () => { si = +b.dataset.i; tt = 0; store.set("sent", si); renderWalks(); sentPickers(); }));
+  });
+}
+let unitSel = 0;
+function walkHTML(kind) {
+  const words = SENTS[si][0].split(" "), T = words.length, fr = FR()[kind], S = fr.steps[tt], x = S.x;
+  const target = SENTS[si][1];
+  let h = `<div class="card"><div class="tokens">${words.map((w, i) => `<button class="tok ${i === tt ? "now" : i < tt ? "past" : "nxt"}" type="button" data-t="${i}">${w}</button>`).join("")}</div>
+    <div class="row"><button class="btn small" data-act="prev" type="button">&larr; Back</button><button class="btn small primary" data-act="next" type="button">Next word &rarr;</button><span class="small muted">Step ${tt + 1} of ${T}: reading <b>“${words[tt]}”</b></span><span class="small" style="margin-left:auto">arithmetic for hidden unit <select data-act="unit">${[1, 2, 3, 4].map(u => `<option value="${u - 1}" ${u - 1 === unitSel ? "selected" : ""}>${u}</option>`).join("")}</select></span></div>`;
+  h += `<p class="small muted" style="margin:8px 0 2px">Input <i>x<sub>t</sub></i> = (polarity ${f2(x[0], 0)}, negation ${f2(x[1], 0)})${x[1] ? " — a negation word" : x[0] > 0 ? " — a positive word" : x[0] < 0 ? " — a negative word" : " — a neutral filler word"}.</p>`;
+  const P = MODEL[kind].P, k = unitSel;
+  if (kind === "rnn") {
+    h += vecRows([["previous memory h<sub>t−1</sub>", S.hp], ["pre-activation a", S.a, 3], ["new memory h<sub>t</sub> = tanh(a)", S.h]]);
+    const row = [...sl(P.Wx, k, D), ...sl(P.Wh, k, H)], vec = [...x, ...S.hp], a = sumDot(row, vec, P.b[k]);
+    h += `<div class="arith">a<sub>${k + 1}</sub> = ${dotLine(row, vec, P.b[k])} = <b>${f2(a)}</b><br>h<sub>${k + 1}</sub> = tanh(${f2(a)}) = <b>${f2(Math.tanh(a))}</b></div><p class="small muted">Terms where the input is 0 are left out. Weights come first, then the value they multiply.</p>`;
+    const dh = Array.from(S.h, (v, i) => v - S.hp[i]), big = dh.reduce((b, v, i) => (Math.abs(v) > Math.abs(dh[b]) ? i : b), 0);
+    h += `<p class="small">The memory changed most in unit ${big + 1} (${f2(S.hp[big])} → ${f2(S.h[big])}). Every unit is rewritten at every step: the RNN has no way to say “leave this unit alone”.</p>`;
+  } else if (kind === "lstm") {
+    h += vecRows([["previous cell c<sub>t−1</sub>", S.cp, 2], ["forget f<sub>t</sub>", S.f, 1], ["input i<sub>t</sub>", S.i, 1], ["candidate g<sub>t</sub>", S.g, 1], ["output o<sub>t</sub>", S.o, 1], ["new cell c<sub>t</sub>", S.c, 2], ["new hidden h<sub>t</sub>", S.h, 1]]);
+    const n = D + H, r = (W, b) => sumDot(sl(W, k, n), S.v, b[k]);
+    const af = r(P.Wf, P.bf), ai = r(P.Wi, P.bi), ag = r(P.Wg, P.bg), ao = r(P.Wo, P.bo), f = sigS(af), i = sigS(ai), g = Math.tanh(ag), o = sigS(ao), c = f * S.cp[k] + i * g, hh = o * Math.tanh(c);
+    h += `<div class="arith">forget: σ(${dotLine(sl(P.Wf, k, n), S.v, P.bf[k])}) = σ(${f2(af)}) = <b>${f2(f)}</b></div><div class="arith">input: σ(${dotLine(sl(P.Wi, k, n), S.v, P.bi[k])}) = σ(${f2(ai)}) = <b>${f2(i)}</b></div><div class="arith">candidate: tanh(${dotLine(sl(P.Wg, k, n), S.v, P.bg[k])}) = tanh(${f2(ag)}) = <b>${f2(g)}</b></div><div class="arith">output: σ(${dotLine(sl(P.Wo, k, n), S.v, P.bo[k])}) = σ(${f2(ao)}) = <b>${f2(o)}</b></div>
+      <div class="arith">c<sub>${k + 1}</sub> = f·c<sub>t−1</sub> + i·g = ${f2(f)}×${f2(S.cp[k])} + ${f2(i)}×${f2(g)} = <b>${f2(c)}</b></div><div class="arith">h<sub>${k + 1}</sub> = o·tanh(c) = ${f2(o)}×tanh(${f2(c)}) = <b>${f2(hh)}</b></div>`;
+    const mean = a => a.reduce((s, v) => s + v, 0) / a.length;
+    h += `<p class="small">Averages this step: forget gate ${f2(mean(S.f))} (${mean(S.f) > .7 ? "mostly keeping old memory" : mean(S.f) < .3 ? "mostly erasing old memory" : "partly keeping old memory"}), input gate ${f2(mean(S.i))} (${mean(S.i) > .7 ? "writing a lot" : mean(S.i) < .3 ? "writing little" : "writing moderately"}).</p>`;
+  } else {
+    h += vecRows([["previous state h<sub>t−1</sub>", S.hp], ["update z<sub>t</sub>", S.z, 1], ["reset r<sub>t</sub>", S.r, 1], ["candidate h̃<sub>t</sub>", S.hc, 1], ["new state h<sub>t</sub>", S.h, 1]]);
+    const n = D + H, az = sumDot(sl(P.Wz, k, n), S.v, P.bz[k]), ar = sumDot(sl(P.Wr, k, n), S.v, P.br[k]), rowc = [...sl(P.Wx, k, D), ...sl(P.Uh, k, H)], vc = [...x, ...S.rh], ac = sumDot(rowc, vc, P.bh[k]);
+    const z = sigS(az), r = sigS(ar), hc = Math.tanh(ac), hh = (1 - z) * S.hp[k] + z * hc;
+    h += `<div class="arith">update: σ(${dotLine(sl(P.Wz, k, n), S.v, P.bz[k])}) = σ(${f2(az)}) = <b>${f2(z)}</b></div><div class="arith">reset: σ(${dotLine(sl(P.Wr, k, n), S.v, P.br[k])}) = σ(${f2(ar)}) = <b>${f2(r)}</b></div><div class="arith">candidate: tanh(${dotLine(rowc, vc, P.bh[k])}) = tanh(${f2(ac)}) = <b>${f2(hc)}</b> &nbsp; (uses r⊙h<sub>t−1</sub>)</div><div class="arith">h<sub>${k + 1}</sub> = (1−z)·h<sub>t−1</sub> + z·h̃ = ${f2(1 - z)}×${f2(S.hp[k])} + ${f2(z)}×${f2(hc)} = <b>${f2(hh)}</b></div>`;
+    const mz = S.z.reduce((s, v) => s + v, 0) / H;
+    h += `<p class="small">Average update gate ${f2(mz)}: ${mz > .7 ? "the state is being largely replaced" : mz < .3 ? "the old state is mostly copied through" : "old state and new candidate are blended"}.</p>`;
+  }
+  let z = P.r[0]; for (let i = 0; i < H; i++) z += P.R[i] * S.h[i];
+  const pp = sigS(z);
+  h += `<div class="stat" style="margin-top:8px"><b>${pc(pp)}</b><span>read-out P(positive) if the review stopped after “${words[tt]}”${tt === T - 1 ? ` — the real answer: ${target ? "positive" : "negative"}, so this ${pp > .5 === !!target ? "<span class='pill ok'>is correct</span>" : "<span class='pill no'>is wrong</span>"}` : " (the read-out was trained on the final step only, so earlier values are just a peek)"}</span></div></div>`;
+  return h;
+}
+function renderWalk(kind) {
+  const el = $("#walk-" + kind); el.innerHTML = walkHTML(kind);
+  $$(".tok", el).forEach(b => b.addEventListener("click", () => { tt = +b.dataset.t; renderWalks(); }));
+  $$("[data-act=prev]", el).forEach(b => b.addEventListener("click", () => { tt = Math.max(0, tt - 1); renderWalks(); }));
+  $$("[data-act=next]", el).forEach(b => b.addEventListener("click", () => { tt = Math.min(SENTS[si][0].split(" ").length - 1, tt + 1); renderWalks(); }));
+  $$("[data-act=unit]", el).forEach(s => s.addEventListener("change", () => { unitSel = +s.value; renderWalks(); }));
+}
+function renderWalks() { KINDS.forEach(renderWalk); }
+
+/* ---------- section 1: Kannada agreement ---------- */
+const KN = [["ನಾನು", "I", "1st person singular", "ಹೋಗುತ್ತೇನೆ", "hōguttēne", "-ತ್ತೇನೆ (-ttēne)"], ["ಅವನು", "he", "3rd person, masculine", "ಹೋಗುತ್ತಾನೆ", "hōguttāne", "-ತ್ತಾನೆ (-ttāne)"], ["ಅವಳು", "she", "3rd person, feminine", "ಹೋಗುತ್ತಾಳೆ", "hōguttāḷe", "-ತ್ತಾಳೆ (-ttāḷe)"], ["ನಾವು", "we", "1st person plural", "ಹೋಗುತ್ತೇವೆ", "hōguttēve", "-ತ್ತೇವೆ (-ttēve)"]];
+let knI = 0, knT = 0;
+function renderKn() {
+  const s = KN[knI], toks = [s[0], "ನಾಳೆ", "ಮೈಸೂರಿಗೆ", s[3]], gloss = [s[1], "tomorrow", "to Mysuru", "will go"];
+  $("#knSubj").innerHTML = KN.map((k, i) => `<button class="btn small kn ${i === knI ? "on" : ""}" type="button" data-i="${i}">${k[0]} (${k[1]})</button>`).join("");
+  $$("#knSubj button").forEach(b => b.addEventListener("click", () => { knI = +b.dataset.i; knT = 0; renderKn(); }));
+  $("#knToks").innerHTML = toks.map((t, i) => `<span class="tok kn ${i === knT ? "now" : i < knT ? "past" : "nxt"}" style="${i > knT ? "visibility:hidden" : ""}">${t}</span>`).join("");
+  $("#knMem").textContent = knT === 0 ? "reading the subject…" : s[2];
+  $("#knEnd").textContent = knT >= 3 ? s[3] : knT >= 1 ? "(not needed yet)" : "–";
+  $("#knEnd").className = "kn"; $("#knEndCap").textContent = knT >= 3 ? "the verb, with the ending the subject demands" : "verb ending needed";
+  $("#knNote").innerHTML = `${toks.slice(0, knT + 1).map((t, i) => `<span class="kn">${t}</span> (${gloss[i]})`).join(" · ")}. ${knT === 3 ? `The ending <b class="kn">${s[5]}</b> can only be chosen by remembering “${s[1]}” from the first word; the words in between say nothing about the subject (${s[4]}).` : knT >= 1 ? "The memory holds the subject while neutral words pass by." : "The first word sets the memory."}`;
+  $("#knPrev").disabled = knT === 0; $("#knNext").disabled = knT === 3;
+}
+
+/* ---------- section 5: parameters ---------- */
+function renderParams() {
+  const d = +$("#pD").value, h = +$("#pH").value; $("#pDv").textContent = d; $("#pHv").textContent = h;
+  const n = k => nParams(k, d, h) - (h + 1), base = n("rnn");
+  $("#pOut").innerHTML = KINDS.map(k => `<div class="row" style="justify-content:space-between;border-bottom:1px solid var(--line);padding:3px 0"><span><span class="dot" style="background:${KCLR[k]}"></span><b>${KNAME[k]}</b></span><span>${n(k).toLocaleString("en-US")} <span class="muted small">(${(n(k) / base).toFixed(0)}× RNN)</span></span></div>`).join("") + `<p class="small muted" style="margin-bottom:0">Counted without the final read-out layer. Formulas: H(D+H+1) × 1, 4 and 3.</p>`;
+}
+
+/* ---------- charts ---------- */
+function lineChart(id, series, o) {
+  const W = 400, Hh = o.h || 200, L = 40, R = 10, T = 14, B = 26, nx = o.n, X = i => L + i / Math.max(1, nx - 1) * (W - L - R), Y = v => T + (1 - (v - o.lo) / (o.hi - o.lo)) * (Hh - T - B);
+  let s = `<g style="stroke:var(--line)"><line x1="${L}" y1="${Hh - B}" x2="${W - R}" y2="${Hh - B}"/><line x1="${L}" y1="${T}" x2="${L}" y2="${Hh - B}"/></g>`;
+  for (let t = 0; t <= 4; t++) { const v = o.lo + (o.hi - o.lo) * t / 4; s += `<text x="3" y="${Y(v) + 4}" font-size="10" style="fill:var(--muted)">${o.fmt(v)}</text><line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)" stroke-dasharray="2 4"/>`; }
+  s += `<text x="${L}" y="${Hh - 8}" font-size="10" style="fill:var(--muted)">${o.xl0}</text><text x="${W - R}" y="${Hh - 8}" font-size="10" text-anchor="end" style="fill:var(--muted)">${o.xl1}</text>`;
+  series.forEach((se, k) => { if (se.v.length > 1) s += `<polyline fill="none" stroke="${se.c}" stroke-width="2.5" points="${se.v.map((v, i) => X(se.x ? se.x[i] : i).toFixed(1) + "," + Y(Math.max(o.lo, Math.min(o.hi, v))).toFixed(1)).join(" ")}"/>`; s += `<text x="${L + 8 + k * 90}" y="${T + 8}" font-size="11" font-weight="700" style="fill:${se.c}">${se.n}</text>`; });
+  $("#" + id).innerHTML = s;
+}
+/* gradient strength vs distance */
+function renderGrad() {
+  const sc = +$("#gS").value, f = +$("#gF").value; $("#gSv").textContent = sc; $("#gFv").textContent = f2(f, 2);
+  const Hn = 8, r = rng(11), M = Array.from({ length: Hn * Hn }, () => gauss(r) / Math.sqrt(Hn));
+  // scale so the spectral radius is ~ sc: estimate radius by power iteration on M
+  let v = Array.from({ length: Hn }, () => r()), lam = 1; for (let it = 0; it < 60; it++) { const w = Array.from({ length: Hn }, (_, i) => M.slice(i * Hn, i * Hn + Hn).reduce((s, m, j) => s + m * v[j], 0)); lam = Math.hypot(...w); v = w.map(x => x / (lam || 1)); }
+  const Wh = M.map(m => m / lam * sc), K = 40, h = new Array(Hn).fill(0), r2 = rng(5), Js = [];
+  for (let t = 0; t < K; t++) { for (let i = 0; i < Hn; i++) { let a = gauss(r2) * 0.4; for (let j = 0; j < Hn; j++) a += Wh[i * Hn + j] * h[j]; h[i] = Math.tanh(a); } Js.push(Wh.map((w, idx) => w * (1 - h[Math.floor(idx / Hn)] ** 2))); }
+  let Pm = Array.from({ length: Hn * Hn }, (_, i) => (i % (Hn + 1) === 0 ? 1 : 0)); const rnnL = [0];
+  for (let k = 1; k <= K; k++) { const J = Js[K - k], N = new Array(Hn * Hn).fill(0); for (let i = 0; i < Hn; i++) for (let j = 0; j < Hn; j++) { let s = 0; for (let q = 0; q < Hn; q++) s += Pm[i * Hn + q] * J[q * Hn + j]; N[i * Hn + j] = s; } Pm = N; rnnL.push(Math.log10(Math.sqrt(Pm.reduce((s, x) => s + x * x, 0) / Hn) + 1e-30)); }
+  const lstmL = Array.from({ length: K + 1 }, (_, k) => k * Math.log10(f));
+  lineChart("gChart", [{ n: "RNN", c: "var(--c-rnn)", v: rnnL }, { n: "LSTM cell path", c: "var(--c-lstm)", v: lstmL }], { n: K + 1, lo: -8, hi: 4, fmt: v => v.toFixed(0), xl0: "distance 0", xl1: "40 steps back" });
+}
+
+/* ---------- lab ---------- */
+const lab = { seed: 10, hist: { rnn: [], lstm: [], gru: [] }, final: null, running: false, gradInit: null, gradEnd: null, gradMode: "init", P: null };
+function gradFlow(Pm, test, T) { const gr = {}; KINDS.forEach(k => { const acc = new Array(T).fill(0); for (let n = 0; n < 40; n++) { const q = test[n], o = bptt(k, Pm[k], q.xs, q.y, D, H), ref = o.gnorm[T - 1] || 1e-12; for (let t = 0; t < T; t++) acc[t] += Math.log10(Math.max(o.gnorm[t], 1e-30) / ref) / 40; } gr[k] = acc.reverse(); }); return gr; }
+function labRender(info) {
+  const ev = k => lab.hist[k];
+  lineChart("lAcc", KINDS.map(k => ({ n: KNAME[k], c: KCLR[k], v: ev(k).map(h => h.acc), x: ev(k).map(h => h.step / 20) })), { n: Math.max(2, +$("#lSteps").value / 20 + 1), lo: 0.4, hi: 1, fmt: v => Math.round(v * 100) + "%", xl0: "step 0", xl1: `step ${$("#lSteps").value}` });
+  // axis x uses step index: remap
+  const gd = lab.gradMode === "init" ? lab.gradInit : lab.gradEnd;
+  $("#lgInit").classList.toggle("on", lab.gradMode === "init"); $("#lgEnd").classList.toggle("on", lab.gradMode === "end");
+  if (gd) lineChart("lGrad", KINDS.map(k => ({ n: KNAME[k], c: KCLR[k], v: gd[k] })), { n: gd.rnn.length, lo: -8, hi: 2, fmt: v => v.toFixed(0), xl0: "last word", xl1: "first word" });
+  else $("#lGrad").innerHTML = `<text x="20" y="100" style="fill:var(--muted)">Press Train to see this chart.</text>`;
+  $("#lTable").innerHTML = `<thead><tr><th></th><th>Parameters</th><th>Final test accuracy</th><th>Final test loss</th></tr></thead><tbody>${KINDS.map(k => { const f = lab.final && lab.final[k]; return `<tr><td><span class="dot" style="background:${KCLR[k]}"></span><b>${KNAME[k]}</b></td><td>${nParams(k, D, H)}</td><td>${f ? `<b>${pc(f.acc)}</b>` : "–"}</td><td>${f ? f2(f.loss, 3) : "–"}</td></tr>`; }).join("")}</tbody>`;
+  if (info) $("#lInfo").textContent = info;
+}
+async function labTrain() {
+  if (lab.running) return; lab.running = true; $("#lGo").disabled = true; $("#lSeed").disabled = true;
+  const T = +$("#lT").value, steps = +$("#lSteps").value, r = rng(lab.seed + 100), rt = rng(999);
+  const test = Array.from({ length: 200 }, () => genB(T, rt)), Pm = {}, Am = {};
+  KINDS.forEach(k => { Pm[k] = initP(k, D, H, lab.seed); Am[k] = adamInit(Pm[k]); lab.hist[k] = []; });
+  const evalAll = (step) => { const res = {}; KINDS.forEach(k => { let ok = 0, L = 0; for (const q of test) { const p = run(k, Pm[k], q.xs, D, H).p; L += bce(p, q.y); if ((p > .5) === (q.y === 1)) ok++; } res[k] = { acc: ok / test.length, loss: L / test.length, step }; lab.hist[k].push(res[k]); }); lab.final = res; };
+  evalAll(0); lab.gradInit = gradFlow(Pm, test, T); lab.gradEnd = null; labRender("training…");
+  for (let s = 1; s <= steps; s++) {
+    const batch = Array.from({ length: 16 }, () => genB(T, r));
+    for (const k of KINDS) { const G = {}; for (const n in Pm[k]) G[n] = new Float64Array(Pm[k][n].length); for (const q of batch) { const o = bptt(k, Pm[k], q.xs, q.y, D, H); for (const n in G) for (let i = 0; i < G[n].length; i++) G[n][i] += o.G[n][i] / 16; } adamStep(Pm[k], G, Am[k], 0.03); }
+    if (s % 20 === 0) { evalAll(s); labRender(`step ${s} of ${steps}`); await new Promise(res => setTimeout(res, 0)); }
+  }
+  lab.gradEnd = gradFlow(Pm, test, T); lab.P = Pm; labRender(`done: T = ${T}, ${steps} steps, seed ${lab.seed - 9}`);
+  const f = lab.final, best = KINDS.reduce((b, k) => (f[k].acc > f[b].acc ? k : b), "rnn");
+  $("#lVerdict").innerHTML = `<b>Result of this run</b>At T = ${T}: ${KINDS.map(k => `${KNAME[k]} ${pc(f[k].acc)}`).join(", ")}. ${f.rnn.acc < .65 && Math.max(f.lstm.acc, f.gru.acc) > .9 ? "The plain RNN did not learn to keep the “not” in memory over this distance, while at least one gated model did. The gradient chart shows how much learning signal reaches the early words; compare the lines, and see the note below it." : f.rnn.acc > .9 && f.lstm.acc > .9 && f.gru.acc > .9 ? "All three learned it at this length. Raise T and train again to see where the plain RNN breaks." : "Mixed result. A single run depends on the random seed and number of steps; press New random seed or train longer, and compare several runs before drawing conclusions."}`;
+  lab.running = false; $("#lGo").disabled = false; $("#lSeed").disabled = false;
+}
+
+/* ---------- quiz + glossary ---------- */
+const QUIZ = [
+  ["What is the hidden state of an RNN?", ["The input word", "A vector that summarises what has been read so far and is updated at each step", "The learning rate", "The final prediction only"], 1, "It is the network’s running memory, rewritten after every input."],
+  ["Which equation is the plain RNN update?", ["h = σ(W x)", "h_t = tanh(W_x x_t + W_h h_(t−1) + b)", "c_t = f ⊙ c_(t−1) + i ⊙ g", "h_t = (1 − z) h_(t−1) + z h̃"], 1, "The same weights are reused at every step; tanh keeps values in (−1, 1)."],
+  ["Why do gradients vanish in a long plain RNN?", ["The data is too small", "Each step back multiplies the gradient by W_h and a tanh slope ≤ 1, so it shrinks exponentially with distance", "tanh has no derivative", "The batch is too large"], 1, "Products of many factors below 1 go to zero."],
+  ["What does the LSTM forget gate do?", ["Chooses the next word", "Scales the old cell state, deciding how much memory to keep", "Normalises the input", "Computes the loss"], 1, "f near 1 keeps a memory slot, f near 0 erases it."],
+  ["Why is ∂c_t/∂c_(t−1) = f_t important?", ["It makes training slower", "It gives gradients a path that is not multiplied by a weight matrix each step, so it can stay near 1", "It removes the need for data", "It only matters at test time"], 1, "That is the “constant error carousel” idea behind the LSTM."],
+  ["How does a GRU differ from an LSTM?", ["It has no gates", "It has no separate cell state and uses two gates (update, reset), so fewer parameters", "It reads backwards", "It cannot learn long dependencies"], 1, "3H(D+H+1) parameters against 4H(D+H+1)."],
+  ["If the update gate z ≈ 0 in a GRU, the new state is…", ["The candidate h̃", "Zero", "A copy of the old state h_(t−1)", "Random"], 2, "h_t = (1 − z)·h_(t−1) + z·h̃ with z = 0 leaves the old state unchanged."],
+  ["Which is a practical remedy against exploding gradients?", ["Gradient clipping", "Removing the output layer", "Using fewer training examples", "Larger gates"], 0, "Rescale the gradient when its norm is too large."],
+];
+const GLOSS = [["Sequence", "Items where order matters: words, audio frames, readings over time."], ["Hidden state h", "The network’s memory vector, updated each step."], ["Cell state c", "The LSTM’s protected memory lane, separate from h."], ["Gate", "A number from 0 to 1 per memory slot that lets information pass or blocks it."], ["Forget gate", "Decides how much old cell memory to keep."], ["Input gate", "Decides how much new content to write."], ["Output gate", "Decides how much memory to reveal as h."], ["Update gate (GRU)", "Blends old state and new candidate."], ["Reset gate (GRU)", "Decides how much old state to use when proposing new content."], ["Candidate", "The proposed new content, computed with tanh."], ["tanh", "A squashing function with outputs between −1 and 1."], ["Sigmoid σ", "A squashing function with outputs between 0 and 1; used for gates."], ["BPTT", "Backpropagation through time: unroll the network and backpropagate through all steps."], ["Vanishing gradient", "The learning signal shrinks towards zero as it travels back."], ["Exploding gradient", "The learning signal grows without bound; fixed by clipping."], ["Gradient clipping", "Cap the gradient’s length to a threshold."], ["Embedding", "A vector that represents a word."], ["Bidirectional RNN", "Two networks, one reading forwards and one backwards, combined."], ["Teacher forcing", "Training a generator with the correct previous token as input."]];
+function initQuiz() {
+  let qi = 0, sc = 0; const draw = () => {
+    if (qi >= QUIZ.length) { const b = Math.max(sc, store.get("best", 0)); store.set("best", b); $("#qProg").textContent = "Finished"; $("#qBest").textContent = `Best: ${b}/${QUIZ.length}`; $("#qBody").innerHTML = `<div class="stat" style="margin:8px 0"><b>${sc}/${QUIZ.length}</b><span>${sc >= 7 ? "Excellent: you understand RNNs, LSTMs and GRUs." : sc >= 5 ? "Good. Revisit the parts you missed." : "Re-read parts 2 to 6 and try again."}</span></div><button class="btn primary" id="qAgain" type="button">Try again</button>`; $("#qAgain").addEventListener("click", () => { qi = 0; sc = 0; draw(); }); return; }
+    const [q, o, a, why] = QUIZ[qi]; $("#qProg").textContent = `Question ${qi + 1} of ${QUIZ.length}`; const bs = store.get("best", null); $("#qBest").textContent = bs != null ? `Best: ${bs}/${QUIZ.length}` : "";
+    $("#qBody").innerHTML = `<p style="font-weight:700">${esc(q)}</p>` + o.map((t, i) => `<button class="quiz-opt" type="button" data-i="${i}">${esc(t)}</button>`).join("") + `<div id="qFb"></div>`;
+    $$("#qBody .quiz-opt").forEach(b => b.addEventListener("click", () => { if ($("#qFb").innerHTML) return; const i = +b.dataset.i; if (i === a) sc++; $$("#qBody .quiz-opt").forEach((x, j) => x.classList.add(j === a ? "right" : j === i ? "wrong" : "x")); $("#qFb").innerHTML = `<div class="callout ${i === a ? "tip" : "warn"}"><b>${i === a ? "Correct" : "Not quite"}</b>${esc(why)}</div><button class="btn primary" id="qNext" type="button">${qi === QUIZ.length - 1 ? "See result" : "Next"}</button>`; $("#qNext").addEventListener("click", () => { qi++; draw(); }); }));
+  }; draw();
+  $("#gloss").innerHTML = GLOSS.map(g => `<div class="card" style="margin:0"><b>${g[0]}</b><p class="small muted" style="margin:.2em 0 0">${g[1]}</p></div>`).join("");
+}
+
+/* ---------- boot ---------- */
+function boot() {
+  const root = document.documentElement; root.dataset.theme = store.get("theme", "auto");
+  $("#themeBtn").addEventListener("click", () => { const dark = root.dataset.theme === "dark" || (root.dataset.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches); root.dataset.theme = dark ? "light" : "dark"; store.set("theme", root.dataset.theme); });
+  const NAMES = [["s1", "1 Why memory"], ["s2", "2 RNN"], ["s3", "3 LSTM"], ["s4", "4 GRU"], ["s5", "5 Compare"], ["s6", "6 Gradients"], ["s7", "7 Lab"], ["s8", "8 Uses and quiz"]];
+  const BL = ["Sequences need memory", "Loop and unroll", "Gated memory cell", "Lighter gates", "Table and sizes", "Vanishing and exploding", "Train all three live", "Applications, quiz"];
+  $("#flow").innerHTML = NAMES.map((n, i) => `<a href="#${n[0]}"><b>${n[1]}</b><span>${BL[i]}</span></a>`).join("");
+  $("#chips").innerHTML = `<a href="#s0" data-id="s0">Start</a>` + NAMES.map(n => `<a href="#${n[0]}" data-id="${n[0]}">${n[1]}</a>`).join("");
+  const obs = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) $$("#chips a").forEach(a => a.classList.toggle("on", a.dataset.id === en.target.id)); }), { rootMargin: "-30% 0px -60% 0px" }); $$("section").forEach(s => obs.observe(s));
+  sentPickers(); renderWalks(); renderKn();
+  $("#knNext").addEventListener("click", () => { knT = Math.min(3, knT + 1); renderKn(); }); $("#knPrev").addEventListener("click", () => { knT = Math.max(0, knT - 1); renderKn(); });
+  ["pD", "pH"].forEach(id => $("#" + id).addEventListener("input", renderParams)); renderParams();
+  ["gS", "gF"].forEach(id => $("#" + id).addEventListener("input", renderGrad)); renderGrad();
+  $("#lT").addEventListener("input", e => { $("#lTv").textContent = e.target.value; }); $("#lSteps").addEventListener("input", e => { $("#lStepsv").textContent = e.target.value; });
+  $("#lGo").addEventListener("click", labTrain); $("#lgInit").addEventListener("click", () => { lab.gradMode = "init"; labRender(); }); $("#lgEnd").addEventListener("click", () => { lab.gradMode = "end"; labRender(); }); $("#lSeed").addEventListener("click", () => { lab.seed++; $("#lInfo").textContent = `seed ${lab.seed - 9}: press Train`; });
+  labRender(); initQuiz(); window.__rnnReady = true;
+}
+boot();
+</script>
+</body>
+</html>
