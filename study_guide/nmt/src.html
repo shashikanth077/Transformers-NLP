@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neural Machine Translation Pipeline: Data to BLEU</title>
+<meta name="description" content="An interactive, offline walk through the neural machine translation pipeline on a real English-Kannada phrasebook: aligned pairs, tokenization, splits, encoder-decoder, attention, teacher forcing, decoding and BLEU, with the maths computed live.">
+<style>
+:root { --bg:#f6f7fc; --surface:#fff; --surface2:#eef0fa; --ink:#1d1d3a; --muted:#5a5977; --line:#d9dcef; --brand:#2e2a6b; --brand-ink:#fff; --pos:#6250d6; --neg:#d9541f; --good:#0c7a4d; --good-bg:#e2f5ec; --bad:#b3261e; --bad-bg:#fde8e6; --info-bg:#e8effd; --warn-bg:#fff3dc; --green:#159a6a; --blue:#2a78d6; --amber:#a86a00; --radius:14px; --shadow:0 1px 3px rgba(30,30,70,.08); --mono:Consolas,"Cascadia Mono",monospace; }
+:root[data-theme="dark"] { --bg:#11121f; --surface:#1a1b2e; --surface2:#23243b; --ink:#ecebff; --muted:#a6a5c6; --line:#34365a; --brand:#7c70ff; --brand-ink:#0d0d1e; --pos:#9c8fff; --neg:#ee7a4b; --good:#52d6a0; --good-bg:#123a2c; --bad:#ff8d84; --bad-bg:#44201f; --info-bg:#1d2a4a; --warn-bg:#3d3115; --green:#2fc08f; --blue:#4c92ea; --amber:#f0b44c; --shadow:none; }
+@media (prefers-color-scheme: dark) { :root[data-theme="auto"] { --bg:#11121f; --surface:#1a1b2e; --surface2:#23243b; --ink:#ecebff; --muted:#a6a5c6; --line:#34365a; --brand:#7c70ff; --brand-ink:#0d0d1e; --pos:#9c8fff; --neg:#ee7a4b; --good:#52d6a0; --good-bg:#123a2c; --bad:#ff8d84; --bad-bg:#44201f; --info-bg:#1d2a4a; --warn-bg:#3d3115; --green:#2fc08f; --blue:#4c92ea; --amber:#f0b44c; --shadow:none; } }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-padding-top:70px; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 system-ui,"Segoe UI",Roboto,"Nirmala UI",sans-serif; }
+button,input,select { font:inherit; color:inherit; } button { cursor:pointer; } a { color:var(--pos); }
+.top { position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+.top .in { max-width:1080px; margin:0 auto; padding:8px 16px; display:flex; gap:10px; align-items:center; } .top b { white-space:nowrap; }
+.chips { display:flex; gap:6px; overflow-x:auto; flex:1; scrollbar-width:thin; padding:2px 0; }
+.chips a { white-space:nowrap; text-decoration:none; color:var(--ink); border:1px solid var(--line); background:var(--surface); border-radius:99px; padding:3px 11px; font-size:.82rem; font-weight:600; } .chips a.on { background:var(--brand); color:var(--brand-ink); border-color:var(--brand); }
+main { max-width:1080px; margin:0 auto; padding:0 16px 80px; } section { padding:46px 0 12px; border-bottom:1px solid var(--line); }
+.eyebrow { text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; font-weight:700; color:var(--pos); margin:0 0 .3em; }
+h1 { font-size:clamp(1.9rem,4.4vw,2.8rem); line-height:1.15; margin:.1em 0 .4em; letter-spacing:-.02em; } h2 { font-size:1.75rem; line-height:1.2; margin:0 0 .5em; } h3 { font-size:1.12rem; margin:1.6em 0 .4em; } h4 { margin:1em 0 .3em; font-size:.98rem; }
+p { margin:.6em 0; max-width:78ch; } .lead { font-size:1.12rem; color:var(--muted); max-width:72ch; } .muted { color:var(--muted); } .small { font-size:.86rem; }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); margin:12px 0; }
+.grid { display:grid; gap:12px; } .g2 { grid-template-columns:repeat(2,minmax(0,1fr)); } .g3 { grid-template-columns:repeat(3,minmax(0,1fr)); } .g4 { grid-template-columns:repeat(4,minmax(0,1fr)); }
+.row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.btn { border:1px solid var(--line); background:var(--surface); padding:7px 13px; border-radius:10px; font-weight:600; font-size:.9rem; } .btn:hover { background:var(--surface2); } .btn.on,.btn.primary { background:var(--brand); color:var(--brand-ink); border-color:var(--brand); } .btn.small { padding:3px 10px; font-size:.8rem; } .btn:disabled { opacity:.5; cursor:default; }
+.callout { border-radius:12px; padding:12px 16px; margin:14px 0; background:var(--info-bg); border:1px solid var(--line); max-width:84ch; } .callout.tip { background:var(--good-bg); } .callout.warn { background:var(--warn-bg); } .callout > b:first-child { display:block; margin-bottom:2px; }
+.plain,.analogy,.maths { border-left:5px solid var(--pos); border-radius:0 12px 12px 0; padding:10px 16px; margin:14px 0; background:var(--surface); max-width:86ch; } .plain { border-color:var(--green); } .analogy { border-color:var(--neg); } .maths { border-color:var(--pos); max-width:92ch; }
+.plain::before,.analogy::before,.maths::before { display:block; font-size:.72rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin-bottom:2px; } .plain::before { content:"In plain words"; color:var(--green); } .analogy::before { content:"Real-world picture"; color:var(--neg); } .maths::before { content:"The maths"; color:var(--pos); }
+.formula { font-family:"Cambria Math",Cambria,"Times New Roman",serif; font-size:1.1rem; background:var(--surface2); border-radius:10px; padding:8px 14px; margin:8px 0; overflow-x:auto; line-height:1.95; } .formula i { font-style:italic; }
+code { font-family:var(--mono); font-size:.88em; background:var(--surface2); padding:0 .3em; border-radius:4px; }
+.kn { font-family:"Nirmala UI","Noto Sans Kannada",system-ui,sans-serif; }
+.tokens { display:flex; flex-wrap:wrap; gap:5px; margin:6px 0; } .tok { border:1px solid var(--line); background:var(--surface); padding:2px 9px; border-radius:9px; font-size:.92rem; } .tok.sp { opacity:.7; font-style:italic; } .tok.unk { background:var(--bad-bg); border-color:var(--bad); } .tok.on { background:var(--brand); color:var(--brand-ink); border-color:var(--brand); }
+.tbl { border-collapse:collapse; font-size:.85rem; } .tbl th,.tbl td { padding:4px 9px; border:1px solid var(--line); text-align:center; font-variant-numeric:tabular-nums; } .tbl th { background:var(--surface2); } .tbl td.l,.tbl th.l { text-align:left; }
+table.t { border-collapse:collapse; font-size:.88rem; width:100%; } table.t th,table.t td { padding:6px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } table.t th { background:var(--surface2); } table.t td.n { text-align:right; font-variant-numeric:tabular-nums; } table.t tr.drop td { background:var(--bad-bg); }
+.scroll { overflow:auto; border:1px solid var(--line); border-radius:12px; background:var(--surface); max-height:420px; } .scroll.tall { max-height:none; }
+.arith { font-family:var(--mono); font-size:.8rem; background:var(--surface2); border-radius:8px; padding:6px 10px; margin:5px 0; overflow-x:auto; white-space:nowrap; } .arith b { color:var(--pos); }
+.stat { padding:12px 14px; border-radius:12px; background:var(--surface); border:1px solid var(--line); } .stat b { display:block; font-size:1.6rem; line-height:1.15; } .stat span { color:var(--muted); font-size:.84rem; }
+.bars { display:grid; gap:5px; } .bar { display:grid; grid-template-columns:130px 1fr 66px; gap:8px; align-items:center; font-size:.86rem; } .bar .track { height:13px; background:var(--surface2); border-radius:99px; position:relative; overflow:hidden; } .bar .fill { position:absolute; top:0; bottom:0; border-radius:99px; background:var(--green); } .bar .fill.neg { background:var(--neg); } .bar .fill.pos { background:var(--pos); } .bar b { text-align:right; font-variant-numeric:tabular-nums; } .bar .lbl { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pill { display:inline-block; padding:1px 9px; border-radius:99px; font-size:.75rem; font-weight:700; background:var(--surface2); } .pill.ok { background:var(--good-bg); color:var(--good); } .pill.no { background:var(--bad-bg); color:var(--bad); } .pill.real { background:var(--good-bg); color:var(--good); } .pill.toy { background:var(--warn-bg); color:var(--amber); }
+label.f { display:block; font-size:.85rem; font-weight:600; margin:8px 0 3px; } input[type=range] { width:100%; max-width:340px; accent-color:var(--pos); } select,input[type=number] { padding:4px 8px; border-radius:8px; border:1px solid var(--line); background:var(--surface); max-width:100%; }
+.quiz-opt { display:block; width:100%; text-align:left; margin:6px 0; padding:9px 14px; border-radius:10px; border:1px solid var(--line); background:var(--surface); } .quiz-opt.right { background:var(--good-bg); border-color:var(--good); } .quiz-opt.wrong { background:var(--bad-bg); border-color:var(--bad); }
+.flow { display:flex; flex-wrap:wrap; gap:8px; } .flow a { flex:1 1 150px; text-decoration:none; color:inherit; border:2px solid var(--line); border-radius:12px; padding:8px 10px; background:var(--surface); } .flow a:hover { border-color:var(--pos); } .flow b { display:block; } .flow span { font-size:.78rem; color:var(--muted); line-height:1.35; display:block; }
+svg text { fill:var(--ink); font-size:12px; } svg .m { fill:var(--muted); } svg .box { fill:var(--surface); stroke:var(--ink); stroke-width:1.6; } svg .ln { stroke:var(--ink); stroke-width:1.6; fill:none; }
+.heat td { width:34px; height:28px; padding:0; font-size:.7rem; } .heat th { font-size:.74rem; font-weight:500; }
+.banner { border-radius:12px; padding:10px 14px; margin:10px 0; background:var(--warn-bg); border:1px solid var(--amber); }
+@media (max-width:760px) { .g3,.g4 { grid-template-columns:repeat(2,minmax(0,1fr)); } .bar { grid-template-columns:90px 1fr 56px; } .top b { display:none; } }
+@media (max-width:520px) { .g2,.g3,.g4 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><b>NMT pipeline</b><nav class="chips" id="chips" aria-label="Sections"></nav><button class="btn small" id="themeBtn" type="button">Light / dark</button></div></div>
+<main>
+
+<!-- ============ INTRO ============ -->
+<section id="s0">
+  <p class="eyebrow">Neural machine translation · end to end</p>
+  <h1>From aligned sentences to a BLEU score</h1>
+  <p class="lead">Collect aligned sentence pairs → tokenize → train/validation/test split → encoder/decoder model → attention weights → train with teacher forcing → decode → evaluate with BLEU and human examples. One real example runs through every step: an <b>English → Kannada phrasebook</b> for a visitor in Karnataka. All the maths is computed live on this page.</p>
+  <div class="card"><h3 style="margin-top:0">The example: a phrasebook for a visitor in Mysuru</h3>
+    <p>Someone arriving in Karnataka needs a few dozen everyday sentences: <i>“Where is the bus stand?”, “I will go to Mysuru tomorrow.”, “How much is the coffee?”</i> We hand-built <b id="nPairs">70</b> such English–Kannada pairs from 9 patterns (a real, if tiny, parallel corpus) and use them in two ways:</p>
+    <div class="grid g2"><div class="callout" style="margin:0"><span class="pill toy">TOY, trained here</span><p class="small" style="margin:.4em 0 0">A small GRU encoder-decoder with attention (about 16,000 numbers) written for this page. Every number in it can be inspected, and you can retrain it in your browser. Because it learns from only ~48 pairs, it is weak, and that is instructive.</p></div>
+      <div class="callout tip" style="margin:0"><span class="pill real">REAL, pretrained</span><p class="small" style="margin:.4em 0 0"><b>NLLB-200</b> (Meta AI, 615 million parameters, trained on huge multilingual data), run on the same sentences. It shows what the same pipeline achieves at scale, and its real attention head is used to verify the attention maths.</p></div></div></div>
+  <h3>The pipeline</h3><div class="flow" id="flow"></div>
+  <div class="callout warn"><b>Honesty note</b>Our corpus has 70 sentences; real systems use millions (for Indian languages, public collections such as Samanantar contain tens of millions of pairs). The toy model’s modest scores are the expected result of a tiny dataset, not a bug; the pretrained model shows the real-scale picture. Scores on a test set of 11 sentences are very noisy.</div>
+</section>
+
+<!-- ============ 1 COLLECT ============ -->
+<section id="s1">
+  <p class="eyebrow">Step 1 of 8</p><h2>Collect aligned sentence pairs</h2>
+  <div class="plain">A translation model learns from examples: a sentence in the source language next to its translation. A collection of such pairs is a <b>parallel corpus</b>. “Aligned” means each source sentence is matched with its translation, one to one. The model can only learn what its pairs show, so quality, size and variety of the pairs set the ceiling.</div>
+  <div class="analogy">A student learning Kannada from a bilingual phrasebook: each line has the English on the left and the Kannada on the right. If a line is mismatched (the English says “bus stand”, the Kannada says “coffee”), the student learns wrong things and does not know it.</div>
+  <div class="maths"><b>Where pairs come from.</b> Translators’ work (government and news sites published in both languages, subtitles, books), then <b>sentence alignment</b>: matching sentences across the two documents. Classic length-based alignment (Gale and Church) assumes the length of a translation is roughly proportional to the source with noise; modern tools compare multilingual sentence embeddings instead. Then <b>cleaning</b>:
+    <div class="formula"><i>r</i> = (words in Kannada side) / (words in English side) &nbsp;&nbsp; keep a pair only if <i>r</i><sub>min</sub> ≤ <i>r</i> ≤ <i>r</i><sub>max</sub></div>
+    plus removing exact duplicates, pairs in the wrong script, and pairs a trained model finds improbable: the average per-token negative log-likelihood of the Kannada given the English, −(1/<i>T</i>) Σ ln <i>p</i>(<i>y<sub>t</sub></i> | <i>y</i><sub>&lt;<i>t</i></sub>, <i>x</i>), is high when the two sides do not match (“dual cross-entropy” style filtering).</div>
+  <h3>Our corpus</h3>
+  <div class="row"><label class="small" for="tagSel">Show pattern:</label><select id="tagSel"></select><span class="small muted" id="corpusInfo"></span></div>
+  <div class="scroll" style="margin-top:6px"><table class="t" id="corpusTable"></table></div>
+  <h3>Try it: clean a messy crawl</h3>
+  <p>Real crawled data is dirty. Below, our 70 pairs have been mixed with <b>5 bad rows</b> (a duplicate and four others). Switch the filters on and see which bad rows each one catches, and what slips through.</p>
+  <div class="grid g2"><div class="card"><div class="row"><label><input type="checkbox" id="fDup" checked> remove exact duplicates</label></div><div class="row"><label><input type="checkbox" id="fScript" checked> Kannada side must be Kannada script</label></div>
+      <div class="row"><label><input type="checkbox" id="fRatio" checked> length ratio r within</label><b id="rLim">0.4 to 2.5</b></div><input type="range" id="rMax" min="1.2" max="6" step="0.1" value="2.5">
+      <div class="row"><label><input type="checkbox" id="fNll"> model-based filter: mean NLL ≤</label><b id="nllLim">2.0</b></div><input type="range" id="nMax" min="0.5" max="6" step="0.1" value="2"><p class="small muted">The NLL filter uses the real NLLB model’s per-token negative log-likelihood for each pair (exported in advance).</p></div>
+    <div class="card"><div id="cleanStats"></div></div></div>
+  <div class="scroll tall"><table class="t" id="cleanTable"></table></div>
+  <div class="callout"><b>What you should notice</b>Duplicates, wrong script and extreme lengths are easy to catch. The two <em>misaligned pairs with a normal length</em> pass every rule-based filter; only the model-based score separates them (their average NLL is about 5 to 8 times that of the clean pairs). That is why large projects score pairs with a trained model or multilingual embeddings, and why a small hand-checked corpus like ours is valuable.</div>
+</section>
+
+<!-- ============ 2 TOKENIZE ============ -->
+<section id="s2">
+  <p class="eyebrow">Step 2 of 8</p><h2>Tokenize: turn sentences into numbers</h2>
+  <div class="plain">A network needs numbers, so each sentence is cut into <b>tokens</b> and each token is replaced by an integer ID from a fixed <b>vocabulary</b>. Special tokens mark the start (<code>&lt;s&gt;</code>), the end (<code>&lt;/s&gt;</code>), padding and unknown words (<code>&lt;unk&gt;</code>). The vocabulary is built <b>from the training data only</b>.</div>
+  <div class="analogy">Giving every word in the phrasebook a page number. A word you have never seen has no page: it becomes <i>“unknown”</i>. Kannada attaches endings to words (ಮೈಸೂರು “Mysuru”, ಮೈಸೂರಿಗೆ “to Mysuru”), so a word-level phrasebook needs a separate page for every ending. Cutting words into frequent pieces (<b>subwords</b>) avoids this.</div>
+  <h3>Try it: tokenize a pair</h3>
+  <div class="row"><label class="small" for="tokPair">Pair:</label><select id="tokPair"></select></div>
+  <div id="tokOut"></div>
+  <div class="grid g3" id="vocabStats" style="margin-top:8px"></div>
+  <h3>Subwords: byte-pair encoding (BPE), live</h3>
+  <div class="maths">BPE starts with single characters and repeatedly <b>merges the most frequent adjacent pair</b> into a new symbol:
+    <div class="formula">(<i>a</i>, <i>b</i>) = argmax<sub>(<i>a</i>,<i>b</i>)</sub> count(<i>a</i> followed by <i>b</i>) &nbsp;&nbsp; vocabulary size = (number of distinct characters) + (number of merges)</div>
+    Frequent words become single tokens; rare words are spelled with a few pieces; nothing is ever unknown. The model NLLB uses a similar method (SentencePiece) with a vocabulary of about 256,000 pieces.</div>
+  <div class="card"><div class="row"><label class="f" for="bpeN" style="margin:0">Merges learned: <b id="bpeNv">0</b></label><input type="range" id="bpeN" min="0" max="60" value="40" style="max-width:260px"><label class="small">Segment word:</label><select id="bpeWord"></select></div>
+    <div id="bpeOut" style="margin-top:8px"></div></div>
+  <p class="small muted">BPE here is learned on the Kannada words of the training pairs. Our translation model itself uses whole-word tokens so every step stays readable; real systems use subwords.</p>
+</section>
+
+<!-- ============ 3 SPLIT ============ -->
+<section id="s3">
+  <p class="eyebrow">Step 3 of 8</p><h2>Split: train, validation and test</h2>
+  <div class="plain">The pairs are divided into three groups that never overlap. The model <b>learns</b> from the <b>training</b> set. The <b>validation</b> set is used while building the system, to tune settings and decide when to stop. The <b>test</b> set is touched once at the end for an honest score, because a model naturally does well on sentences it has memorised.</div>
+  <div class="analogy">A language class: practice sheets (training), a mock exam to decide how long to keep revising (validation), and the real exam with questions the student has never seen (test). Letting exam questions leak into the practice sheets would make the marks meaningless.</div>
+  <div class="maths">Random split with a fixed seed (so results can be reproduced): for <i>N</i> pairs, test ≈ 15%, validation ≈ 15%, training = the rest.
+    <div class="formula"><i>N</i><sub>train</sub> = <i>N</i> − <i>N</i><sub>val</sub> − <i>N</i><sub>test</sub> &nbsp;&nbsp; no pair appears in two sets: |train ∩ val| = |train ∩ test| = |val ∩ test| = 0</div>
+    With only 70 pairs a different seed changes which sentences are tested, so scores jump around: a small test set gives a noisy estimate (the standard error of an accuracy-like score is about √(<i>p</i>(1−<i>p</i>)/<i>n</i>); for <i>n</i> = 11 that is up to ±15 points).</div>
+  <div class="card"><div class="row"><label class="f" for="seedS" style="margin:0">Split seed: <b id="seedV">7</b></label><input type="range" id="seedS" min="1" max="30" value="7" style="max-width:260px"><label><input type="checkbox" id="covChk" checked> every word in validation/test must also occur in training</label></div>
+    <div id="modelBanner"></div></div>
+  <div class="grid g3" id="splitStats"></div>
+  <div class="grid g3" id="splitLists"></div>
+  <div class="callout"><b>Why the “coverage” option?</b>With a corpus this small, a randomly chosen test sentence often contains a word that never occurs in training. Then the model cannot possibly produce it (it only knows words from the training vocabulary), and the test measures vocabulary luck instead of translation skill. Real systems avoid this with subwords and far more data; here we keep the test fair by requiring that every word has been seen. Untick it to see the unknown-word rate jump.</div>
+</section>
+
+<!-- ============ 4 MODEL ============ -->
+<section id="s4">
+  <p class="eyebrow">Step 4 of 8</p><h2>The encoder-decoder model</h2>
+  <div class="plain">Two networks work together. The <b>encoder</b> reads the English tokens one by one and produces a vector for every position that summarises the sentence read so far. The <b>decoder</b> then writes the Kannada one token at a time, each time looking at the encoder’s vectors (attention, next step) and at what it has already written. At the end of each decoder step a <b>softmax</b> gives a probability for every Kannada token.</div>
+  <svg viewBox="0 0 720 250" style="width:100%;max-width:800px" role="img" aria-label="Encoder-decoder diagram">
+    <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="var(--ink)"/></marker></defs>
+    <g><rect class="box" x="20" y="150" width="80" height="34" rx="8"/><rect class="box" x="120" y="150" width="80" height="34" rx="8"/><rect class="box" x="220" y="150" width="80" height="34" rx="8"/><rect class="box" x="320" y="150" width="80" height="34" rx="8"/></g>
+    <g text-anchor="middle"><text x="60" y="171">GRU</text><text x="160" y="171">GRU</text><text x="260" y="171">GRU</text><text x="360" y="171">GRU</text>
+      <text x="60" y="225">Where</text><text x="160" y="225">is</text><text x="260" y="225">the bus stand</text><text x="360" y="225">?  &lt;/s&gt;</text>
+      <text x="60" y="140" class="m">h₁</text><text x="160" y="140" class="m">h₂</text><text x="260" y="140" class="m">h₃</text><text x="360" y="140" class="m">h_S</text><text x="200" y="244" class="m">ENCODER: source tokens, embeddings, GRU states h₁ … h_S</text></g>
+    <g class="ln" marker-end="url(#a1)"><path d="M100 167h18"/><path d="M200 167h18"/><path d="M300 167h18"/><path d="M60 205v-19"/><path d="M160 205v-19"/><path d="M260 205v-19"/><path d="M360 205v-19"/></g>
+    <g><rect class="box" x="440" y="150" width="80" height="34" rx="8"/><rect class="box" x="540" y="150" width="80" height="34" rx="8"/><rect class="box" x="640" y="150" width="70" height="34" rx="8"/></g>
+    <g text-anchor="middle"><text x="480" y="171">GRU</text><text x="580" y="171">GRU</text><text x="675" y="171">GRU</text><text x="480" y="225">&lt;s&gt;</text><text x="580" y="225" class="kn">ಬಸ್ ನಿಲ್ದಾಣ</text><text x="675" y="225" class="kn">ಎಲ್ಲಿದೆ</text><text x="580" y="244" class="m">DECODER: previous Kannada tokens in</text>
+      <text x="480" y="30" class="kn">ಬಸ್ ನಿಲ್ದಾಣ</text><text x="580" y="30" class="kn">ಎಲ್ಲಿದೆ</text><text x="675" y="30">&lt;/s&gt;</text></g>
+    <g class="ln" marker-end="url(#a1)"><path d="M400 167h38" stroke-dasharray="4 3"/><path d="M520 167h18"/><path d="M620 167h18"/><path d="M480 205v-19"/><path d="M580 205v-19"/><path d="M675 205v-19"/>
+      <path d="M480 150v-30"/><path d="M580 150v-30"/><path d="M675 150v-30"/><path d="M480 80v-38"/><path d="M580 80v-38"/><path d="M675 80v-38"/></g>
+    <g><rect class="box" x="440" y="80" width="270" height="38" rx="8" style="fill:var(--info-bg)"/></g><text x="575" y="103" text-anchor="middle">attention over h₁…h_S → context → softmax</text>
+    <path class="ln" d="M200 150V99H438" stroke-dasharray="3 3" marker-end="url(#a1)"/><text x="215" y="92" class="m">all h_i are visible to the decoder</text>
+  </svg>
+  <div class="maths"><b>Equations.</b> <i>E<sub>s</sub></i>, <i>E<sub>t</sub></i> are embedding tables (one row of <i>d</i> numbers per token). GRU is the gated recurrent unit from the RNN/LSTM/GRU guide.
+    <div class="formula"><i>h<sub>i</sub></i> = GRU( <i>E<sub>s</sub></i>[<i>x<sub>i</sub></i>], <i>h</i><sub><i>i</i>−1</sub> ) &nbsp;&nbsp; <i>h</i><sub>0</sub> = 0, &nbsp; <i>i</i> = 1 … <i>S</i> &nbsp;&nbsp; <i>(encoder)</i><br><i>s</i><sub>0</sub> = <i>h<sub>S</sub></i>, &nbsp; <i>s<sub>t</sub></i> = GRU( <i>E<sub>t</sub></i>[<i>y</i><sub><i>t</i>−1</sub>], <i>s</i><sub><i>t</i>−1</sub> ) &nbsp;&nbsp; <i>(decoder; <i>y</i><sub>0</sub> = &lt;s&gt;)</i><br><i>a<sub>t</sub></i> = tanh( <i>W<sub>c</sub></i> [ <i>c<sub>t</sub></i> ; <i>s<sub>t</sub></i> ] + <i>b<sub>c</sub></i> ), &nbsp; <i>p<sub>t</sub></i> = softmax( <i>W<sub>o</sub></i> <i>a<sub>t</sub></i> + <i>b<sub>o</sub></i> ) &nbsp;&nbsp; <i>(c<sub>t</sub> comes from attention, step 5)</i></div></div>
+  <h3>The two models in numbers</h3>
+  <div class="grid g2"><div class="card"><span class="pill toy">TOY (this page)</span><div id="toySizes" style="margin-top:6px"></div></div><div class="card"><span class="pill real">REAL (NLLB-200 distilled)</span><div id="realSizes" style="margin-top:6px"></div></div></div>
+  <h3>Try it: watch the encoder read a sentence</h3>
+  <div class="row"><label class="small" for="encPair">Sentence:</label><select id="encPair"></select></div>
+  <div id="encOut"></div>
+  <div class="callout"><b>The same idea at scale</b>NLLB replaces the GRU chains with Transformer layers (self-attention instead of recurrence) but keeps this exact plan: an encoder that reads the source, a decoder that writes the target while attending to the encoder, and a softmax over the vocabulary.</div>
+</section>
+
+<!-- ============ 5 ATTENTION ============ -->
+<section id="s5">
+  <p class="eyebrow">Step 5 of 8</p><h2>Calculate the attention weights</h2>
+  <div class="plain">When the decoder is about to write a word, it should look mostly at the source words that matter for <em>that</em> word. Attention does this in three small calculations: score every source position against the decoder’s current state, turn the scores into weights that sum to 1, and take the weighted average of the encoder vectors. That average is the <b>context</b> the decoder uses.</div>
+  <div class="analogy">A translator with the English sentence on the desk. Before writing “ಬಸ್ ನಿಲ್ದಾಣ” she glances mostly at “bus stand”; before writing “ಎಲ್ಲಿದೆ” she glances at “Where”. The glance is a set of weights across the English words.</div>
+  <div class="maths"><div class="formula"><i>e</i><sub><i>t</i>,<i>i</i></sub> = ( <i>s<sub>t</sub></i> · <i>h<sub>i</sub></i> ) / √<i>H</i> &nbsp;&nbsp;&nbsp; <i>(score: how well position i matches the decoder state)</i><br><i>α</i><sub><i>t</i>,<i>i</i></sub> = exp( <i>e</i><sub><i>t</i>,<i>i</i></sub> ) / Σ<sub><i>j</i></sub> exp( <i>e</i><sub><i>t</i>,<i>j</i></sub> ) &nbsp;&nbsp; <i>(weights, sum to 1)</i><br><i>c<sub>t</sub></i> = Σ<sub><i>i</i></sub> <i>α</i><sub><i>t</i>,<i>i</i></sub> <i>h<sub>i</sub></i> &nbsp;&nbsp; <i>(context vector)</i></div>
+    The dot product is large when two vectors point the same way; dividing by √<i>H</i> keeps scores from growing with the vector length. Transformers use exactly this “scaled dot-product” with learned projections: <i>Q</i> = <i>s<sub>t</sub></i>·<i>W<sub>Q</sub></i>, <i>K</i> = <i>h<sub>i</sub></i>·<i>W<sub>K</sub></i>, <i>V</i> = <i>h<sub>i</sub></i>·<i>W<sub>V</sub></i>, and weights = softmax(<i>Q K</i><sup>T</sup> / √<i>d<sub>k</sub></i>).</div>
+  <h3>Our toy model, number by number <span class="pill toy">TOY</span></h3>
+  <div class="row"><label class="small" for="attPair">Sentence:</label><select id="attPair"></select><span class="small muted">(teacher-forced on the reference, so each step is one the model is asked about)</span></div>
+  <div class="row" id="attSteps" style="margin-top:6px"></div>
+  <div id="attOut" style="margin-top:8px"></div>
+  <h4>Attention for the whole sentence</h4><div class="scroll tall" style="padding:6px"><div id="attHeat"></div></div>
+  <h3>The real model’s attention, recomputed from its own vectors <span class="pill real">REAL</span></h3>
+  <p>NLLB’s decoder layer 6, head 1 produced these query (<i>Q</i>) and key (<i>K</i>) vectors for the reference translation (exported from the model). We recompute scores and softmax ourselves and compare with the weights the model itself reports.</p>
+  <div class="row"><label class="small" for="realPair">Sentence:</label><select id="realPair"></select><span id="realSteps" class="row"></span></div>
+  <div id="realOut" style="margin-top:8px"></div>
+</section>
+
+<!-- ============ 6 TRAIN ============ -->
+<section id="s6">
+  <p class="eyebrow">Step 6 of 8</p><h2>Train with teacher forcing</h2>
+  <div class="plain">To learn, the model is shown a source sentence and the correct translation. The decoder is fed the <b>correct previous words</b> (shifted by one, with a start token in front) and at every position must predict the <b>next correct word</b>. Giving the right answer as the hint is <b>teacher forcing</b>. The loss measures how much probability the model gave to the right word; gradients flow back through the softmax, attention, decoder and encoder, and the optimiser nudges all weights.</div>
+  <div class="maths"><div class="formula"><i>L</i> = −(1/<i>T</i>) Σ<sub><i>t</i>=1..<i>T</i></sub> ln <i>p<sub>t</sub></i>( <i>y<sub>t</sub></i> ) &nbsp;&nbsp; decoder input: ( &lt;s&gt;, <i>y</i><sub>1</sub>, …, <i>y</i><sub><i>T</i>−1</sub> ) &nbsp;&nbsp; targets: ( <i>y</i><sub>1</sub>, …, <i>y<sub>T</sub></i> = &lt;/s&gt; )</div>
+    <b>Why teacher forcing:</b> all positions are computed in one pass, and a wrong guess at position 3 does not corrupt position 4 during learning. The price is <b>exposure bias</b>: at test time the model must feed on its <em>own</em> earlier outputs, which it never practised. Backpropagation here uses the chain rule exactly as in the earlier guides; one extra piece is the gradient of the attention softmax: with <i>dα<sub>i</sub></i> = <i>dc</i> · <i>h<sub>i</sub></i>, &nbsp; <i>de<sub>i</sub></i> = <i>α<sub>i</sub></i> ( <i>dα<sub>i</sub></i> − Σ<sub><i>j</i></sub> <i>α<sub>j</sub></i> <i>dα<sub>j</sub></i> ). The page’s gradients were checked against numerical derivatives (relative error below 10<sup>−4</sup>).
+    <div class="formula"><i>w</i> ← <i>w</i> − η · Adam( ∂<i>L</i>/∂<i>w</i> ), &nbsp; gradient norm clipped to 1, &nbsp; mini-batches of 4 pairs</div></div>
+  <h3>One training pair, position by position <span class="pill toy">TOY</span></h3>
+  <div class="row"><label class="small" for="trPair">Training pair:</label><select id="trPair"></select></div>
+  <div id="trOut"></div>
+  <h3>The same pair under the real model <span class="pill real">REAL</span></h3>
+  <div id="trReal"></div>
+  <h3>Train the toy yourself</h3>
+  <div class="grid g2"><div class="card"><label class="f" for="epN">Epochs: <b id="epV">40</b></label><input type="range" id="epN" min="5" max="80" step="5" value="40"><div class="row" style="margin-top:8px"><button class="btn primary" id="trGo" type="button">Train from scratch</button><button class="btn" id="trShip" type="button">Load the pre-trained toy</button></div><p class="small muted" id="trInfo"></p></div>
+    <div class="card"><div class="stat"><b id="bestEp">–</b><span id="bestCap">best epoch (chosen by validation chrF)</span></div></div></div>
+  <div class="grid g2"><div class="card"><h4 style="margin-top:0">Loss per epoch</h4><svg id="chLoss" viewBox="0 0 400 200" width="100%" role="img" aria-label="Loss per epoch"></svg></div><div class="card"><h4 style="margin-top:0">Validation quality per epoch (chrF, 0 to 100)</h4><svg id="chQ" viewBox="0 0 400 200" width="100%" role="img" aria-label="Validation chrF per epoch"></svg></div></div>
+  <div class="callout"><b>What the curves show</b>Training loss keeps falling towards 0: the model is memorising its ~48 pairs. Validation loss stops improving after a few epochs and then creeps up: the sign of <b>overfitting</b>. Validation quality (chrF) stays roughly flat and noisy because the validation set has only 11 sentences. Standard practice is to keep the checkpoint with the best validation score (<b>early stopping</b>), which is what the page does, and to prefer more data over more epochs.</div>
+</section>
+
+<!-- ============ 7 DECODE ============ -->
+<section id="s7">
+  <p class="eyebrow">Step 7 of 8</p><h2>Decode: produce a translation</h2>
+  <div class="plain">At test time there is no correct answer to feed in. The decoder starts with <code>&lt;s&gt;</code>, predicts the next word, <b>feeds its own prediction back in</b>, and repeats until it predicts <code>&lt;/s&gt;</code>. <b>Greedy decoding</b> always takes the single most probable word. <b>Beam search</b> keeps the <i>k</i> best partial translations at every step, so one tempting but poor early choice can be recovered.</div>
+  <div class="maths"><div class="formula">score( <i>y</i><sub>1..<i>T</i></sub> ) = Σ<sub><i>t</i></sub> ln <i>p</i>( <i>y<sub>t</sub></i> | <i>y</i><sub>&lt;<i>t</i></sub>, <i>x</i> ) &nbsp;&nbsp; ranking score = score / <i>T</i><sup><i>α</i></sup> &nbsp;&nbsp; (length normalisation, <i>α</i> = 0 means none)</div>
+    Each log-probability is negative, so every extra word lowers the score; without normalisation beam search prefers short outputs. Beam width 1 is greedy decoding.</div>
+  <div class="row"><label class="small" for="dcPair">Sentence:</label><select id="dcPair"></select></div>
+  <h4>Greedy decoding, step by step <span class="pill toy">TOY</span></h4><div id="greedyOut"></div>
+  <h4>Beam search <span class="pill toy">TOY</span></h4>
+  <div class="row"><label class="f" for="bw" style="margin:0">Beam width: <b id="bwV">4</b></label><input type="range" id="bw" min="1" max="8" value="4" style="max-width:200px"><label class="f" for="ba" style="margin:0">Length penalty α: <b id="baV">0.7</b></label><input type="range" id="ba" min="0" max="1.5" step="0.1" value="0.7" style="max-width:200px"></div>
+  <div class="scroll" style="margin-top:6px"><table class="t" id="beamTable"></table></div>
+  <h4>What the real model writes <span class="pill real">REAL</span></h4><div id="realDec"></div>
+</section>
+
+<!-- ============ 8 EVALUATE ============ -->
+<section id="s8">
+  <p class="eyebrow">Step 8 of 8</p><h2>Evaluate: BLEU and human examples</h2>
+  <div class="plain"><b>BLEU</b> scores a translation by how many of its word sequences (n-grams) also appear in the human reference, with a penalty for being too short. It is fast and repeatable but blind to meaning: a correct translation worded differently scores low. So BLEU is always read together with other measures (here <b>chrF</b>, which compares character sequences and suits Kannada’s long, ending-rich words) and with <b>human judgement</b> of real examples.</div>
+  <div class="maths">For candidate and reference tokens, with <i>n</i> = 1…4:
+    <div class="formula"><i>p<sub>n</sub></i> = Σ min( count<sub>cand</sub>(g), count<sub>ref</sub>(g) ) / Σ count<sub>cand</sub>(g) &nbsp;&nbsp; <i>(clipped n-gram precision)</i><br>BP = 1 if <i>c</i> ≥ <i>r</i>, otherwise e<sup>1 − <i>r</i>/<i>c</i></sup> &nbsp;&nbsp; <i>(brevity penalty; c, r = candidate and reference length)</i><br>BLEU = 100 · BP · exp( ¼ Σ<sub><i>n</i>=1..4</sub> ln <i>p<sub>n</sub></i> )</div>
+    “Clipped” means a candidate word cannot be credited more times than it occurs in the reference. A single missing 4-gram makes <i>p</i><sub>4</sub> = 0 and BLEU 0, so on short sentences we add 1 to the counts for <i>n</i> &gt; 1 (a standard smoothing). <b>chrF</b> = (1+β²) P R / (β² P + R) with β = 2, averaged over character n-grams of length 1–6.</div>
+  <h3>Worked example: one test sentence</h3>
+  <div class="row"><label class="small" for="evPair">Test sentence:</label><select id="evPair"></select></div>
+  <div id="bleuWork"></div>
+  <h3>Scores on the whole test set</h3>
+  <div id="scoreTable"></div>
+  <div id="scoreNote"></div>
+  <h3>Human evaluation: read the examples</h3>
+  <p>Numbers hide what went wrong. For each test sentence compare the reference, the toy model and NLLB, then give an <b>adequacy</b> score (is the meaning right? 1 to 5) and a <b>fluency</b> score (does it read naturally? 1 to 5). Your scores are averaged below and saved in this browser. If you read Kannada, your judgement is the point of this step; if not, use the automatic word-difference marks.</p>
+  <div class="scroll tall"><table class="t" id="humanTable"></table></div>
+  <div class="grid g2" id="humanSummary" style="margin-top:8px"></div>
+  <div class="callout"><b>How professionals do it</b>Several translators rate each output on adequacy and fluency (direct assessment) or mark errors by type and severity (the MQM scheme). Agreement between raters is reported with Cohen’s κ = (<i>p<sub>o</sub></i> − <i>p<sub>e</sub></i>) / (1 − <i>p<sub>e</sub></i>), where <i>p<sub>o</sub></i> is the observed agreement and <i>p<sub>e</sub></i> the agreement expected by chance. BLEU differences below roughly 1 point are rarely meaningful, and results on 11 sentences are anecdotes: real evaluations use thousands of sentences, several references, and significance tests such as bootstrap resampling.</div>
+</section>
+
+<!-- ============ 9 WRAP ============ -->
+<section id="s9">
+  <p class="eyebrow">Wrap-up</p><h2>The whole pipeline in one table</h2>
+  <div class="scroll tall"><table class="t"><thead><tr><th>Step</th><th>What happens</th><th>Key maths</th><th>In our example</th></tr></thead><tbody>
+    <tr><td>1 Collect pairs</td><td>Gather and clean aligned sentences</td><td>length ratio r; dedupe; mean NLL</td><td id="w1"></td></tr>
+    <tr><td>2 Tokenize</td><td>Text → tokens → IDs</td><td>vocabulary from train; BPE merge = argmax pair count</td><td id="w2"></td></tr>
+    <tr><td>3 Split</td><td>Train / validation / test, no overlap</td><td>N = N<sub>tr</sub> + N<sub>val</sub> + N<sub>test</sub>; standard error ~ √(p(1−p)/n)</td><td id="w3"></td></tr>
+    <tr><td>4 Model</td><td>Encoder reads, decoder writes</td><td>h<sub>i</sub> = GRU(E[x<sub>i</sub>], h<sub>i−1</sub>); softmax(W a + b)</td><td id="w4"></td></tr>
+    <tr><td>5 Attention</td><td>Weights over source positions</td><td>e = s·h/√H; α = softmax(e); c = Σ α h</td><td>verified against NLLB’s own head</td></tr>
+    <tr><td>6 Train</td><td>Teacher forcing, backprop, Adam</td><td>L = −mean ln p(y<sub>t</sub>); w ← w − η g</td><td id="w6"></td></tr>
+    <tr><td>7 Decode</td><td>Greedy or beam search</td><td>Σ ln p / T<sup>α</sup></td><td>beam width 1–8 live</td></tr>
+    <tr><td>8 Evaluate</td><td>BLEU, chrF, human reading</td><td>BP · exp(¼ Σ ln p<sub>n</sub>)</td><td id="w8"></td></tr></tbody></table></div>
+  <h3>Check yourself</h3>
+  <div class="card"><div class="row" style="justify-content:space-between"><b id="qProg"></b><span class="muted small" id="qBest"></span></div><div id="qBody"></div></div>
+  <h3>Glossary</h3><div class="grid g2" id="gloss"></div>
+  <p class="small muted" style="margin-top:20px">Pretrained model: NLLB-200 distilled 600M (Meta AI, CC-BY-NC licence; used here for research and education). The phrasebook pairs were written for this page; the Kannada references are the author’s and should be checked by a fluent speaker before any real-world use.</p>
+</section>
+</main>
+
+<script>
+"use strict";
+/*__ENGINE__*/
+const NL = /*__NLLB__*/;
+const TOY = /*__TOY__*/;
+
+const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+const store = { get(k, d) { try { const v = localStorage.getItem("nmt:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("nmt:" + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } } };
+const f2 = (v, d = 2) => v.toFixed(d), pc = (p, d = 1) => (p * 100).toFixed(d) + "%", esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const bar = (label, frac, val, cls = "") => `<div class="bar"><span class="lbl">${label}</span><span class="track"><span class="fill ${cls}" style="left:0;width:${Math.max(0, Math.min(1, frac)) * 100}%"></span></span><b>${val}</b></div>`;
+const tokH = (t, c = "") => `<span class="tok ${/^<.*>$/.test(t) || /^[a-z]{3}_[A-Z][a-z]{3}$/.test(t) ? "sp" : ""} ${c}">${esc(t.replace(/^▁/, "") || "▁")}</span>`;
+const heatC = (v, mx) => { const t = Math.min(1, Math.abs(v) / (mx || 1)); return `rgba(98,80,214,${(t * .85).toFixed(3)})`; };
+const DEF = { seed: 7, cov: true };
+let seed = store.get("seed", 7), cov = store.get("cov", true);
+let prep, model = null, modelKey = null, tr = null, hist = TOY.hist, bestEp = TOY.bestEpoch;
+const SHIP_KEY = DEF.seed + "|" + DEF.cov;
+const keyNow = () => seed + "|" + cov;
+function loadShipped() {
+  const split = makeSplit(CORPUS, DEF.seed, DEF.cov), p = prepare(CORPUS, split), m = initModel(p.Vs.words.length, p.Vt.words.length, TOY.cfg.d, TOY.cfg.H, 1);
+  TOY.arrays.forEach(([k, arr], i) => { paramArrays(m)[i][1].set(arr); });
+  return { m, p };
+}
+function setSplit() {
+  const split = makeSplit(CORPUS, seed, cov); prep = prepare(CORPUS, split); prep.split = split;
+  if (keyNow() === SHIP_KEY) { const s = loadShipped(); model = s.m; modelKey = SHIP_KEY; hist = TOY.hist; bestEp = TOY.bestEpoch; }
+  else if (modelKey !== keyNow()) { model = null; }
+}
+const idxOf = p => CORPUS.indexOf(p);
+const decStr = ids => ids.map(i => prep.Vt.words[i]).join(" ").replace(/ ([?.])/g, "$1");
+const toyOut = (p, bw) => { const e = prep.enc(p); if (!model) return null; if (bw > 1) { const b = beam(model, e.src, 1, 2, 24, bw, 0.7)[0]; return b ? decStr(b.ids) : ""; } return decStr(greedy(model, e.src, 1, 2, 24).ids); };
+const tk = s => tok(s, false);
+function sentenceSelect(id, groups) { $("#" + id).innerHTML = groups.map(([label, list]) => `<optgroup label="${label}">${list.map(p => `<option value="${idxOf(p)}">${esc(p.en)}</option>`).join("")}</optgroup>`).join(""); }
+const NEEDMODEL = `<div class="banner">The toy model has not been trained for this split. Go to <a href="#s6">step 6</a> and press “Train from scratch” (about 10 seconds), or set the split seed back to 7 in step 3.</div>`;
+
+/* ================= step 1 ================= */
+const NLLB_ROW = i => NL.pairs[i];
+const meanNll = a => a.reduce((s, v) => s + v, 0) / a.length;
+const isKn = s => /[ಀ-೿]/.test(s);
+function initCollect() {
+  $("#nPairs").textContent = CORPUS.length;
+  const tags = [...new Set(CORPUS.map(p => p.tag))];
+  $("#tagSel").innerHTML = `<option value="">all ${CORPUS.length} pairs</option>` + tags.map(t => `<option>${t}</option>`).join("");
+  const showCorpus = () => {
+    const t = $("#tagSel").value, rows = CORPUS.filter(p => !t || p.tag === t);
+    $("#corpusInfo").textContent = `${rows.length} pair${rows.length === 1 ? "" : "s"} shown`;
+    $("#corpusTable").innerHTML = `<thead><tr><th>#</th><th>English (source)</th><th>Kannada (reference)</th><th>pattern</th></tr></thead><tbody>${rows.map(p => `<tr><td class="n">${idxOf(p) + 1}</td><td>${esc(p.en)}</td><td class="kn">${esc(p.kn)}</td><td class="muted">${p.tag}</td></tr>`).join("")}</tbody>`;
+  };
+  $("#tagSel").addEventListener("change", showCorpus); showCorpus();
+  const raw = CORPUS.map((p, i) => ({ en: p.en, kn: p.kn, nll: meanNll(NL.pairs[i].tf_nll), note: "" }));
+  raw.splice(9, 0, { en: CORPUS[0].en, kn: CORPUS[0].kn, nll: meanNll(NL.pairs[0].tf_nll), note: "duplicate" });
+  NL.dirty.forEach((d, k) => raw.splice(20 + k * 13, 0, { en: d.en, kn: d.kn, nll: meanNll(d.tf_nll), note: d.why }));
+  const clean = () => {
+    const rmax = +$("#rMax").value, nmax = +$("#nMax").value; $("#rLim").textContent = `${(1 / rmax).toFixed(2)} to ${rmax.toFixed(1)}`; $("#nllLim").textContent = nmax.toFixed(1);
+    const seen = new Set(), rows = raw.map(r => {
+      const wc = s => s.trim().split(/\s+/).filter(Boolean).length, ratio = wc(r.kn) / Math.max(1, wc(r.en)), key = r.en + "|" + r.kn, why = [];
+      if ($("#fDup").checked) { if (seen.has(key)) why.push("duplicate"); seen.add(key); }
+      if ($("#fScript").checked && !isKn(r.kn)) why.push("not Kannada script");
+      if ($("#fRatio").checked && (ratio > rmax || ratio < 1 / rmax)) why.push(`length ratio ${ratio.toFixed(1)}`);
+      if ($("#fNll").checked && r.nll > nmax) why.push(`NLL ${r.nll.toFixed(1)} > ${nmax.toFixed(1)}`);
+      return { ...r, ratio, why };
+    });
+    const bad = rows.filter(r => r.note), caught = bad.filter(r => r.why.length), goodDropped = rows.filter(r => !r.note && r.why.length);
+    $("#cleanStats").innerHTML = `<div class="grid g2"><div class="stat"><b>${rows.length}</b><span>rows in the raw crawl</span></div><div class="stat"><b>${rows.length - rows.filter(r => r.why.length).length}</b><span>rows kept</span></div><div class="stat"><b style="color:var(--good)">${caught.length} of ${bad.length}</b><span>bad rows caught</span></div><div class="stat"><b style="color:var(--bad)">${goodDropped.length}</b><span>good rows wrongly dropped</span></div></div>`;
+    $("#cleanTable").innerHTML = `<thead><tr><th>English</th><th>Kannada</th><th class="n">ratio r</th><th class="n">mean NLL</th><th>verdict</th></tr></thead><tbody>${rows.filter(r => r.note || r.why.length).map(r => `<tr class="${r.why.length ? "drop" : ""}"><td>${esc(r.en)}</td><td class="kn">${esc(r.kn.length > 60 ? r.kn.slice(0, 58) + "…" : r.kn)}</td><td class="n">${r.ratio.toFixed(1)}</td><td class="n">${r.nll.toFixed(2)}</td><td>${r.note ? `<b>bad row (${r.note})</b>: ` : "good row: "}${r.why.length ? "dropped: " + r.why.join(", ") : "<b>kept</b> (slipped through)"}</td></tr>`).join("")}</tbody>`;
+  };
+  ["fDup", "fScript", "fRatio", "fNll", "rMax", "nMax"].forEach(id => $("#" + id).addEventListener("input", clean)); clean();
+}
+
+/* ================= step 2 ================= */
+function renderTok() {
+  const i = +$("#tokPair").value, p = CORPUS[i], e = prep.enc(p), nl = NL.pairs[i];
+  const sw = tok(p.en, true), tw = tok(p.kn, false), unkS = e.src.slice(0, -1).filter(x => x === 3).length, unkT = e.tout.slice(0, -1).filter(x => x === 3).length;
+  const inTrain = prep.tr.includes(p);
+  $("#tokOut").innerHTML = `<div class="grid g2"><div class="card"><span class="pill toy">TOY: word tokens</span> <span class="small muted">(${inTrain ? "this pair is in the training set" : "this pair is held out: unknown words become ⟨unk⟩"})</span>
+    <h4>English → IDs</h4><div class="tokens">${[...sw, "</s>"].map((w, k) => `${tokH(w, e.src[k] === 3 ? "unk" : "")}`).join("")}</div><div class="small muted">IDs: ${e.src.join(", ")}</div>
+    <h4>Kannada → IDs</h4><div class="tokens kn">${[...tw, "</s>"].map((w, k) => `${tokH(w, e.tout[k] === 3 ? "unk" : "")}`).join("")}</div><div class="small muted">IDs: ${e.tout.join(", ")} &nbsp; (decoder input is shifted: &lt;s&gt; = 1, then ${e.tin.slice(1).join(", ")})</div>
+    <p class="small muted">${unkS + unkT ? `${unkS + unkT} unknown token${unkS + unkT > 1 ? "s" : ""} in this pair.` : "No unknown tokens."}</p></div>
+    <div class="card"><span class="pill real">REAL: NLLB SentencePiece</span><h4>English → ${nl.src_tok.length} pieces</h4><div class="tokens">${nl.src_tok.map(t => tokH(t)).join("")}</div><h4>Kannada → ${nl.ref_tok.length} pieces</h4><div class="tokens kn">${nl.ref_tok.map(t => tokH(t)).join("")}</div>
+    <p class="small muted">${tw.length} Kannada words became ${nl.ref_tok.length - 2} pieces (${((nl.ref_tok.length - 2) / tw.length).toFixed(1)} per word, excluding markers). A leading “▁” (hidden) marks a word start. Rare or long words are split; frequent ones stay whole.</p></div></div>`;
+  const oov = ps => { let n = 0, u = 0; ps.forEach(q => { const t = prep.enc(q); n += t.src.length - 1 + t.tout.length - 1; u += t.src.filter(x => x === 3).length + t.tout.filter(x => x === 3).length; }); return n ? u / n : 0; };
+  $("#vocabStats").innerHTML = `<div class="stat"><b>${prep.Vs.words.length} / ${prep.Vt.words.length}</b><span>English / Kannada vocabulary (4 specials + words seen in training)</span></div><div class="stat"><b>${pc(oov(prep.va))}</b><span>unknown-token rate in validation</span></div><div class="stat"><b>${pc(oov(prep.te))}</b><span>unknown-token rate in test</span></div>`;
+}
+function initTokenize() {
+  $("#tokPair").innerHTML = CORPUS.map((p, i) => `<option value="${i}">${esc(p.en)}</option>`).join(""); $("#tokPair").value = String(CORPUS.findIndex(p => p.en === "I will go to Mysuru tomorrow."));
+  $("#tokPair").addEventListener("change", renderTok); renderTok();
+  const bpeWords = () => { const m = new Map(); prep.tr.forEach(p => tk(p.kn).forEach(w => { if (/[ಀ-೿]/.test(w)) m.set(w, (m.get(w) || 0) + 1); })); return m; };
+  const fillWords = () => { const w = [...bpeWords().keys()]; const cur = $("#bpeWord").value; $("#bpeWord").innerHTML = w.map(x => `<option class="kn">${x}</option>`).join(""); const want = cur || (w.includes("ಮೈಸೂರಿಗೆ") ? "ಮೈಸೂರಿಗೆ" : w[0]); if (w.includes(want)) $("#bpeWord").value = want; };
+  fillWords();
+  const draw = () => {
+    const n = +$("#bpeN").value; $("#bpeNv").textContent = n; const wc = bpeWords(), L = bpeLearn(wc, 60), merges = L.merges.slice(0, n), word = $("#bpeWord").value || [...wc.keys()][0];
+    const seg = bpeApply(word, merges), chars = new Set([...wc.keys()].flatMap(w => [...w])), pcs = bpePairCounts(wc, merges).slice(0, 5);
+    let tot = 0, cnt = 0; wc.forEach((c, w) => { tot += bpeApply(w, merges).length * c; cnt += c; });
+    const nxt = L.merges[n];
+    $("#bpeOut").innerHTML = `<div class="grid g2"><div><h4 style="margin-top:0">“<span class="kn">${esc(word)}</span>” is cut into ${seg.length} piece${seg.length > 1 ? "s" : ""}</h4><div class="tokens kn">${seg.map(s => `<span class="tok">${esc(s)}</span>`).join("")}</div>
+      <div class="grid g2" style="margin-top:8px"><div class="stat"><b>${chars.size + n}</b><span>vocabulary size = ${chars.size} characters + ${n} merges</span></div><div class="stat"><b>${(tot / cnt).toFixed(2)}</b><span>average pieces per word (training text)</span></div></div></div>
+      <div><h4 style="margin-top:0">Most frequent adjacent pairs now</h4><div class="bars">${pcs.map(([k, c], i) => bar(`<span class="kn">${esc(k)}</span>`, c / pcs[0][1], c, i === 0 ? "pos" : "")).join("")}</div>
+      <p class="small muted">${nxt ? `Next merge (merge ${n + 1}): <b class="kn">${esc(nxt.a)}</b> + <b class="kn">${esc(nxt.b)}</b> → <b class="kn">${esc(nxt.a + nxt.b)}</b>, seen ${nxt.count} times.` : "No more merges."} With 0 merges every word is spelled out in characters; with many merges whole words become single tokens.</p></div></div>`;
+  };
+  $("#bpeN").addEventListener("input", draw); $("#bpeWord").addEventListener("change", draw); draw(); window.__bpeRefresh = () => { fillWords(); draw(); };
+}
+
+/* ================= step 3 ================= */
+function renderSplit() {
+  $("#seedV").textContent = seed; const sp = prep.split, n = CORPUS.length;
+  const oov = ps => { let k = 0, u = 0; ps.forEach(q => { const t = prep.enc(q); k += t.src.length - 1 + t.tout.length - 1; u += t.src.filter(x => x === 3).length + t.tout.filter(x => x === 3).length; }); return k ? u / k : 0; };
+  const overlap = (a, b) => a.filter(x => b.includes(x)).length;
+  $("#splitStats").innerHTML = `<div class="stat"><b>${sp.train.length}</b><span>training pairs (${pc(sp.train.length / n, 0)})</span></div><div class="stat"><b>${sp.val.length}</b><span>validation pairs, unknown-token rate ${pc(oov(prep.va))}</span></div><div class="stat"><b>${sp.test.length}</b><span>test pairs, unknown-token rate ${pc(oov(prep.te))}</span></div>`;
+  const list = (label, ps) => `<div class="card"><b>${label}</b><div class="small" style="max-height:220px;overflow:auto;margin-top:4px">${ps.map(p => esc(p.en)).join("<br>")}</div></div>`;
+  $("#splitLists").innerHTML = list("Training", prep.tr) + list("Validation", prep.va) + list("Test", prep.te) + `<div class="callout tip" style="grid-column:1/-1;margin:0"><b>Leakage check</b>Overlap train∩val = ${overlap(sp.train, sp.val)}, train∩test = ${overlap(sp.train, sp.test)}, val∩test = ${overlap(sp.val, sp.test)}. All three must be 0.</div>`;
+  const ok = modelKey === keyNow() && model;
+  $("#modelBanner").innerHTML = ok ? `<p class="small muted" style="margin:6px 0 0">${keyNow() === SHIP_KEY ? "The shipped pre-trained toy was trained on exactly this split (seed 7, coverage on)." : "The toy model has been trained on this split."}</p>` : `<div class="banner"><b>The toy model has not seen this split.</b> The pre-trained toy belongs to seed 7 with the coverage option on; with another split it would already have trained on some of your test sentences. Steps 4 to 8 for the toy now wait until you train in <a href="#s6">step 6</a> (about 10 seconds).</div>`;
+}
+function initSplit() {
+  $("#seedS").value = seed; $("#covChk").checked = cov;
+  const change = () => { seed = +$("#seedS").value; cov = $("#covChk").checked; store.set("seed", seed); store.set("cov", cov); setSplit(); renderAll(); };
+  $("#seedS").addEventListener("input", change); $("#covChk").addEventListener("change", change);
+}
+
+/* ================= step 4 ================= */
+function fillSelects() {
+  const groups = [["Test", prep.te], ["Validation", prep.va], ["Training", prep.tr]];
+  ["encPair", "attPair", "dcPair"].forEach(id => { const cur = $("#" + id).value; sentenceSelect(id, groups); if (cur && $("#" + id + " option[value='" + cur + "']")) $("#" + id).value = cur; });
+  const cur = $("#trPair").value; sentenceSelect("trPair", [["Training", prep.tr]]); if (cur && $("#trPair option[value='" + cur + "']")) $("#trPair").value = cur;
+  const cur2 = $("#evPair").value; sentenceSelect("evPair", [["Test", prep.te]]); if (cur2 && $("#evPair option[value='" + cur2 + "']")) $("#evPair").value = cur2;
+  const cur3 = $("#realPair").value; $("#realPair").innerHTML = NL.showcase.map((s, i) => `<option value="${i}">${esc(s.en)}</option>`).join(""); if (cur3) $("#realPair").value = cur3;
+}
+function renderModel() {
+  const cfg = TOY.cfg, vs = prep.Vs.words.length, vt = prep.Vt.words.length, d = cfg.d, H = cfg.H, g = (D) => 3 * H * (D + H) + 3 * H;
+  const rows = [["Source embeddings E_s", `${vs} × ${d}`, vs * d], ["Encoder GRU", `3 gates, ${d} in, ${H} hidden`, g(d)], ["Target embeddings E_t", `${vt} × ${d}`, vt * d], ["Decoder GRU", `3 gates, ${d} in, ${H} hidden`, g(d)], ["Attention output W_c, b_c", `${H} × ${2 * H} + ${H}`, H * 2 * H + H], ["Output layer W_o, b_o", `${vt} × ${H} + ${vt}`, vt * H + vt]];
+  const tot = rows.reduce((s, r) => s + r[2], 0);
+  $("#toySizes").innerHTML = `<table class="t"><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td class="muted">${r[1]}</td><td class="n">${r[2].toLocaleString("en-US")}</td></tr>`).join("")}<tr><td><b>Total</b></td><td></td><td class="n"><b>${tot.toLocaleString("en-US")}</b></td></tr></tbody></table>`;
+  $("#realSizes").innerHTML = `<table class="t"><tbody><tr><td>Encoder layers</td><td class="n">${NL.enc_layers}</td></tr><tr><td>Decoder layers</td><td class="n">${NL.dec_layers}</td></tr><tr><td>Model width d_model</td><td class="n">${NL.d_model}</td></tr><tr><td>Attention heads</td><td class="n">${NL.heads}</td></tr><tr><td>Vocabulary (subwords)</td><td class="n">${NL.vocab.toLocaleString("en-US")}</td></tr><tr><td><b>Parameters</b></td><td class="n"><b>${NL.params.toLocaleString("en-US")}</b></td></tr></tbody></table><p class="small muted" style="margin-bottom:0">That is about ${Math.round(NL.params / tot).toLocaleString("en-US")} times the toy.</p>`;
+  if (!model) { $("#encOut").innerHTML = NEEDMODEL; return; }
+  const p = CORPUS[+$("#encPair").value], e = prep.enc(p), E = encode(model, e.src), words = [...tok(p.en, true), "</s>"], d4 = a => Array.from(a.slice(0, 4), v => f2(v)).join(", ");
+  $("#encOut").innerHTML = `<div class="scroll tall"><table class="tbl"><thead><tr><th class="l">position i</th><th>token</th><th>ID</th><th class="l">embedding E_s[x<sub>i</sub>] (first 4 of ${d})</th><th class="l">encoder state h<sub>i</sub> (first 4 of ${H})</th></tr></thead><tbody>${words.map((w, i) => `<tr><td class="l">${i + 1}</td><td>${esc(w)}</td><td>${e.src[i]}</td><td class="l">(${d4(model.Es.slice(e.src[i] * d, e.src[i] * d + d))})</td><td class="l">(${d4(E.hs[i])})</td></tr>`).join("")}</tbody></table></div><p class="small muted">Each state h<sub>i</sub> depends on the token at i <em>and</em> everything before it. The last state h<sub>${words.length}</sub> becomes the decoder’s starting state s<sub>0</sub>.</p>`;
+}
+
+/* ================= step 5 ================= */
+let attT = 0, realT = 2;
+function renderAtt() {
+  if (!model) { $("#attOut").innerHTML = NEEDMODEL; $("#attHeat").innerHTML = ""; $("#attSteps").innerHTML = ""; return; }
+  const p = CORPUS[+$("#attPair").value], e = prep.enc(p), r = lossGrad(model, e.src, e.tin, e.tout, false), src = [...tok(p.en, true), "</s>"], tgt = e.tout.map(i => prep.Vt.words[i]), T = tgt.length, t = Math.min(attT, T - 1), A = r.att[t], E = encode(model, e.src), H = model.cfg.H;
+  $("#attSteps").innerHTML = tgt.map((w, k) => `<button class="btn small kn ${k === t ? "on" : ""}" type="button" data-t="${k}">${k + 1}: ${esc(w)}</button>`).join("");
+  $$("#attSteps button").forEach(b => b.addEventListener("click", () => { attT = +b.dataset.t; renderAtt(); }));
+  const mx = Math.max(...A.sc), ex = Array.from(A.sc, v => Math.exp(v - mx)), top = Array.from(A.p).map((v, i) => [v, i]).sort((a, b) => b[0] - a[0]).slice(0, 3), d4 = a => Array.from(a.slice(0, 4), v => f2(v)).join(", ");
+  $("#attOut").innerHTML = `<p>Decoder step <b>${t + 1}</b>: it has read <b class="kn">${esc(prep.Vt.words[e.tin[t]])}</b> and must predict <b class="kn">${esc(tgt[t])}</b>. Its state <i>s<sub>${t + 1}</sub></i> = (${d4(A.s)}, …) has ${H} numbers.</p>
+    <div class="scroll tall"><table class="tbl"><thead><tr><th class="l">source token i</th><th class="l">h<sub>i</sub> (first 4)</th><th>score e = s·h/√${H}</th><th>e − max</th><th>exp(e − max)</th><th>weight α</th></tr></thead><tbody>${src.map((w, i) => `<tr><td class="l">${esc(w)}</td><td class="l">(${d4(E.hs[i])})</td><td>${f2(A.sc[i])}</td><td>${f2(A.sc[i] - mx)}</td><td>${f2(ex[i], 3)}</td><td style="background:${heatC(A.al[i], 1)}"><b>${f2(A.al[i], 3)}</b></td></tr>`).join("")}</tbody></table></div>
+    <div class="arith">Σ exp = ${f2(ex.reduce((s, v) => s + v, 0), 3)} &nbsp;→&nbsp; α<sub>i</sub> = exp(e<sub>i</sub> − max) / ${f2(ex.reduce((s, v) => s + v, 0), 3)} &nbsp;(weights add to <b>${f2(A.al.reduce((s, v) => s + v, 0), 3)}</b>)</div>
+    <div class="arith">context c = Σ α<sub>i</sub> h<sub>i</sub> = (${d4(A.c)}, …)</div>
+    <div class="arith">a = tanh(W<sub>c</sub>[c ; s] + b<sub>c</sub>) = (${d4(A.a)}, …) &nbsp;→&nbsp; softmax over ${model.cfg.Vt} Kannada tokens</div>
+    <p class="small">Most likely next tokens: ${top.map(([v, i]) => `<span class="tok kn ${i === e.tout[t] ? "on" : ""}">${esc(prep.Vt.words[i])}</span> ${pc(v)}`).join(" &nbsp; ")} &nbsp; Probability of the correct token <b class="kn">${esc(tgt[t])}</b>: <b>${pc(A.p[e.tout[t]])}</b> (loss at this step ${f2(-Math.log(A.p[e.tout[t]] + 1e-12), 2)}).</p>`;
+  const cell = (v) => `<td style="background:${heatC(v, 1)}">${v >= 0.05 ? Math.round(v * 100) : ""}</td>`;
+  $("#attHeat").innerHTML = `<table class="tbl heat"><thead><tr><th class="l">target ↓ / source →</th>${src.map(w => `<th>${esc(w)}</th>`).join("")}</tr></thead><tbody>${r.att.map((a, k) => `<tr><th class="l kn">${esc(tgt[k])}</th>${Array.from(a.al, cell).join("")}</tr>`).join("")}</tbody></table><p class="small muted">Percent of attention; blank below 5%. Each row sums to 100%. With so little training data the toy’s attention is blurry; real models learn much sharper alignments.</p>`;
+}
+function renderReal() {
+  const sc = NL.showcase[+$("#realPair").value || 0], T = sc.q.length, t = Math.min(realT, T - 1), S = sc.src_tok.length, sq = Math.sqrt(sc.d_k);
+  $("#realSteps").innerHTML = sc.tgt_tok.slice(0, T).map((w, k) => `<button class="btn small kn ${k === t ? "on" : ""}" type="button" data-t="${k}">${k + 1}: ${esc(w.replace(/^▁/, ""))}</button>`).join("");
+  $$("#realSteps button").forEach(b => b.addEventListener("click", () => { realT = +b.dataset.t; renderReal(); }));
+  const q = sc.q[t], dots = sc.k.map(k => q.reduce((s, v, j) => s + v * k[j], 0)), scores = dots.map(v => v / sq), m = Math.max(...scores), ex = scores.map(v => Math.exp(v - m)), Z = ex.reduce((a, b) => a + b, 0), w = ex.map(v => v / Z);
+  const diff = Math.max(...w.map((v, i) => Math.abs(v - sc.w[t][i]))), ctx = Array.from({ length: 4 }, (_, j) => sc.v.reduce((s, vv, i) => s + w[i] * vv[j], 0)), d4 = a => a.slice(0, 4).map(v => f2(v)).join(", ");
+  $("#realOut").innerHTML = `<p>Decoder position <b>${t + 1}</b> (input <b class="kn">${esc(sc.dec_tok[t].replace(/^▁/, ""))}</b>, target <b class="kn">${esc(sc.tgt_tok[t].replace(/^▁/, ""))}</b>). The query vector has ${sc.d_k} numbers: Q = (${d4(q)}, …).</p>
+    <div class="scroll tall"><table class="tbl"><thead><tr><th class="l">source piece</th><th class="l">K (first 4)</th><th>Q·K (64 terms)</th><th>÷ √${sc.d_k} = score</th><th>softmax weight (ours)</th><th>weight reported by NLLB</th></tr></thead><tbody>${sc.src_tok.map((p, i) => `<tr><td class="l">${esc(p.replace(/^▁/, ""))}</td><td class="l">(${d4(sc.k[i])}, …)</td><td>${f2(dots[i])}</td><td>${f2(scores[i])}</td><td style="background:${heatC(w[i], 1)}"><b>${f2(w[i], 4)}</b></td><td>${f2(sc.w[t][i], 4)}</td></tr>`).join("")}</tbody></table></div>
+    <div class="arith">largest difference between our weights and the model’s: <b>${diff.toExponential(1)}</b> (rounding of the exported vectors) &nbsp;|&nbsp; context = Σ w<sub>i</sub> V<sub>i</sub> = (${d4(ctx)}, …)</div>
+    <p class="small muted">${sc.check_err === 0 ? "Recomputing the full 12 × " + S + " matrix in Python from the same vectors reproduced the model’s attention exactly (maximum difference 0.0)." : ""} This is the same three-line calculation as the toy’s, with learned projections Q, K, V; the real model repeats it for 16 heads in each of 12 decoder layers.</p>`;
+}
+
+/* ================= step 6 ================= */
+function lineChart(id, series, o) {
+  const W = 400, Hh = 200, L = 38, R = 10, T = 14, B = 26, nx = Math.max(2, o.n), X = i => L + i / (nx - 1) * (W - L - R), Y = v => T + (1 - (v - o.lo) / (o.hi - o.lo)) * (Hh - T - B);
+  let s = `<g style="stroke:var(--line)"><line x1="${L}" y1="${Hh - B}" x2="${W - R}" y2="${Hh - B}"/><line x1="${L}" y1="${T}" x2="${L}" y2="${Hh - B}"/></g>`;
+  for (let k = 0; k <= 4; k++) { const v = o.lo + (o.hi - o.lo) * k / 4; s += `<text x="2" y="${Y(v) + 4}" font-size="10" class="m">${o.fmt(v)}</text><line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)" stroke-dasharray="2 4"/>`; }
+  s += `<text x="${L}" y="${Hh - 8}" font-size="10" class="m">epoch 1</text><text x="${W - R}" y="${Hh - 8}" font-size="10" text-anchor="end" class="m">epoch ${o.n}</text>`;
+  if (o.best) s += `<line x1="${X(o.best - 1)}" x2="${X(o.best - 1)}" y1="${T}" y2="${Hh - B}" stroke="var(--green)" stroke-width="2" stroke-dasharray="4 3"/><text x="${X(o.best - 1) + 4}" y="${T + 22}" font-size="10" style="fill:var(--green)">best: epoch ${o.best}</text>`;
+  series.forEach((se, k) => { if (se.v.length > 1) s += `<polyline fill="none" stroke="${se.c}" stroke-width="2.5" points="${se.v.map((v, i) => X(i).toFixed(1) + "," + Y(Math.max(o.lo, Math.min(o.hi, v))).toFixed(1)).join(" ")}"/>`; s += `<text x="${L + 8 + k * 100}" y="${T + 8}" font-size="11" font-weight="700" style="fill:${se.c}">${se.n}</text>`; });
+  $("#" + id).innerHTML = s;
+}
+function renderTrain() {
+  const nll = NL.pairs[+$("#trPair").value];
+  if (!model) { $("#trOut").innerHTML = NEEDMODEL; } else {
+    const p = CORPUS[+$("#trPair").value], e = prep.enc(p), r = lossGrad(model, e.src, e.tin, e.tout, false), g = greedy(model, e.src, 1, 2, 24), ok = decStr(g.ids) === p.kn;
+    $("#trOut").innerHTML = `<div class="scroll tall"><table class="tbl"><thead><tr><th class="l">position t</th><th>decoder input y<sub>t−1</sub></th><th>target y<sub>t</sub></th><th>model’s top guess</th><th>P(target)</th><th>−ln P</th></tr></thead><tbody>${e.tout.map((id, t) => { const A = r.att[t], top = A.p.indexOf(Math.max(...A.p)); return `<tr><td class="l">${t + 1}</td><td class="kn">${esc(prep.Vt.words[e.tin[t]])}</td><td class="kn"><b>${esc(prep.Vt.words[id])}</b></td><td class="kn">${top === id ? "✓ " : ""}${esc(prep.Vt.words[top])}</td><td>${pc(A.p[id])}</td><td>${f2(-Math.log(A.p[id] + 1e-12), 3)}</td></tr>`; }).join("")}</tbody></table></div><div class="arith">L = (${e.tout.map((id, t) => f2(-Math.log(r.att[t].p[id] + 1e-12), 2)).join(" + ")}) / ${e.tout.length} = <b>${f2(r.loss, 3)}</b></div><p class="small muted">Free-running (the model feeds on its own output): <span class="kn">${esc(decStr(g.ids))}</span> ${ok ? "<span class='pill ok'>same as the reference</span>" : "<span class='pill no'>differs from the reference</span>"}. For a training pair the toy usually ends up near-perfect; the interesting question is what it does on unseen pairs (steps 7 and 8).</p>`;
+  }
+  $("#trReal").innerHTML = `<div class="bars">${nll.tf_nll.map((v, k) => bar(`<span class="kn">${esc(nll.ref_tok[k + 1].replace(/^▁/, ""))}</span>`, Math.min(1, v / 5), f2(v, 2), "neg")).join("")}</div><p class="small muted">Per-token loss (−ln P) of NLLB on the reference with teacher forcing: mean <b>${f2(meanNll(nll.tf_nll), 2)}</b>. The pretrained model has already been trained on vastly more data; it is not trained on this page.</p>`;
+  const h = hist; $("#epV").textContent = $("#epN").value;
+  lineChart("chLoss", [{ n: "train", c: "var(--pos)", v: h.map(x => x.train) }, { n: "validation", c: "var(--neg)", v: h.map(x => x.val) }], { n: h.length, lo: 0, hi: Math.max(1.5, ...h.map(x => x.val)), fmt: v => v.toFixed(1), best: bestEp });
+  lineChart("chQ", [{ n: "validation chrF", c: "var(--green)", v: h.map(x => x.valChrf) }], { n: h.length, lo: 0, hi: 100, fmt: v => v.toFixed(0), best: bestEp });
+  $("#bestEp").textContent = bestEp || "–"; $("#bestCap").textContent = `best epoch of ${h.length} (chosen by validation chrF; the checkpoint from that epoch is used)`;
+}
+let training = false;
+async function trainLive() {
+  if (training) return; training = true; $("#trGo").disabled = true; $("#trShip").disabled = true; const N = +$("#epN").value;
+  tr = new Trainer(prep, { d: TOY.cfg.d, H: TOY.cfg.H, seed: 11, lr: 0.01, batch: 4, clip: 1 }); hist = tr.hist; bestEp = 0; model = null;
+  for (let e = 0; e < N; e++) { tr.epoch(); bestEp = tr.best.ep; $("#trInfo").textContent = `epoch ${e + 1} of ${N}: train ${f2(hist[e].train, 3)}, validation ${f2(hist[e].val, 3)}`; renderTrain(); await new Promise(r => setTimeout(r, 0)); }
+  tr.finish(); model = tr.P; modelKey = keyNow(); training = false; $("#trGo").disabled = false; $("#trShip").disabled = false;
+  $("#trInfo").textContent = `done: ${N} epochs, checkpoint from epoch ${tr.best.ep} restored.`; renderAll();
+}
+function initTrain() {
+  $("#epN").addEventListener("input", renderTrain); $("#trGo").addEventListener("click", trainLive);
+  $("#trShip").addEventListener("click", () => { seed = DEF.seed; cov = DEF.cov; store.set("seed", seed); store.set("cov", cov); $("#seedS").value = seed; $("#covChk").checked = cov; setSplit(); $("#trInfo").textContent = "pre-trained toy loaded (seed 7 split)."; renderAll(); });
+  $("#trPair").addEventListener("change", renderTrain);
+}
+
+/* ================= step 7 ================= */
+function renderDecode() {
+  const i = +$("#dcPair").value, p = CORPUS[i], nl = NL.pairs[i];
+  $("#bwV").textContent = $("#bw").value; $("#baV").textContent = $("#ba").value;
+  $("#realDec").innerHTML = `<div class="card"><div class="small muted">Reference</div><div class="kn">${esc(p.kn)}</div><div class="small muted" style="margin-top:6px">NLLB, beam width 4</div><div class="kn"><b>${esc(nl.nllb)}</b> ${tk(nl.nllb).join(" ") === tk(p.kn).join(" ") ? "<span class='pill ok'>identical to the reference</span>" : "<span class='pill'>differs from the reference</span>"}</div></div>`;
+  if (!model) { $("#greedyOut").innerHTML = NEEDMODEL; $("#beamTable").innerHTML = ""; return; }
+  const e = prep.enc(p), g = greedy(model, e.src, 1, 2, 24);
+  $("#greedyOut").innerHTML = `<div class="scroll tall"><table class="tbl"><thead><tr><th class="l">step</th><th class="l">fed in</th><th class="l">top 5 next tokens (probability)</th><th>chosen</th><th>ln p</th></tr></thead><tbody>${g.att.map((A, t) => { const top = Array.from(A.p).map((v, k) => [v, k]).sort((a, b) => b[0] - a[0]).slice(0, 5), ch = top[0][1]; return `<tr><td class="l">${t + 1}</td><td class="l kn">${t === 0 ? "&lt;s&gt;" : esc(prep.Vt.words[g.ids[t - 1]])}</td><td class="l kn">${top.map(([v, k], j) => `<span class="${j === 0 ? "pill ok" : ""}">${esc(prep.Vt.words[k])} ${pc(v, 0)}</span>`).join(" ")}</td><td class="kn"><b>${esc(prep.Vt.words[ch])}</b></td><td>${f2(Math.log(top[0][0]), 2)}</td></tr>`; }).join("")}</tbody></table></div><div class="arith">score = Σ ln p = <b>${f2(g.logprob, 2)}</b> &nbsp;|&nbsp; output: <span class="kn">${esc(decStr(g.ids))}</span> &nbsp;|&nbsp; reference: <span class="kn">${esc(p.kn)}</span></div>`;
+  const w = +$("#bw").value, a = +$("#ba").value, hy = beam(model, e.src, 1, 2, 24, w, a).slice(0, w);
+  $("#beamTable").innerHTML = `<thead><tr><th>rank</th><th>hypothesis</th><th class="n">length T</th><th class="n">Σ ln p</th><th class="n">Σ ln p / T<sup>α</sup></th></tr></thead><tbody>${hy.map((h, k) => `<tr class="${k === 0 ? "" : ""}"><td>${k + 1}${k === 0 ? " ✓" : ""}</td><td class="kn">${esc(decStr(h.ids))}</td><td class="n">${h.ids.length + 1}</td><td class="n">${f2(h.lp, 2)}</td><td class="n"><b>${f2(h.score, 2)}</b></td></tr>`).join("")}</tbody>`;
+}
+
+/* ================= step 8 ================= */
+function sentBleu(cand, ref) { const s = bleuStats([cand], [ref]); return s; }
+const noteFor = { "I would like a coffee.": "NLLB’s “ಬಯಸುತ್ತೇನೆ” (I desire) is correct but stiff; a shopkeeper would say “ಬೇಕು”. A valid paraphrase that BLEU punishes.", "Good morning.": "NLLB writes the English phrase in Kannada letters (“ಗುಡ್ ಮಾರ್ನಿಂಗ್”), common in speech; the reference uses the Kannada greeting “ಶುಭೋದಯ”.", "Give me one idli.": "NLLB spells “idli” as “ಐಡಿಲಿ” and uses the casual “ಕೊಡು”; the standard spelling is “ಇಡ್ಲಿ” and the polite form is “ಕೊಡಿ”.", "Give me one juice.": "NLLB chooses “ರಸ” (juice, sap) with “ನೀಡಿ” (formal “give”); understandable, wording differs from the reference." };
+function bleuTable(cand, ref, title) {
+  const s = bleuStats([cand], [ref]);
+  return `<div class="card"><b>${title}</b><div class="kn small" style="margin:4px 0">${esc(cand.join(" ").replace(/ ([?.])/g, "$1"))}</div><table class="tbl"><thead><tr><th>n</th><th>matches</th><th>candidate n-grams</th><th>p<sub>n</sub></th></tr></thead><tbody>${[0, 1, 2, 3].map(n => `<tr><td>${n + 1}</td><td>${s.match[n]}</td><td>${s.tot[n]}</td><td>${n === 0 ? f2(s.p[n], 3) : `(${s.match[n]}+1)/(${s.tot[n]}+1) = ${f2(s.p[n], 3)}`}</td></tr>`).join("")}</tbody></table><div class="arith">c = ${s.c}, r = ${s.r} → BP = ${s.c >= s.r ? "1" : `e<sup>1−${s.r}/${s.c}</sup> = ${f2(s.bp, 3)}`} &nbsp;|&nbsp; BLEU = 100·${f2(s.bp, 3)}·exp(¼ Σ ln p<sub>n</sub>) = <b>${f2(s.bleu, 1)}</b></div></div>`;
+}
+function wordMarks(cand, ref) { const rs = new Set(ref); return cand.map(w => `<span class="tok kn" style="${rs.has(w) ? "background:var(--good-bg)" : "background:var(--bad-bg)"}">${esc(w)}</span>`).join(""); }
+function renderEval() {
+  const idx = +$("#evPair").value, p = CORPUS[idx], ref = tk(p.kn), nlT = tk(NL.pairs[idx].nllb);
+  const toy = model ? tk(toyOut(p, 1)) : null;
+  $("#bleuWork").innerHTML = `<p>Reference: <b class="kn">${esc(p.kn)}</b> (${ref.length} tokens)</p><div class="grid g2">${toy ? bleuTable(toy, ref, "Toy model (greedy)") : `<div class="card">${NEEDMODEL}</div>`}${bleuTable(nlT, ref, "NLLB (beam 4)")}</div>`;
+  const te = prep.te, sys = {};
+  sys.nllb = te.map(q => tk(NL.pairs[idxOf(q)].nllb)); sys.refs = te.map(q => tk(q.kn));
+  const row = (name, cls, c, refs, strs, refStrs) => { const b = bleuStats(c, refs), ch = strs.reduce((s, x, i) => s + chrf(x, refStrs[i]), 0) / Math.max(1, strs.length); return `<tr><td><span class="pill ${cls}">${cls.toUpperCase()}</span> ${name}</td><td class="n"><b>${f2(b.bleu, 1)}</b></td><td class="n">${f2(ch, 1)}</td><td class="n">${b.p.map(v => f2(v, 2)).join(" / ")}</td><td class="n">${f2(b.bp, 2)}</td></tr>`; };
+  let rows = "";
+  if (model) { const tt = ps => ps.map(q => tk(toyOut(q, 1))), ts = ps => ps.map(q => toyOut(q, 1)); const tb = ps => ps.map(q => tk(toyOut(q, 4)));
+    rows += row(`Toy, greedy, <b>test</b> (${te.length} sentences)`, "toy", tt(te), te.map(q => tk(q.kn)), ts(te), te.map(q => q.kn)); rows += row("Toy, beam 4, <b>test</b>", "toy", tb(te), te.map(q => tk(q.kn)), te.map(q => toyOut(q, 4)), te.map(q => q.kn));
+    rows += row(`Toy, greedy, validation (${prep.va.length})`, "toy", tt(prep.va), prep.va.map(q => tk(q.kn)), ts(prep.va), prep.va.map(q => q.kn)); rows += row(`Toy, greedy, <b>training</b> (${prep.tr.length}): memorised`, "toy", tt(prep.tr), prep.tr.map(q => tk(q.kn)), ts(prep.tr), prep.tr.map(q => q.kn)); }
+  rows += row("NLLB-200, beam 4, <b>same test sentences</b>", "real", sys.nllb, sys.refs, te.map(q => NL.pairs[idxOf(q)].nllb), te.map(q => q.kn));
+  rows += row(`NLLB-200, beam 4, all ${CORPUS.length} pairs`, "real", CORPUS.map((q, i) => tk(NL.pairs[i].nllb)), CORPUS.map(q => tk(q.kn)), CORPUS.map((q, i) => NL.pairs[i].nllb), CORPUS.map(q => q.kn));
+  $("#scoreTable").innerHTML = `<div class="scroll tall"><table class="t"><thead><tr><th>System and data</th><th class="n">BLEU</th><th class="n">chrF</th><th class="n">p₁ / p₂ / p₃ / p₄</th><th class="n">BP</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  const nllbExact = CORPUS.filter((q, i) => tk(NL.pairs[i].nllb).join(" ") === tk(q.kn).join(" ")).length;
+  $("#scoreNote").innerHTML = `<div class="callout"><b>Reading the table</b>The toy scores far higher on the sentences it was trained on than on the test set: it has memorised rather than learned to translate (the gap is the point of the test set). NLLB gets <b>${nllbExact} of ${CORPUS.length}</b> pairs exactly equal to our reference, yet many of its other outputs are perfectly good Kannada worded differently (BLEU counts those as errors), so its BLEU understates its quality. Scores on ${te.length} sentences are anecdotes: change the split seed in step 3 and retrain to see the numbers move.</div>`;
+  const R = store.get("ratings", {});
+  const sel = (k, which) => `<select data-k="${esc(k)}" data-w="${which}" aria-label="${which} score"><option value="">–</option>${[1, 2, 3, 4, 5].map(v => `<option ${R[k + "|" + which] == v ? "selected" : ""}>${v}</option>`).join("")}</select>`;
+  $("#humanTable").innerHTML = `<thead><tr><th>#</th><th>English</th><th>Reference</th><th>Toy output</th><th>NLLB output</th><th>Your scores: toy adequacy / fluency</th><th>NLLB adequacy / fluency</th></tr></thead><tbody>${te.map((q, i) => { const t = model ? tk(toyOut(q, 1)) : []; const n = tk(NL.pairs[idxOf(q)].nllb), rf = tk(q.kn), exT = t.join(" ") === rf.join(" "), exN = n.join(" ") === rf.join(" "); return `<tr><td>${i + 1}</td><td>${esc(q.en)}</td><td class="kn">${esc(q.kn)}</td><td class="kn">${model ? `<div class="tokens">${wordMarks(t, rf)}</div>${exT ? "<span class='pill ok'>exact</span>" : ""}` : "–"}</td><td class="kn"><div class="tokens">${wordMarks(n, rf)}</div>${exN ? "<span class='pill ok'>exact</span>" : ""}${noteFor[q.en] ? `<div class="small muted" style="font-family:system-ui">Author’s note: ${noteFor[q.en]}</div>` : ""}</td><td>${sel(q.en + "|toy", "A")} ${sel(q.en + "|toy", "F")}</td><td>${sel(q.en + "|nllb", "A")} ${sel(q.en + "|nllb", "F")}</td></tr>`; }).join("")}</tbody>`;
+  $$("#humanTable select").forEach(s => s.addEventListener("change", () => { const r = store.get("ratings", {}); r[s.dataset.k.replace(/\|(toy|nllb)$/, "") + "|" + (s.dataset.k.endsWith("toy") ? "toy" : "nllb") + "|" + s.dataset.w] = s.value ? +s.value : null; store.set("ratings", r); renderHuman(); }));
+  renderHuman();
+}
+function renderHuman() {
+  const R = store.get("ratings", {}), avg = (sys, w) => { const v = Object.entries(R).filter(([k, x]) => x != null && k.endsWith(`|${sys}|${w}`)).map(([, x]) => x); return v.length ? [v.reduce((a, b) => a + b, 0) / v.length, v.length] : null; };
+  const card = (name, sys) => { const a = avg(sys, "A"), f = avg(sys, "F"); return `<div class="stat"><b>${a ? f2(a[0], 1) : "–"} / ${f ? f2(f[0], 1) : "–"}</b><span>${name}: mean adequacy / mean fluency (${a ? a[1] : 0} rated sentences)</span></div>`; };
+  $("#humanSummary").innerHTML = card("Toy model", "toy") + card("NLLB", "nllb");
+}
+
+/* ================= wrap-up, quiz, glossary ================= */
+function renderWrap() {
+  const sp = prep.split; $("#w1").textContent = `${CORPUS.length} pairs, 9 patterns`; $("#w2").textContent = `${prep.Vs.words.length} + ${prep.Vt.words.length} word types (toy); ${NL.vocab.toLocaleString("en-US")} subwords (NLLB)`; $("#w3").textContent = `${sp.train.length} / ${sp.val.length} / ${sp.test.length}`;
+  $("#w4").textContent = `GRU encoder-decoder, ${TOY.arrays.reduce((s, [, a]) => s + a.length, 0).toLocaleString("en-US")} parameters`; $("#w6").textContent = `${hist.length} epochs, best epoch ${bestEp}`;
+  if (model) { const te = prep.te, b = bleuStats(te.map(q => tk(toyOut(q, 1))), te.map(q => tk(q.kn))), n = bleuStats(te.map(q => tk(NL.pairs[idxOf(q)].nllb)), te.map(q => tk(q.kn))); $("#w8").textContent = `test BLEU: toy ${f2(b.bleu, 1)}, NLLB ${f2(n.bleu, 1)}`; } else $("#w8").textContent = "train the toy first";
+}
+const QUIZ = [
+  ["Why is the test set kept untouched until the end?", ["It is the biggest set", "A model scores well on sentences it has seen, so only unseen sentences give an honest estimate", "It is used to build the vocabulary", "It trains the attention"], 1, "Training and validation sentences influence the model or its settings; test sentences must not."],
+  ["Where must the vocabulary be built from?", ["The whole corpus including test", "The training data only", "The validation data only", "A dictionary"], 1, "Building it from test data would leak information; unseen test words become <unk> (or are split into subwords)."],
+  ["What does the decoder receive as input during training with teacher forcing?", ["Its own previous predictions", "The correct target tokens shifted right, with <s> in front", "The source sentence", "Random tokens"], 1, "Each position predicts the next correct token, all positions in one pass."],
+  ["What is exposure bias?", ["The model sees too much data", "At test time the model feeds on its own outputs, which it never practised during teacher-forced training", "Attention weights are too high", "The test set leaks into training"], 1, "A mismatch between training (gold history) and decoding (own history)."],
+  ["What do attention weights add up to?", ["The number of source tokens", "1", "0", "The vector length"], 1, "They are a softmax over the source positions."],
+  ["Why divide the attention scores by √H (or √d_k)?", ["To make them negative", "To stop dot products growing with vector length, which would make the softmax too sharp", "To save memory", "To count tokens"], 1, "Larger vectors give larger dot products; scaling keeps the softmax well behaved."],
+  ["What does beam search do that greedy decoding does not?", ["It uses the test set", "It keeps several best partial translations so an early poor choice can be recovered", "It trains the model", "It removes the encoder"], 1, "Greedy commits to one word at every step; beam keeps k candidates."],
+  ["A translation is correct but worded differently from the reference. What happens to BLEU?", ["It stays high", "It is penalised because n-grams do not match the reference", "It becomes 100", "BLEU ignores references"], 1, "BLEU compares surface n-grams; this is why human evaluation and metrics such as chrF are also used."],
+];
+const GLOSS = [["Parallel corpus", "Source sentences paired with their translations."], ["Sentence alignment", "Matching each source sentence with its translation."], ["Token", "A unit of text (word or piece) the model reads."], ["Vocabulary", "The fixed list of tokens with IDs, built from training data."], ["<unk>", "Token standing for any word outside the vocabulary."], ["BPE / subword", "Splitting words into frequent pieces so rare words are never unknown."], ["Training / validation / test", "Learn from; tune and stop with; final honest exam."], ["Encoder", "Network that reads the source and produces one vector per position."], ["Decoder", "Network that writes the target one token at a time."], ["Attention", "Weighted look at the encoder vectors while decoding."], ["Context vector", "Attention-weighted average of encoder vectors."], ["Softmax", "Turns scores into probabilities that sum to 1."], ["Teacher forcing", "Feeding the correct previous tokens during training."], ["Exposure bias", "Mismatch between teacher-forced training and free-running decoding."], ["Cross-entropy loss", "−ln of the probability given to the correct token."], ["Early stopping", "Keeping the checkpoint with the best validation score."], ["Greedy / beam search", "Pick the best token each step / keep the k best partial outputs."], ["BLEU", "Clipped n-gram precision with a brevity penalty."], ["chrF", "Character n-gram F-score; better suited to morphologically rich languages."], ["Adequacy / fluency", "Human scores for correct meaning / natural wording."]];
+function initQuiz() {
+  let qi = 0, sc = 0; const draw = () => {
+    if (qi >= QUIZ.length) { const b = Math.max(sc, store.get("best", 0)); store.set("best", b); $("#qProg").textContent = "Finished"; $("#qBest").textContent = `Best: ${b}/${QUIZ.length}`; $("#qBody").innerHTML = `<div class="stat" style="margin:8px 0"><b>${sc}/${QUIZ.length}</b><span>${sc >= 7 ? "Excellent: you can explain the whole pipeline." : sc >= 5 ? "Good. Revisit the steps you missed." : "Re-read steps 3 to 8 and try again."}</span></div><button class="btn primary" id="qAgain" type="button">Try again</button>`; $("#qAgain").addEventListener("click", () => { qi = 0; sc = 0; draw(); }); return; }
+    const [q, o, a, why] = QUIZ[qi]; $("#qProg").textContent = `Question ${qi + 1} of ${QUIZ.length}`; const bs = store.get("best", null); $("#qBest").textContent = bs != null ? `Best: ${bs}/${QUIZ.length}` : "";
+    $("#qBody").innerHTML = `<p style="font-weight:700">${esc(q)}</p>` + o.map((t, i) => `<button class="quiz-opt" type="button" data-i="${i}">${esc(t)}</button>`).join("") + `<div id="qFb"></div>`;
+    $$("#qBody .quiz-opt").forEach(b => b.addEventListener("click", () => { if ($("#qFb").innerHTML) return; const i = +b.dataset.i; if (i === a) sc++; $$("#qBody .quiz-opt").forEach((x, j) => x.classList.add(j === a ? "right" : j === i ? "wrong" : "x")); $("#qFb").innerHTML = `<div class="callout ${i === a ? "tip" : "warn"}"><b>${i === a ? "Correct" : "Not quite"}</b>${esc(why)}</div><button class="btn primary" id="qNext" type="button">${qi === QUIZ.length - 1 ? "See result" : "Next"}</button>`; $("#qNext").addEventListener("click", () => { qi++; draw(); }); }));
+  }; draw();
+  $("#gloss").innerHTML = GLOSS.map(g => `<div class="card" style="margin:0"><b>${esc(g[0])}</b><p class="small muted" style="margin:.2em 0 0">${g[1]}</p></div>`).join("");
+}
+
+/* ================= orchestration ================= */
+function renderAll() {
+  fillSelects(); renderTok(); if (window.__bpeRefresh) window.__bpeRefresh(); renderSplit(); renderModel(); renderAtt(); renderReal(); renderTrain(); renderDecode(); renderEval(); renderWrap();
+}
+function boot() {
+  const root = document.documentElement; root.dataset.theme = store.get("theme", "auto");
+  $("#themeBtn").addEventListener("click", () => { const dark = root.dataset.theme === "dark" || (root.dataset.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches); root.dataset.theme = dark ? "light" : "dark"; store.set("theme", root.dataset.theme); });
+  const NAMES = [["s1", "1 Collect"], ["s2", "2 Tokenize"], ["s3", "3 Split"], ["s4", "4 Model"], ["s5", "5 Attention"], ["s6", "6 Train"], ["s7", "7 Decode"], ["s8", "8 Evaluate"]], BL = ["Aligned sentence pairs, cleaning", "Words to IDs, BPE", "Train / validation / test", "Encoder and decoder", "Scores, softmax, context", "Teacher forcing, loss, Adam", "Greedy and beam search", "BLEU, chrF, human reading"];
+  $("#flow").innerHTML = NAMES.map((n, i) => `<a href="#${n[0]}"><b>${n[1]}</b><span>${BL[i]}</span></a>`).join("");
+  $("#chips").innerHTML = `<a href="#s0" data-id="s0">Start</a>` + NAMES.map(n => `<a href="#${n[0]}" data-id="${n[0]}">${n[1]}</a>`).join("") + `<a href="#s9" data-id="s9">Wrap-up</a>`;
+  const obs = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) $$("#chips a").forEach(a => a.classList.toggle("on", a.dataset.id === en.target.id)); }), { rootMargin: "-30% 0px -60% 0px" }); $$("section").forEach(s => obs.observe(s));
+  setSplit(); if (!model && keyNow() !== SHIP_KEY) { /* a stored non-default split: model must be retrained */ }
+  initCollect(); fillSelects(); initTokenize(); initSplit(); initTrain();
+  ["encPair", "attPair", "dcPair", "evPair", "realPair"].forEach(id => $("#" + id).addEventListener("change", () => { attT = 0; realT = 2; renderAll(); })); ["bw", "ba"].forEach(id => $("#" + id).addEventListener("input", renderDecode));
+  initQuiz(); renderAll(); window.__nmtReady = true;
+}
+boot();
+</script>
+</body>
+</html>

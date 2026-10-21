@@ -19,6 +19,7 @@ robustness on negation / contrast.
 | `Transformers_Explained_Overview.html` | **Interactive overview of Transformers** (works offline), following the structure of Ketan Doshi's "Transformers Explained Visually, Part 1" article with original text and demos: architecture explorer, real DistilBERT attention maps, step-by-step training and inference with real English→Kannada outputs (NLLB-200), teacher forcing, task heads, RNN comparison, quiz |
 | `CNN_Pipeline_Explained.html` | **CNN explained end to end** (offline): image → convolution → ReLU → pooling → flatten → dense → prediction → loss → backpropagation → weight updates on a PIN-code digit reader, with plain-words, real-world and maths boxes; a real CNN runs live in the browser (gradient check, training, draw-your-own digit) |
 | `RNN_LSTM_GRU_Explained.html` | **Main guide to RNN, LSTM and GRU** (offline): memory and sequences, the three cells with equations and schematics, step-by-step walkthroughs using real trained 4-unit models, vanishing/exploding gradients, a live training lab (BPTT) and quiz |
+| `NMT_Pipeline_Explained.html` | **Neural machine translation pipeline end to end** (offline), on an English-Kannada phrasebook: aligned pairs and cleaning, tokenization and BPE, splits, GRU encoder-decoder, attention maths (verified against NLLB's real head), teacher forcing with live training, greedy and beam decoding, BLEU/chrF and human examples |
 
 ## Main results (SST-2 test set, 872 sentences)
 
