@@ -21,6 +21,7 @@ robustness on negation / contrast.
 | `RNN_LSTM_GRU_Explained.html` | **Main guide to RNN, LSTM and GRU** (offline): memory and sequences, the three cells with equations and schematics, step-by-step walkthroughs using real trained 4-unit models, vanishing/exploding gradients, a live training lab (BPTT) and quiz |
 | `NMT_Pipeline_Explained.html` | **Neural machine translation pipeline end to end** (offline), on an English-Kannada phrasebook: aligned pairs and cleaning, tokenization and BPE, splits, GRU encoder-decoder, attention maths (verified against NLLB's real head), teacher forcing with live training, greedy and beam decoding, BLEU/chrF and human examples |
 | `Transformer_Encoder_Decoder_Flow.pdf` | **Transformer encoder and decoder flow** (12-page PDF): architecture diagram, 13-step flow, encoder and decoder layer diagrams, and a worked English→Kannada example with real NLLB-200 embeddings, attention matrices and the token-by-token decoding loop |
+| `Transformer_Coding_Walkthrough.pdf` | **The Transformer in code, start to end** (23-page PDF): a from-scratch PyTorch encoder-decoder (tokenizing, masks, attention, layers, teacher-forced training, decoding, BLEU) and the same flow with pretrained NLLB via Hugging Face; real code with line numbers and real outputs. Scripts: `code/transformer_walkthrough/` |
 
 ## Main results (SST-2 test set, 872 sentences)
 

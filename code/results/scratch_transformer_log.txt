@@ -1,0 +1,34 @@
+STEP 1  pairs: 70 | example: Where is the bus stand? -> ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ?
+STEP 2  split: train 50 | validation 10 | test 10
+        vocab sizes: 74 (English), 70 (Kannada)
+        example ids: [68, 73, 70, 22, 51, 45, 54, 4, 2] | [1, 33, 66, 50, 52, 4, 2]
+STEP 3  src (3, 9) tgt_in (3, 7) tgt_out (3, 7)
+        causal mask for T=4:
+ tensor([[1, 0, 0, 0],
+        [1, 1, 0, 0],
+        [1, 1, 1, 0],
+        [1, 1, 1, 1]], dtype=torch.int32)
+STEP 9  parameters: 176896
+        attention check vs torch built-in, max |difference| = 2.384185791015625e-07
+STEP 10 shape trace for: Thank you very much for your help.
+        src ids (1, 9) -> embedding (1, 9, 64)
+        encoder memory (1, 9, 64) | src mask (1, 1, 1, 9)
+        decoder input (1, 6) -> logits (1, 6, 70) = (batch, target length, Kannada vocabulary)
+        one attention map: cross-attention (1, 4, 6, 9) = (batch, heads, target length, source length)
+STEP 12 training (teacher forcing):
+        epoch   1  train loss 4.586  validation loss 3.747
+        epoch   5  train loss 1.963  validation loss 2.020
+        epoch  10  train loss 0.804  validation loss 1.351
+        epoch  20  train loss 0.181  validation loss 1.000
+        epoch  40  train loss 0.017  validation loss 0.772
+        epoch  80  train loss 0.005  validation loss 0.868
+        epoch 120  train loss 0.002  validation loss 0.826
+        best validation loss 0.721 at epoch 93 (checkpoint restored)
+STEP 13 greedy decoding:
+        [train] Thank you very much for your help.     -> ನಿಮ್ಮ ಸಹಾಯಕ್ಕೆ ತುಂಬಾ ಧನ್ಯವಾದಗಳು.   (reference: ನಿಮ್ಮ ಸಹಾಯಕ್ಕೆ ತುಂಬಾ ಧನ್ಯವಾದಗಳು.)
+        [train] Please take me to the temple.          -> ದಯವಿಟ್ಟು ನನ್ನನ್ನು ದೇವಸ್ಥಾನಕ್ಕೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ.   (reference: ದಯವಿಟ್ಟು ನನ್ನನ್ನು ದೇವಸ್ಥಾನಕ್ಕೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ.)
+        [test ] Give me one ticket.                    -> ನನಗೆ ಒಂದು ಟಿಕೆಟ್ ಕೊಡಿ.   (reference: ನನಗೆ ಒಂದು ಟಿಕೆಟ್ ಕೊಡಿ.)
+        [test ] I will go to Hassan tomorrow.          -> ನಾನು ನಾಳೆ ಹಾಸನಕ್ಕೆ ಹೋಗುತ್ತೇನೆ.   (reference: ನಾನು ನಾಳೆ ಹಾಸನಕ್ಕೆ ಹೋಗುತ್ತೇನೆ.)
+        [test ] Where is the bus stand?                -> ಬಸ್ ನಿಲ್ದಾಣಕ್ಕೆ ಕರೆದುಕೊಂಡು ಹೋಗಿ.   (reference: ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ?)
+        [test ] I am going to Belagavi today.          -> ನಾನು ಇಂದು ಬೆಳಗಾವಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.   (reference: ನಾನು ಇಂದು ಬೆಳಗಾವಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.)
+STEP 14 BLEU  train 100.0 | validation 41.5 | test 63.9   (10-sentence sets: indicative only)

@@ -1,0 +1,28 @@
+STEP 1  loaded: facebook/nllb-200-distilled-600M | 12 encoder + 12 decoder layers | d_model 1024 | heads 16 | vocabulary 256206
+STEP 2  pieces: ['eng_Latn', '▁I', '▁am', '▁going', '▁to', '▁Mys', 'uru', '▁tomorrow', '.', '</s>']
+        ids   : [256047, 117, 259, 17221, 202, 23059, 1027, 103005, 248075, 2] | attention_mask: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+STEP 3  encoder memory: (1, 10, 1024) | self-attention maps: 12 layers, each (1, 16, 10, 10) = (batch, heads, S, S)
+STEP 4  decoding loop (greedy):
+        turn  1: chose '▁ನಾ'            p=0.577   top-3: [('▁ನಾ', 0.577), ('▁ನಾನು', 0.354), ('▁ನನಗೆ', 0.003)]
+        turn  2: chose 'ಳೆ'             p=0.951   top-3: [('ಳೆ', 0.951), ('ಳೆಯ', 0.03), ('ಳ', 0.007)]
+        turn  3: chose '▁ನಾನು'          p=0.562   top-3: [('▁ನಾನು', 0.562), ('▁ಮ', 0.166), ('▁ಮೈ', 0.024)]
+        turn  4: chose '▁ಮ'             p=0.692   top-3: [('▁ಮ', 0.692), ('▁ಮೈ', 0.172), ('▁ಮು', 0.014)]
+        turn  5: chose 'ೈಸ'             p=0.966   top-3: [('ೈಸ', 0.966), ('ಿಸ', 0.01), ('ಸ', 0.006)]
+        turn  6: chose 'ೂ'              p=0.421   top-3: [('ೂ', 0.421), ('ೂರು', 0.388), ('ೂರ', 0.07)]
+        turn  7: chose 'ರಿಗೆ'           p=0.793   top-3: [('ರಿಗೆ', 0.793), ('ರು', 0.093), ('ರಿನ', 0.017)]
+        turn  8: chose '▁ಹೋಗ'           p=0.697   top-3: [('▁ಹೋಗ', 0.697), ('▁ಹೊರ', 0.043), ('▁ಹೋಗುವ', 0.043)]
+        turn  9: chose 'ುತ್ತಿದ್ದೇನೆ'    p=0.466   top-3: [('ುತ್ತಿದ್ದೇನೆ', 0.466), ('ುತ್ತೇನೆ', 0.271), ('ಲ', 0.058)]
+        turn 10: chose '.'              p=0.869   top-3: [('.', 0.869), ('</s>', 0.02), ('▁.', 0.006)]
+        turn 11: chose '</s>'           p=0.901   top-3: [('</s>', 0.901), ('▁.', 0.0), ('▁-', 0.0)]
+        manual loop result : ನಾಳೆ ನಾನು ಮೈಸೂರಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.
+STEP 5  generate(greedy): ನಾಳೆ ನಾನು ಮೈಸೂರಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ. | identical to the manual loop: True
+        generate(beam=4) : ನಾಳೆ ನಾನು ಮೈಸೂರಿಗೆ ಹೋಗುತ್ತಿದ್ದೇನೆ.
+STEP 6  decoder self-attention per layer: (1, 16, 12, 12) | cross-attention per layer: (1, 16, 12, 10) = (batch, heads, T, S)
+        decoder input '▁ನಾನು'      -> looks most at source '▁Mys' (0.38); weight on the two markers: 0.51
+        decoder input '▁ಮ'         -> looks most at source '▁Mys' (0.10); weight on the two markers: 0.81
+        decoder input 'ೈಸ'         -> looks most at source 'uru' (0.07); weight on the two markers: 0.90
+STEP 7  Q (12, 64), K (10, 64) -> scores (12, 10) -> softmax; max |ours - model| = 0.0e+00
+        row for decoder input '▁ಮ' (sums to 1.0 ): [0.005, 0.005, 0.009, 0.016, 0.023, 0.005, 0.015, 0.003, 0.004, 0.916]
+STEP 8  batch of 2 sentences padded to the same length: (2, 10) | attention_mask: [[1, 1, 1, 1, 1, 1, 1, 1, 0, 0], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
+         Where is the bus stand? -> ಬಸ್ ನಿಲ್ದಾಣ ಎಲ್ಲಿದೆ?
+         Thank you very much for your help. -> ನಿಮ್ಮ ಸಹಾಯಕ್ಕಾಗಿ ತುಂಬಾ ಧನ್ಯವಾದಗಳು.
