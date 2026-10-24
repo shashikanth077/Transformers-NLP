@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project Map and Interview Prep: Transformers in NLP</title>
+<meta name="description" content="One page: the whole Transformers in NLP project as an interactive flow diagram, the results at a glance, 54 interview questions with answers, and our purpose and motto.">
+<style>
+:root { --bg:#f6f7fc; --surface:#fff; --surface2:#eef0fa; --ink:#1d1d3a; --muted:#5a5977; --line:#d9dcef; --brand:#2e2a6b; --brand-ink:#fff; --plan:#2a78d6; --build:#d9541f; --deliver:#159a6a; --purpose:#6250d6; --good:#0c7a4d; --good-bg:#e2f5ec; --bad:#b3261e; --bad-bg:#fde8e6; --info-bg:#e8effd; --warn-bg:#fff3dc; --amber:#a86a00; --classical:#2a78d6; --recurrent:#d9541f; --transformer:#159a6a; --radius:14px; --shadow:0 1px 3px rgba(30,30,70,.08); }
+:root[data-theme="dark"] { --bg:#11121f; --surface:#1a1b2e; --surface2:#23243b; --ink:#ecebff; --muted:#a6a5c6; --line:#34365a; --brand:#7c70ff; --brand-ink:#0d0d1e; --plan:#4c92ea; --build:#ee7a4b; --deliver:#2fc08f; --purpose:#9c8fff; --good:#52d6a0; --good-bg:#123a2c; --bad:#ff8d84; --bad-bg:#44201f; --info-bg:#1d2a4a; --warn-bg:#3d3115; --amber:#f0b44c; --classical:#4c92ea; --recurrent:#ee7a4b; --transformer:#2fc08f; --shadow:none; }
+@media (prefers-color-scheme: dark) { :root[data-theme="auto"] { --bg:#11121f; --surface:#1a1b2e; --surface2:#23243b; --ink:#ecebff; --muted:#a6a5c6; --line:#34365a; --brand:#7c70ff; --brand-ink:#0d0d1e; --plan:#4c92ea; --build:#ee7a4b; --deliver:#2fc08f; --purpose:#9c8fff; --good:#52d6a0; --good-bg:#123a2c; --bad:#ff8d84; --bad-bg:#44201f; --info-bg:#1d2a4a; --warn-bg:#3d3115; --amber:#f0b44c; --classical:#4c92ea; --recurrent:#ee7a4b; --transformer:#2fc08f; --shadow:none; } }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; scroll-padding-top:68px; }
+body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.65 system-ui,"Segoe UI",Roboto,"Nirmala UI",sans-serif; }
+button,input,select { font:inherit; color:inherit; } button { cursor:pointer; } a { color:var(--purpose); }
+.top { position:sticky; top:0; z-index:20; background:color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter:blur(8px); border-bottom:1px solid var(--line); }
+.top .in { max-width:1120px; margin:0 auto; padding:8px 16px; display:flex; gap:10px; align-items:center; } .top b { white-space:nowrap; }
+.chips { display:flex; gap:6px; overflow-x:auto; flex:1; scrollbar-width:thin; padding:2px 0; }
+.chips a { white-space:nowrap; text-decoration:none; color:var(--ink); border:1px solid var(--line); background:var(--surface); border-radius:99px; padding:3px 12px; font-size:.84rem; font-weight:600; } .chips a.on { background:var(--brand); color:var(--brand-ink); border-color:var(--brand); }
+main { max-width:1120px; margin:0 auto; padding:0 16px 70px; } section { padding:42px 0 14px; border-bottom:1px solid var(--line); }
+.eyebrow { text-transform:uppercase; letter-spacing:.12em; font-size:.75rem; font-weight:700; color:var(--purpose); margin:0 0 .3em; }
+h1 { font-size:clamp(1.9rem,4.4vw,2.8rem); line-height:1.15; margin:.1em 0 .4em; letter-spacing:-.02em; } h2 { font-size:1.7rem; line-height:1.2; margin:0 0 .5em; } h3 { font-size:1.1rem; margin:1.4em 0 .4em; } h4 { margin:.9em 0 .3em; font-size:.96rem; }
+p { margin:.6em 0; max-width:78ch; } .lead { font-size:1.1rem; color:var(--muted); max-width:72ch; } .muted { color:var(--muted); } .small { font-size:.86rem; }
+.card { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:16px 18px; box-shadow:var(--shadow); margin:12px 0; }
+.grid { display:grid; gap:12px; } .g2 { grid-template-columns:repeat(2,minmax(0,1fr)); } .g3 { grid-template-columns:repeat(3,minmax(0,1fr)); } .g5 { grid-template-columns:repeat(5,minmax(0,1fr)); }
+.row { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.btn { border:1px solid var(--line); background:var(--surface); padding:6px 13px; border-radius:10px; font-weight:600; font-size:.88rem; } .btn:hover { background:var(--surface2); } .btn.on,.btn.primary { background:var(--brand); color:var(--brand-ink); border-color:var(--brand); } .btn.small { padding:3px 10px; font-size:.78rem; }
+.callout { border-radius:12px; padding:12px 16px; margin:12px 0; background:var(--info-bg); border:1px solid var(--line); } .callout.warn { background:var(--warn-bg); } .callout.tip { background:var(--good-bg); } .callout > b:first-child { display:block; margin-bottom:2px; }
+.stat { padding:12px 14px; border-radius:12px; background:var(--surface); border:1px solid var(--line); } .stat b { display:block; font-size:1.6rem; line-height:1.15; } .stat span { color:var(--muted); font-size:.84rem; }
+.pill { display:inline-block; padding:1px 9px; border-radius:99px; font-size:.74rem; font-weight:700; background:var(--surface2); }
+/* flow diagram */
+#flowWrap { background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:8px; overflow:hidden; }
+#flow { width:100%; height:auto; display:block; }
+#flow .lane { rx:14; }
+#flow .node { cursor:pointer; } #flow .node rect { stroke-width:2; transition:filter .15s; } #flow .node:hover rect { filter:brightness(1.12); } #flow .node:focus { outline:none; } #flow .node:focus rect { stroke:var(--ink); stroke-width:3.5; }
+#flow .node.sel rect { stroke:var(--ink); stroke-width:4; } #flow .node.dim { opacity:.35; } #flow .edge { fill:none; stroke:var(--muted); stroke-width:2; opacity:.55; } #flow .edge.hot { stroke:var(--ink); stroke-width:3.2; opacity:1; } #flow .edge.dim { opacity:.15; }
+#flow text { fill:#fff; font-size:13.5px; font-weight:700; pointer-events:none; } #flow text.sub { font-size:10.8px; font-weight:500; opacity:.92; } #flow text.lane-t { fill:var(--muted); font-size:12px; font-weight:800; letter-spacing:.14em; }
+#flow text.purpose-t { font-size:15px; }
+.nodechips { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0 0; }
+#detail { margin-top:12px; }
+#detail h3 { margin:0 0 .3em; } #detail .cols { display:grid; grid-template-columns:1.3fr 1fr; gap:16px; } #detail ul { margin:.3em 0; padding-left:1.2em; } #detail li { margin:.15em 0; }
+.say { border-left:5px solid var(--purpose); background:var(--surface2); border-radius:0 12px 12px 0; padding:8px 14px; margin:10px 0; max-width:80ch; } .say b:first-child { display:block; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--purpose); }
+.filelinks a { display:inline-block; margin:2px 6px 2px 0; padding:2px 10px; border:1px solid var(--line); border-radius:99px; text-decoration:none; font-size:.82rem; background:var(--surface); }
+/* results */
+.bars { display:grid; gap:5px; } .bar { display:grid; grid-template-columns:190px 1fr 92px; gap:8px; align-items:center; font-size:.86rem; } .bar .track { height:14px; background:var(--surface2); border-radius:99px; position:relative; } .bar .fill { position:absolute; top:0; bottom:0; border-radius:99px; } .bar .ci { position:absolute; top:3px; bottom:3px; border-radius:2px; background:var(--ink); opacity:.55; } .bar b { text-align:right; font-variant-numeric:tabular-nums; } .bar .lbl { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; }
+.rq { border-left:5px solid var(--build); }
+/* interview */
+.q { background:var(--surface); border:1px solid var(--line); border-radius:12px; margin:8px 0; }
+.q > button { width:100%; text-align:left; background:none; border:0; padding:11px 14px; display:flex; gap:10px; align-items:flex-start; font-weight:700; }
+.q > button .chev { transition:transform .15s; margin-top:2px; } .q.open > button .chev { transform:rotate(90deg); }
+.q .a { display:none; padding:0 14px 12px 38px; } .q.open .a { display:block; } .q .a p { margin:.4em 0; }
+.q .tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; } .q .tags .pill { font-weight:600; }
+.lv-b { background:var(--good-bg); color:var(--good); } .lv-i { background:var(--warn-bg); color:var(--amber); } .lv-h { background:var(--bad-bg); color:var(--bad); }
+.q.done > button::after { content:"✓ reviewed"; margin-left:auto; color:var(--good); font-size:.76rem; white-space:nowrap; }
+input[type=search] { padding:7px 12px; border-radius:10px; border:1px solid var(--line); background:var(--surface); width:100%; max-width:340px; }
+.quizbox { background:var(--surface); border:2px solid var(--purpose); border-radius:var(--radius); padding:18px 20px; }
+.quizbox .qq { font-size:1.15rem; font-weight:700; }
+.purpose { background:linear-gradient(150deg,#16163f 0%,#2e2a6b 60%,#3a3590 100%); color:#fff; border-radius:20px; padding:34px 28px; margin:14px 0; }
+.purpose h2 { color:#fff; font-size:2rem; margin:0 0 .3em; } .purpose p { color:#dcdcf6; max-width:70ch; } .purpose .motto { font-size:clamp(1.5rem,3.6vw,2.3rem); font-weight:800; line-height:1.25; margin:.2em 0 .5em; color:#ffd98a; letter-spacing:-.01em; }
+.pillars { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:16px; } .pillars div { background:rgba(255,255,255,.1); border-radius:14px; padding:14px 16px; } .pillars b { color:#fff; display:block; font-size:1.05rem; } .pillars span { color:#dcdcf6; font-size:.92rem; }
+@media (max-width:820px) { .g3,.g5 { grid-template-columns:repeat(2,minmax(0,1fr)); } #detail .cols { grid-template-columns:1fr; } .bar { grid-template-columns:120px 1fr 80px; } .pillars { grid-template-columns:1fr; } .top b { display:none; } }
+@media (max-width:520px) { .g2,.g3,.g5 { grid-template-columns:1fr; } }
+@media print { .top, .btn, input, .nodechips { display:none; } .q .a { display:block !important; } body { background:#fff; } }
+</style>
+</head>
+<body>
+<div class="top"><div class="in"><b>Project map</b><nav class="chips" id="chips" aria-label="Sections"></nav><button class="btn small" id="themeBtn" type="button">Light / dark</button></div></div>
+<main>
+
+<!-- ============ HERO ============ -->
+<section id="s0">
+  <p class="eyebrow">VILNIUS TECH · Faculty of Fundamental Sciences · Engineering of Artificial Intelligence</p>
+  <h1>Transformers and their application in NLP tasks</h1>
+  <p class="lead">The whole project on one page: how it flows from the assignment to the deliverables (click any box), what the experiments found, <b>54 interview questions with answers</b>, and, at the end, why we did it. Team: Shashikanth Hosur Ramegowda, Shaeed Khan, Rimsha Tariq.</p>
+  <div class="grid g5" id="heroStats"></div>
+</section>
+
+<!-- ============ FLOW ============ -->
+<section id="s1">
+  <p class="eyebrow">Part 1</p><h2>The project flow, end to end</h2>
+  <p>Three lanes: <b style="color:var(--plan)">plan</b> the study, <b style="color:var(--build)">build and measure</b> ten models, <b style="color:var(--deliver)">explain and deliver</b> the results. <b>Click a box</b> (or press Next) to see what was done, the evidence, the files, and what to say if asked. “Interview questions for this stage” jumps to the matching questions below.</p>
+  <div class="row" style="margin-bottom:8px"><button class="btn primary" id="prevBtn" type="button">&larr; Previous</button><button class="btn primary" id="nextBtn" type="button">Next stage &rarr;</button><button class="btn" id="clearBtn" type="button">Clear selection</button><span class="small muted" id="stageNo"></span></div>
+  <div id="flowWrap"><svg id="flow" viewBox="0 0 1000 648" role="group" aria-label="Project flow diagram"></svg></div>
+  <div class="nodechips" id="nodeChips" aria-label="Jump to a stage"></div>
+  <div class="card" id="detail"></div>
+</section>
+
+<!-- ============ RESULTS ============ -->
+<section id="s2">
+  <p class="eyebrow">Part 2</p><h2>The results at a glance</h2>
+  <p>Ten sentiment classifiers on the SST-2 test set (872 sentences), all measured on one CPU-only laptop (Intel Core i5-8365U, 16 GB RAM, no GPU). Switch the metric to see the trade-off: the most accurate models are also the slowest and largest.</p>
+  <div class="row" id="metricTabs" role="group" aria-label="Metric"></div>
+  <div class="card"><div class="row" id="legend" style="margin-bottom:8px"></div><div class="bars" id="resBars"></div><p class="small muted" id="resNote" style="margin-bottom:0"></p></div>
+  <h3>The five research questions, answered</h3>
+  <div class="grid g2" id="rqGrid"></div>
+  <h3>Data efficiency: how many labels do you need?</h3>
+  <div class="card"><div id="curveWrap"></div><p class="small muted">Accuracy as the number of labelled training sentences grows. BERT-small is pre-trained, TF-IDF + logistic regression is not.</p></div>
+</section>
+
+<!-- ============ INTERVIEW ============ -->
+<section id="s3">
+  <p class="eyebrow">Part 3</p><h2>Interview and viva preparation</h2>
+  <div class="grid g2">
+    <div class="card" style="margin:0"><b>The 30-second pitch</b><p class="small" style="margin:.4em 0 0">We studied the Transformer architecture and tested, on a laptop without a GPU, whether Transformers really beat older NLP methods. We compared ten sentiment classifiers (TF-IDF models, a BiLSTM, Transformers we fine-tuned, and ready-made ones) on SST-2. Result: a Transformer fine-tuned on only 8,000 sentences reached 88.8% against 82.9% for the best classical model trained on all 65,349, but it is 20 to 2,000 times slower. So the answer is: use a pre-trained Transformer when quality matters and the cost is acceptable.</p></div>
+    <div class="card" style="margin:0"><b>The 2-minute story (say it in this order)</b><ol class="small" style="margin:.4em 0 0;padding-left:1.2em"><li>Problem and why sentiment (common task, hard cases: negation, contrast).</li><li>Five research questions: accuracy, cost, data efficiency, ready-made models, hard sentences.</li><li>Ten models in four families; one dataset, one laptop, one seed.</li><li>Quality, then cost, then data efficiency, then robustness.</li><li>Statistics: confidence intervals and McNemar test.</li><li>Recommendations and honest limitations.</li></ol></div>
+  </div>
+  <div class="card" style="margin-top:12px"><div class="row"><input type="search" id="qSearch" placeholder="Search the questions…" aria-label="Search questions"><button class="btn" id="expandAll" type="button">Expand all</button><button class="btn" id="collapseAll" type="button">Collapse all</button><button class="btn primary" id="quizBtn" type="button">&#127922; Quiz me</button><span class="small muted" id="qCount"></span></div>
+    <div class="row" style="margin-top:8px" id="catChips" role="group" aria-label="Category"></div>
+    <div class="row" style="margin-top:6px"><span class="small muted">Level:</span><span id="lvChips" class="row"></span><span class="small muted" id="stageFilter"></span></div></div>
+  <div id="quiz" style="display:none"></div>
+  <div id="qList"></div>
+</section>
+
+<!-- ============ PURPOSE ============ -->
+<section id="s4" style="border-bottom:0">
+  <p class="eyebrow">Part 4 · Why we did this</p>
+  <div class="purpose">
+    <h2>Our purpose</h2>
+    <p>To understand the Transformer properly, and to find out with honest measurements, on ordinary hardware, <b>when a Transformer is worth its cost</b> for a real NLP task. Then to turn what we learned into material that other students can use, in simple English and in Kannada.</p>
+    <div class="motto">Explain it. Measure it. Make it useful for everyone.</div>
+    <div class="pillars">
+      <div><b>Explain it</b><span>A paper, a talk, interactive guides, diagrams and code walkthroughs: from tokens and attention to encoder-decoder translation, RNNs and CNNs.</span></div>
+      <div><b>Measure it</b><span>Ten models, one fair set-up, confidence intervals and paired tests, cost as well as accuracy, and the limits stated openly.</span></div>
+      <div><b>Make it useful</b><span>Practical advice (reuse a public model first, fine-tune a distilled one next) and learning notes in Kannada so the ideas reach people in their own language.</span></div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card" style="margin:0"><h4 style="margin-top:0">What we learned</h4><ul class="small" style="margin:0;padding-left:1.2em"><li>Pre-training is the real advantage: it gives accuracy <em>and</em> data efficiency.</li><li>Bigger is not automatically better: tiny Transformers only matched or lost to classical models.</li><li>Cost matters: the best model is not always the right model.</li><li>A result without a confidence interval is an anecdote.</li></ul></div>
+    <div class="card" style="margin:0"><h4 style="margin-top:0">What we would do next</h4><ul class="small" style="margin:0;padding-left:1.2em"><li>Repeat runs with several random seeds and report the spread.</li><li>Measure latency on a GPU as well as a CPU.</li><li>Apply the same method to Lithuanian (LitLat BERT, XLM-RoBERTa) and to Kannada text.</li><li>Extend from classification to translation and generation.</li></ul></div>
+  </div>
+  <p class="small muted" style="margin-top:14px">The motto wording is a suggestion for the team to edit. Companion material in this repository: paper (28 pages), presentation (11 slides), study guide, Kannada notes, and the explainers on Transformers, CNN, RNN/LSTM/GRU and machine translation.</p>
+</section>
+</main>
+
+<script>
+"use strict";
+const DATA = /*__DATA__*/;
+const $ = (s, el = document) => el.querySelector(s), $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+const store = { get(k, d) { try { const v = localStorage.getItem("pmap:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } }, set(k, v) { try { localStorage.setItem("pmap:" + k, JSON.stringify(v)); } catch (e) { /* ignore */ } } };
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const GH = "https://github.com/shashikanth077/Transformers-NLP/";
+const M = DATA.models, byTag = Object.fromEntries(M.map(m => [m.tag, m]));
+const FAM = { classical: "var(--classical)", recurrent: "var(--recurrent)", transformer: "var(--transformer)" };
+const pct = (v, d = 1) => (v * 100).toFixed(d) + "%";
+
+/* ===================== flow diagram ===================== */
+const LANES = [{ id: "plan", y: 10, h: 140, c: "var(--plan)", t: "1  PLAN" }, { id: "build", y: 170, h: 230, c: "var(--build)", t: "2  BUILD AND MEASURE" }, { id: "deliver", y: 420, h: 150, c: "var(--deliver)", t: "3  EXPLAIN AND DELIVER" }];
+const NODES = [
+  { id: "topic", lane: "plan", x: 30, y: 44, w: 200, h: 84, l: "Assignment and topic", s: "Group course project; 3 members" },
+  { id: "lit", lane: "plan", x: 270, y: 44, w: 200, h: 84, l: "Literature review", s: "Google Scholar, Web of Science" },
+  { id: "rq", lane: "plan", x: 510, y: 44, w: 220, h: 84, l: "Research questions", s: "RQ1 to RQ5 and the 10-model design" },
+  { id: "data", lane: "plan", x: 770, y: 44, w: 200, h: 84, l: "Data: SST-2", s: "65,349 train / 2,000 dev / 872 test" },
+  { id: "classical", lane: "build", x: 30, y: 212, w: 220, h: 84, l: "Classical", s: "TF-IDF + NB, LogReg, SVM" },
+  { id: "bilstm", lane: "build", x: 270, y: 212, w: 220, h: 84, l: "BiLSTM", s: "Recurrent, no pre-training" },
+  { id: "finetune", lane: "build", x: 510, y: 212, w: 230, h: 84, l: "Fine-tuned Transformers", s: "BERT-tiny, BERT-small, DistilBERT" },
+  { id: "ready", lane: "build", x: 760, y: 212, w: 220, h: 84, l: "Ready-made", s: "DistilBERT-SST2, Twitter-RoBERTa, zero-shot NLI" },
+  { id: "eval", lane: "build", x: 130, y: 330, w: 740, h: 56, l: "Evaluation: same 872 test sentences, one laptop CPU", s: "Accuracy, time, latency, size, negation and contrast, learning curve, CI, McNemar" },
+  { id: "paper", lane: "deliver", x: 30, y: 462, w: 170, h: 84, l: "Paper", s: "28 pages, VILNIUS TECH template" },
+  { id: "slides", lane: "deliver", x: 215, y: 462, w: 170, h: 84, l: "Presentation", s: "11 slides, 7 to 10 minutes" },
+  { id: "guide", lane: "deliver", x: 400, y: 462, w: 190, h: 84, l: "Interactive study guide", s: "Whole project, offline HTML" },
+  { id: "kn", lane: "deliver", x: 605, y: 462, w: 170, h: 84, l: "Kannada notes", s: "40-page PDF, Karnataka examples" },
+  { id: "explainers", lane: "deliver", x: 790, y: 462, w: 190, h: 84, l: "Explainers", s: "Transformers, CNN, RNN, NMT, PDFs" },
+];
+const EDGES = [["topic", "lit"], ["lit", "rq"], ["rq", "data"], ["data", "classical"], ["data", "bilstm"], ["data", "finetune"], ["data", "ready"], ["classical", "eval"], ["bilstm", "eval"], ["finetune", "eval"], ["ready", "eval"], ["eval", "paper"], ["eval", "slides"], ["eval", "guide"], ["eval", "kn"], ["eval", "explainers"]];
+const ORDER = ["topic", "lit", "rq", "data", "classical", "bilstm", "finetune", "ready", "eval", "paper", "slides", "guide", "kn", "explainers", "purpose"];
+const NID = Object.fromEntries(NODES.map(n => [n.id, n]));
+NODES.push({ id: "purpose", lane: "purpose", x: 230, y: 594, w: 540, h: 44, l: "Purpose: explain it, measure it, make it useful", s: "" });
+NID.purpose = NODES[NODES.length - 1];
+const laneColor = n => (n.lane === "plan" ? "var(--plan)" : n.lane === "build" ? "var(--build)" : n.lane === "deliver" ? "var(--deliver)" : "var(--purpose)");
+
+const DET = {
+  topic: { what: "The course assignment: <b>“Transformers and their application in NLP tasks”</b>, a group project (3 students) for the Engineering of Artificial Intelligence study program. Deliverables: a 26 to 30 page paper in the faculty template, a 7 to 10 minute presentation, and a practical part with code.", ev: ["Structure: introduction, literature review, methodology, practical part, conclusions, references", "Sources searched: Google Scholar and Web of Science", "Practical part chosen so that it runs end to end on a laptop"], files: [["Paper chapters", GH + "tree/master/paper"]], say: "We chose a topic where the theory (the Transformer) could be tested with a real experiment that every team member could reproduce on a laptop." },
+  lit: { what: "We reviewed how text classification evolved: bag-of-words and TF-IDF, recurrent networks (LSTM), and Transformers (BERT, DistilBERT, RoBERTa). We also looked for Lithuanian work to connect the topic to the university's context.", ev: ["Fine-tuned encoders exceed 90% on SST-2; classical models score about 79 to 83%", "Lithuanian studies show neural nets without pre-training do not always beat classical methods; Lithuanian pre-trained models (LitLat BERT, multilingual BERT) are now available", "Gap found: few studies compare quality, cost and data efficiency together under limited hardware"], files: [["Paper: literature review", GH + "blob/master/paper/ch2_review.md"]], say: "The gap we identified was not 'which model is best' but 'what does the improvement cost, and how much data does it need'." },
+  rq: { what: "From the gap we wrote five research questions and designed the study: ten models from four families, one dataset, identical splits, one random seed (42), cost measured as well as accuracy.", ev: ["RQ1 How much more accurate are Transformers?", "RQ2 What does that cost (training time, latency, size)?", "RQ3 How does the advantage depend on the number of labelled examples?", "RQ4 How do ready-made models compare with models trained on the task?", "RQ5 Are Transformers better on negation and contrast?"], files: [["Paper: methodology", GH + "blob/master/paper/ch3_method.md"]], say: "Each research question maps to one measurement, so the experiment can answer it directly." },
+  data: { what: "<b>SST-2</b> (Stanford Sentiment Treebank, binary version in the GLUE benchmark): movie-review sentences labelled positive or negative. GLUE test labels are hidden, so the official validation set (872 sentences) is our held-out test set; 2,000 training examples were set aside as a development set for choosing the best epoch.", ev: ["Train 65,349 · dev 2,000 · test 872", "Training data: many short phrases (about 9.4 words); test: full sentences (about 19.5 words), so models must generalise", "Test set is almost balanced (50.9% positive); training is 55.8% positive", "Script: 01_prepare_data.py"], files: [["Data script", GH + "blob/master/code/01_prepare_data.py"]], say: "The test set is never used for training or model selection; the development set picks the epoch." },
+  classical: { what: "Three classical baselines on TF-IDF features (word and word-pair weights): naive Bayes, logistic regression and a linear SVM. They train in seconds and answer in 0.05 ms.", ev: ["Accuracy: NB 82.2% · LogReg 81.9% · SVM 82.9%", "Training time 2 to 4 seconds; latency 0.05 to 0.06 ms per sentence", "Weak on negation: SVM drops from 82.9% to 74.5% on sentences with negation"], files: [["02_classical_baselines.py", GH + "blob/master/code/02_classical_baselines.py"]], say: "Strong, cheap baselines: any Transformer has to justify itself against them." },
+  bilstm: { what: "A bidirectional LSTM trained from scratch (no pre-training): the pre-Transformer neural approach, written in PyTorch with its own tokenizer and vocabulary.", ev: ["Accuracy 82.8%, almost the same as the SVM (82.9%)", "About 1.97 million parameters; 380 s to train; 0.45 ms latency", "Better on negation (78.8%) than the bag-of-words models (about 74%), because it reads word order"], files: [["03_bilstm.py", GH + "blob/master/code/03_bilstm.py"]], say: "Order helps on negation, but without pre-training the LSTM brought no overall gain over a linear model." },
+  finetune: { what: "Three Transformer encoders of different sizes, pre-trained by others and <b>fine-tuned by us on 8,000 labelled sentences</b> with a classification head, AdamW and a linear warm-up schedule, on the CPU.", ev: ["BERT-tiny (4.4 M parameters): 76.6%, 2 minutes", "BERT-small (29 M): 83.7%, 26 minutes", "DistilBERT (67 M): 88.8%, 2.6 hours", "Same code for all three: 04_finetune_transformer.py"], files: [["04_finetune_transformer.py", GH + "blob/master/code/04_finetune_transformer.py"]], say: "Only the size changes between the three, so we can see how quality and cost scale together." },
+  ready: { what: "Three public models used as they are: DistilBERT already fine-tuned on SST-2 (best case of reuse), a RoBERTa trained on tweets (a different domain), and a zero-shot NLI model that was never trained for sentiment.", ev: ["DistilBERT-SST2 91.1%: the best model overall, no training at all", "Twitter-RoBERTa 85.8% despite the domain mismatch", "Zero-shot NLI 81.8% with zero labelled examples, but 107 ms per sentence"], files: [["05_pretrained_transformers.py", GH + "blob/master/code/05_pretrained_transformers.py"]], say: "The cheapest way to a good Transformer is to reuse one that already solves your task." },
+  eval: { what: "Every model is judged on the same 872 test sentences: accuracy and macro-F1, training time, latency per sentence (batches of 32), parameters, accuracy on negation (184 sentences) and contrast (130 sentences), a learning curve, 95% bootstrap confidence intervals and McNemar's paired test.", ev: ["Fine-tuned DistilBERT beats the best classical model, trained on 8x less data (p &lt; 0.001)", "Negation: SVM 74.5% vs DistilBERT-SST2 87.0%; contrast: 77.7% vs 86.2%", "With 500 labels BERT-small 75.9% vs TF-IDF 61.8%", "Transformers are 20 to 2,000 times slower at inference"], files: [["08_report.py", GH + "blob/master/code/08_report.py"], ["Results folder", GH + "tree/master/code/results"]], say: "Accuracy alone is not enough: we report cost, robustness and uncertainty, so the recommendation is defensible." },
+  paper: { what: "The written report in the VILNIUS TECH template: 28 pages covering introduction, literature review, methodology (including the Transformer architecture in detail), the practical part with tables and figures, conclusions and references.", ev: ["Generated from chapter files by a script, then finished in MS Word and exported to PDF", "Quality checks script: check_docx.py", "English only, no supervisor section (course project)"], files: [["Paper (PDF)", "Transformers_in_NLP_Project_Paper.pdf"], ["Paper (Word)", "Transformers_in_NLP_Project_Paper.docx"]], say: "Every number in the paper comes from the result files, so text and tables cannot drift apart." },
+  slides: { what: "An 11-slide deck for a 7 to 10 minute talk, generated from the results, with speaker notes.", ev: ["Sections: introduction, theory, experiment, results, conclusions", "Built with a script (build_deck.js) from the same result files"], files: [["Presentation (PPTX)", "Transformers_in_NLP_Presentation.pptx"]], say: "About one minute per slide; the notes hold the key sentence for each." },
+  guide: { what: "A single offline HTML file that tells the whole project as a story with real-world examples: pipeline, sentence lab with real attention maps, all 872 test sentences for every model, results explorer, Q&amp;A, quiz and a rehearsal timer.", ev: ["Numbers are computed from the real result files", "Works without internet", "Includes a defence-preparation section"], files: [["Study guide", "Project_Study_Guide.html"]], say: "Open it to rehearse: it lets you test any sentence against all ten models." },
+  kn: { what: "Forty pages of notes in Kannada explaining NLP and Transformers with Karnataka examples (bus stand, Mysuru, local cinema), the project's real results, viva questions with English answer lines, a glossary and a quiz.", ev: ["Built so that learning is possible in the local language", "Kannada text rendered with correct shaping (Nirmala UI)"], files: [["Kannada notes (PDF)", "Transformers_NLP_Kannada_Notes.pdf"]], say: "Understanding comes faster in your own language; the English answer lines help in the exam." },
+  explainers: { what: "A set of interactive pages and PDFs that go deeper into the building blocks: Transformers explained visually, a live CNN, RNN/LSTM/GRU with a training lab, the neural machine translation pipeline with real NLLB outputs, plus two PDFs on the encoder/decoder flow and a code walkthrough.", ev: ["Transformers_Explained_Overview.html · CNN_Pipeline_Explained.html", "RNN_LSTM_GRU_Explained.html · NMT_Pipeline_Explained.html", "Transformer_Encoder_Decoder_Flow.pdf · Transformer_Coding_Walkthrough.pdf"], files: [["Overview", "Transformers_Explained_Overview.html"], ["CNN", "CNN_Pipeline_Explained.html"], ["RNN/LSTM/GRU", "RNN_LSTM_GRU_Explained.html"], ["NMT", "NMT_Pipeline_Explained.html"], ["Flow PDF", "Transformer_Encoder_Decoder_Flow.pdf"], ["Code PDF", "Transformer_Coding_Walkthrough.pdf"]], say: "These show we understand the mechanics, not only the results: every demo runs real code." },
+  purpose: { what: "Everything above serves one purpose: <b>understand the Transformer, measure honestly when it is worth its cost, and share what we learned</b> in forms others can use, including in Kannada.", ev: ["Explain it: paper, talk, guides, diagrams, code", "Measure it: ten models, fair set-up, statistics, cost", "Make it useful: practical recommendations and local-language notes"], files: [], say: "Our motto: Explain it. Measure it. Make it useful for everyone." },
+};
+const CATNAME = { plan: "Plan", build: "Build and measure", deliver: "Deliver", purpose: "Purpose" };
+let selected = null;
+function drawFlow() {
+  let s = `<defs><marker id="arr" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" refX="9" refY="5.5" orient="auto"><path d="M0 0L11 5.5L0 11z" fill="var(--muted)"/></marker></defs>`;
+  LANES.forEach(l => { s += `<rect class="lane" x="6" y="${l.y}" width="988" height="${l.h}" rx="14" fill="${l.c}" opacity=".10"/><text class="lane-t" x="20" y="${l.y + 20}">${l.t}</text>`; });
+  const anchorB = n => [n.x + n.w / 2, n.y + n.h], anchorT = n => [n.x + n.w / 2, n.y];
+  EDGES.concat(["slides", "paper", "guide", "kn", "explainers"].map(d => [d, "purpose"])).forEach(([a, b], i) => {
+    const A = NID[a], B = NID[b]; let d;
+    if (A.lane === B.lane && b !== "purpose") { const y = A.y + A.h / 2; d = `M${A.x + A.w} ${y} L${B.x - 2} ${y}`; }
+    else { const [x1, y1] = anchorB(A), [x2, y2] = anchorT(B), my = (y1 + y2) / 2; d = `M${x1} ${y1} C${x1} ${my}, ${x2} ${my}, ${x2} ${y2 - 2}`; }
+    s += `<path class="edge" data-a="${a}" data-b="${b}" d="${d}" marker-end="url(#arr)"/>`;
+  });
+  NODES.forEach(n => {
+    const c = laneColor(n); s += `<g class="node" tabindex="0" role="button" aria-label="${esc(n.l)}" data-id="${n.id}"><rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="12" fill="${c}" stroke="${c}"/>`;
+    const cx = n.x + n.w / 2;
+    if (n.id === "eval") s += `<circle cx="${n.x + 16}" cy="${n.y + 18}" r="11" fill="rgba(0,0,0,.28)"/><text x="${n.x + 16}" y="${n.y + 22}" text-anchor="middle" style="font-size:11px">${ORDER.indexOf(n.id) + 1}</text><text x="${cx + 6}" y="${n.y + 23}" text-anchor="middle">${esc(n.l)}</text><text class="sub" x="${cx}" y="${n.y + 43}" text-anchor="middle">${esc(n.s)}</text>`;
+    else if (n.id === "purpose") s += `<text class="purpose-t" x="${cx}" y="${n.y + 29}" text-anchor="middle">${esc(n.l)}</text>`;
+    else { const num = ORDER.indexOf(n.id) + 1; s += `<circle cx="${n.x + 16}" cy="${n.y + 18}" r="11" fill="rgba(0,0,0,.28)"/><text x="${n.x + 16}" y="${n.y + 22}" text-anchor="middle" style="font-size:11px">${num}</text><text x="${cx + 6}" y="${n.y + 24}" text-anchor="middle">${esc(n.l)}</text>`;
+      const words = n.s.split(" "), lines = []; let cur = ""; words.forEach(w => { if ((cur + " " + w).trim().length > Math.floor(n.w / 6.1)) { lines.push(cur.trim()); cur = w; } else cur += " " + w; }); if (cur.trim()) lines.push(cur.trim());
+      lines.slice(0, 3).forEach((ln, k) => { s += `<text class="sub" x="${cx}" y="${n.y + 46 + k * 14}" text-anchor="middle">${esc(ln)}</text>`; }); }
+    s += "</g>";
+  });
+  $("#flow").innerHTML = s;
+  $$("#flow .node").forEach(g => { g.addEventListener("click", () => select(g.dataset.id)); g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(g.dataset.id); } }); });
+  $("#nodeChips").innerHTML = ORDER.map((id, i) => `<button class="btn small" type="button" data-id="${id}">${i + 1}. ${esc(NID[id].l.replace("Purpose: explain it, measure it, make it useful", "Purpose"))}</button>`).join("");
+  $$("#nodeChips button").forEach(b => b.addEventListener("click", () => select(b.dataset.id)));
+}
+function select(id) {
+  selected = id; const connected = new Set([id]);
+  EDGES.concat(["slides", "paper", "guide", "kn", "explainers"].map(d => [d, "purpose"])).forEach(([a, b]) => { if (a === id || b === id) { connected.add(a); connected.add(b); } });
+  $$("#flow .node").forEach(g => { g.classList.toggle("sel", g.dataset.id === id); g.classList.toggle("dim", !connected.has(g.dataset.id)); });
+  $$("#flow .edge").forEach(e => { const hot = e.dataset.a === id || e.dataset.b === id; e.classList.toggle("hot", hot); e.classList.toggle("dim", !hot); });
+  $$("#nodeChips button").forEach(b => b.classList.toggle("on", b.dataset.id === id));
+  const d = DET[id], n = NID[id], idx = ORDER.indexOf(id) + 1; $("#stageNo").textContent = `Stage ${idx} of ${ORDER.length}`;
+  $("#detail").innerHTML = `<div class="row" style="justify-content:space-between"><h3 style="color:${laneColor(n)}">${idx}. ${esc(n.l)}</h3><span class="pill">${CATNAME[n.lane]}</span></div>
+    <div class="cols"><div><p style="margin-top:0">${d.what}</p><div class="say"><b>If you are asked</b>${d.say}</div></div>
+    <div><h4 style="margin-top:0">Evidence</h4><ul class="small">${d.ev.map(e => `<li>${e}</li>`).join("")}</ul></div></div>
+    <div class="row" style="margin-top:8px"><span class="filelinks">${d.files.map(([l, h]) => `<a href="${h}" target="_blank" rel="noopener">${esc(l)}</a>`).join("")}</span><button class="btn small primary" id="jumpQ" type="button">Interview questions for this stage &darr;</button></div>`;
+  $("#jumpQ").addEventListener("click", () => { stageF = id; renderQ(); $("#s3").scrollIntoView(); });
+}
+function clearSel() { selected = null; $$("#flow .node").forEach(g => g.classList.remove("sel", "dim")); $$("#flow .edge").forEach(e => e.classList.remove("hot", "dim")); $$("#nodeChips button").forEach(b => b.classList.remove("on")); $("#detail").innerHTML = `<p class="muted" style="margin:0">Click a box in the diagram, or press <b>Next stage</b>, to see the details of that stage.</p>`; $("#stageNo").textContent = ""; }
+
+/* ===================== results ===================== */
+const METRICS = [
+  { id: "acc", name: "Accuracy", get: m => m.acc, fmt: v => pct(v), max: 1, min: 0.5, note: "Higher is better. The thin dark bar is the 95% bootstrap confidence interval; overlapping intervals mean the difference is not clearly real." },
+  { id: "neg", name: "Negation sentences", get: m => m.neg, fmt: v => pct(v), max: 1, min: 0.5, note: "Accuracy on the 184 test sentences containing not, no, never, n't …" },
+  { id: "con", name: "Contrast sentences", get: m => m.con, fmt: v => pct(v), max: 1, min: 0.5, note: "Accuracy on the 130 test sentences containing but, although, though, yet, however." },
+  { id: "train", name: "Training time", get: m => m.train_s, fmt: v => (v < 1 ? "none" : v < 60 ? v.toFixed(0) + " s" : v < 3600 ? (v / 60).toFixed(0) + " min" : (v / 3600).toFixed(1) + " h"), log: true, note: "Log scale. Ready-made models were not trained by us. DistilBERT fine-tuning on the CPU took about 2.6 hours." },
+  { id: "lat", name: "Latency", get: m => m.lat_ms, fmt: v => (v < 1 ? v.toFixed(2) : v.toFixed(1)) + " ms", log: true, note: "Log scale. Milliseconds per sentence on the CPU (batches of 32). Lower is better." },
+  { id: "params", name: "Size", get: m => m.params, fmt: v => (v >= 1e6 ? (v / 1e6).toFixed(1) + " M" : (v / 1e3).toFixed(0) + " k"), log: true, note: "Log scale. For TF-IDF models this is the number of n-gram weights, not network parameters." },
+];
+let metric = "acc";
+function renderRes() {
+  $("#metricTabs").innerHTML = METRICS.map(m => `<button class="btn small ${m.id === metric ? "on" : ""}" type="button" data-id="${m.id}">${m.name}</button>`).join("");
+  $$("#metricTabs button").forEach(b => b.addEventListener("click", () => { metric = b.dataset.id; renderRes(); }));
+  $("#legend").innerHTML = Object.entries({ classical: "Classical", recurrent: "Recurrent", transformer: "Transformer" }).map(([k, v]) => `<span class="small"><span class="dot" style="background:${FAM[k]}"></span>${v}</span>`).join("");
+  const mt = METRICS.find(x => x.id === metric), vals = M.map(m => mt.get(m)).filter(v => v > 0);
+  const sorted = M.slice().sort((a, b) => (mt.log ? mt.get(b) - mt.get(a) : mt.get(b) - mt.get(a)));
+  const lo = mt.log ? Math.log10(Math.min(...vals)) - 0.3 : mt.min, hi = mt.log ? Math.log10(Math.max(...vals)) : mt.max;
+  const pos = v => (v <= 0 ? 0 : mt.log ? (Math.log10(v) - lo) / (hi - lo) : (v - lo) / (hi - lo));
+  $("#resBars").innerHTML = sorted.map(m => { const v = mt.get(m), w = Math.max(0.02, Math.min(1, pos(v))) * 100, ci = metric === "acc" ? `<span class="ci" style="left:${Math.max(0, pos(m.ci[0])) * 100}%;width:${(pos(m.ci[1]) - pos(m.ci[0])) * 100}%"></span>` : "";
+    return `<div class="bar"><span class="lbl" title="${esc(m.name)}"><span class="dot" style="background:${FAM[m.family]}"></span>${esc(m.short)}</span><span class="track"><span class="fill" style="left:0;width:${w}%;background:${FAM[m.family]};opacity:.85"></span>${ci}</span><b>${mt.fmt(v)}</b></div>`; }).join("");
+  $("#resNote").textContent = mt.note;
+}
+function renderRQ() {
+  const A = byTag.tfidf_svm, D = byTag.ft_distilbert_8000, P = byTag.pt_distilbert_sst2, S = byTag["ft_bert-small_8000"];
+  const items = [
+    ["RQ1 · Accuracy", `A Transformer fine-tuned on 8,000 sentences (DistilBERT, ${pct(D.acc)}) beat the best classical model trained on all 65,349 (SVM, ${pct(A.acc)}); the ready-made in-domain DistilBERT reached ${pct(P.acc)}. Small Transformers only matched classical ones (BERT-small ${pct(S.acc)}).`],
+    ["RQ2 · Cost", `Inference is 20 to 2,000 times slower (0.05 ms for TF-IDF vs ${P.lat_ms.toFixed(0)} ms for DistilBERT, up to 107 ms for zero-shot NLI). Fine-tuning DistilBERT took ${(D.train_s / 3600).toFixed(1)} hours on the CPU, TF-IDF 2 seconds.`],
+    ["RQ3 · Data efficiency", `With 500 labels BERT-small scored ${pct(DATA.curve.transformer[0][1])} vs ${pct(DATA.curve.tfidf[0][1])} for TF-IDF (+${((DATA.curve.transformer[0][1] - DATA.curve.tfidf[0][1]) * 100).toFixed(1)} points). With 4,000 labels it matched the classical model trained on 16 times more data.`],
+    ["RQ4 · Ready-made models", `Reuse works: DistilBERT-SST2 ${pct(P.acc)} with no training; Twitter-RoBERTa ${pct(byTag.pt_twitter_roberta.acc)} despite a different domain; zero-shot NLI ${pct(byTag.zs_nli_distilroberta.acc)} with no labels at all.`],
+    ["RQ5 · Hard sentences", `On negation the SVM falls from ${pct(A.acc)} to ${pct(A.neg)}; DistilBERT-SST2 from ${pct(P.acc)} to ${pct(P.neg)}. Larger Transformers lose 2 to 4 points, bag-of-words models 8 to 9.`],
+  ];
+  $("#rqGrid").innerHTML = items.map(([h, t]) => `<div class="card rq" style="margin:0"><b>${h}</b><p class="small" style="margin:.3em 0 0">${t}</p></div>`).join("") + `<div class="card" style="margin:0"><b>Recommendation</b><p class="small" style="margin:.3em 0 0">1) Look for a public model already fine-tuned for your task. 2) Otherwise fine-tune a distilled Transformer on a few thousand labels. 3) No labels: zero-shot is a usable start. 4) Keep TF-IDF only when inference must be extremely cheap.</p></div>`;
+  const T = DATA.curve.transformer, C = DATA.curve.tfidf, W = 560, H = 210, L = 40, R = 14, Tt = 14, B = 28, xs = [500, 1000, 2000, 4000, 8000], X = n => L + (Math.log(n) - Math.log(500)) / (Math.log(8000) - Math.log(500)) * (W - L - R), Y = v => Tt + (1 - (v - 0.55) / 0.35) * (H - Tt - B);
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:640px" role="img" aria-label="Learning curve"><g style="stroke:var(--line)"><line x1="${L}" y1="${H - B}" x2="${W - R}" y2="${H - B}"/><line x1="${L}" y1="${Tt}" x2="${L}" y2="${H - B}"/></g>`;
+  [0.6, 0.7, 0.8, 0.9].forEach(v => { s += `<text x="4" y="${Y(v) + 4}" font-size="10" style="fill:var(--muted)">${Math.round(v * 100)}%</text><line x1="${L}" x2="${W - R}" y1="${Y(v)}" y2="${Y(v)}" style="stroke:var(--line)" stroke-dasharray="2 4"/>`; });
+  xs.forEach(n => { s += `<text x="${X(n)}" y="${H - 8}" font-size="10" text-anchor="middle" style="fill:var(--muted)">${n}</text>`; });
+  [[T, "var(--transformer)", "BERT-small (pre-trained)"], [C, "var(--classical)", "TF-IDF + logistic regression"]].forEach(([d, c, nm], k) => { s += `<polyline fill="none" stroke="${c}" stroke-width="3" points="${d.map(p => X(p[0]) + "," + Y(p[1])).join(" ")}"/>` + d.map(p => `<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="4" fill="${c}"/><text x="${X(p[0])}" y="${Y(p[1]) + (k ? 16 : -8)}" font-size="9.5" text-anchor="middle" style="fill:${c}">${(p[1] * 100).toFixed(1)}</text>`).join("") + `<text x="${L + 10 + k * 200}" y="${Tt + 10}" font-size="11" font-weight="700" style="fill:${c}">${nm}</text>`; });
+  $("#curveWrap").innerHTML = s + `<text x="${W / 2}" y="${H}" font-size="10" text-anchor="middle" style="fill:var(--muted)">labelled training sentences (log scale)</text></svg>`;
+  $("#heroStats").innerHTML = [["10", "models in 4 families"], [pct(P.acc), "best accuracy (DistilBERT-SST2)"], [pct(D.acc), "DistilBERT fine-tuned on 8,000 labels"], [pct(A.acc), "best classical (all 65,349 labels)"], ["20 to 2,000×", "slower inference than TF-IDF"]].map(([b, t]) => `<div class="stat"><b>${b}</b><span>${t}</span></div>`).join("");
+}
+
+/* ===================== interview ===================== */
+const CATS = ["Project", "Data and method", "Results", "Statistics", "Transformer theory", "Attention and training", "Translation and generation", "RNN and CNN", "Practice and limits"];
+const Q = [
+  /* Project */
+  { c: 0, l: "b", st: ["topic", "purpose"], q: "Explain your project in one minute.", a: "We studied the Transformer architecture and tested experimentally how much better it is than older NLP methods for sentiment classification. We compared ten models (TF-IDF classifiers, a BiLSTM, three Transformers we fine-tuned, three ready-made ones) on SST-2 on a laptop CPU, measuring accuracy, training time, latency, size, data efficiency and performance on negation and contrast. The best result was a ready-made DistilBERT at 91.1%; our fine-tuned DistilBERT reached 88.8% on 8,000 labels, above the best classical model (82.9%) trained on all 65,349. The cost is 20 to 2,000 times slower inference." },
+  { c: 0, l: "b", st: ["topic", "rq"], q: "Why did you choose sentiment classification?", a: "It is one of the most common real-world NLP tasks (reviews, social media), it is a standard benchmark with published results for every model family, so we can compare with the literature, and it contains hard linguistic cases, negation (“not good”), contrast (“weak plot, but great acting”) and sarcasm, which test whether a model understands context." },
+  { c: 0, l: "b", st: ["rq"], q: "What are your research questions?", a: "RQ1 how much more accurate Transformers are; RQ2 what the improvement costs in training time, latency and size; RQ3 how the advantage depends on the number of labelled examples; RQ4 how ready-made models compare with models trained on the task data; RQ5 whether Transformers are better on negation and contrast." },
+  { c: 0, l: "i", st: ["lit", "rq"], q: "What gap in the literature does your work address?", a: "Many studies report that fine-tuned Transformers exceed 90% on SST-2, but few measure quality, cost and data efficiency together under realistic limited hardware. Lithuanian studies also showed that neural networks without pre-training do not necessarily beat classical methods. We compare all of these under identical conditions." },
+  { c: 0, l: "b", st: ["eval", "ready"], q: "What is your main finding in one sentence?", a: "A pre-trained Transformer is clearly the most accurate and the most data-efficient choice, but it costs far more at inference time, so the right choice depends on whether quality or cost matters more." },
+  { c: 0, l: "i", st: ["topic"], q: "What was your own contribution to the project?", a: "Prepare this with your teammates in advance (it is the one question nobody else can answer for you). A good structure: name the parts you did (for example data preparation, one model family, the statistics, a chapter of the paper, the presentation, the study material), say what was hardest, and what you would do differently. Everything in the repository was produced by the three of us and can be reproduced with run_all.sh." },
+  /* Data and method */
+  { c: 1, l: "b", st: ["data"], q: "Describe the dataset.", a: "SST-2: movie-review sentences from Rotten Tomatoes (Stanford Sentiment Treebank, binary version in GLUE; neutral removed). We used 65,349 training phrases and sentences, a 2,000-example development set taken from the training data (stratified), and the official validation set of 872 sentences as our test set, because the GLUE test labels are hidden." },
+  { c: 1, l: "i", st: ["data"], q: "Why is the test set the GLUE validation set?", a: "The GLUE test labels are not public (they are scored by a server). Following common practice we use the official validation set as held-out test data and never use it for training or choosing epochs; for that we use a separate 2,000-example development set." },
+  { c: 1, l: "i", st: ["data", "eval"], q: "Training data are short phrases, test data are full sentences. Is that a problem?", a: "It is a deliberate challenge: training sentences average under 10 words, test sentences about 19.5. Models must generalise from phrases to complete sentences. It makes absolute accuracies a little lower, but the comparison between models stays fair because they all see the same data." },
+  { c: 1, l: "i", st: ["rq", "eval"], q: "Why these ten models?", a: "They represent four approaches a practitioner can realistically choose: classical TF-IDF (cheap strong baselines), a BiLSTM (the pre-Transformer neural approach), three fine-tuned Transformers that differ only in size (4.4 M, 29 M, 67 M parameters), and three ready-made models (best-case reuse, other-domain reuse, zero-shot)." },
+  { c: 1, l: "i", st: ["eval"], q: "How did you measure latency, and why on a CPU?", a: "Latency is the total prediction time on the 872 test sentences divided by 872, with batches of 32, on an Intel Core i5-8365U laptop without GPU. We chose CPU-only because it is what most students and many small deployments have; the limitation is that GPU numbers would differ and the ratios between models could change." },
+  { c: 1, l: "i", st: ["eval"], q: "Why report macro-F1 as well as accuracy?", a: "Accuracy can hide class imbalance. Macro-F1 averages the F1 of the two classes equally. In our data the classes are nearly balanced in the test set (50.9% positive), so accuracy and macro-F1 are almost identical for every model, which we also checked." },
+  { c: 1, l: "b", st: ["eval", "classical"], q: "What is TF-IDF?", a: "Term frequency times inverse document frequency: each word (and word pair) is weighted by how often it occurs in the sentence and how rare it is across all sentences. A sentence becomes a long sparse vector of such weights, and a linear classifier (naive Bayes, logistic regression, SVM) learns which weights indicate positive or negative." },
+  { c: 1, l: "h", st: ["rq", "eval"], q: "How reproducible is your study?", a: "All stages are scripts (01 to 08) writing JSON results; a fixed random seed (42) is used for splits, sampling and initialisation; run_all.sh reproduces everything in about 2.5 to 3 hours on a laptop CPU. The main limit: one seed only, so run-to-run variance is not measured; we use bootstrap intervals over the test set instead and say so as a limitation." },
+  /* Results */
+  { c: 2, l: "b", st: ["eval", "ready"], q: "Which model was best and by how much?", a: "The ready-made DistilBERT fine-tuned on SST-2 by its authors: 91.1% accuracy. Then our DistilBERT fine-tuned on 8,000 sentences (88.8%), Twitter-RoBERTa (85.8%), BERT-small (83.7%), TF-IDF + SVM (82.9%), BiLSTM (82.8%), zero-shot NLI (81.8%), and BERT-tiny last (76.6%)." },
+  { c: 2, l: "i", st: ["eval", "classical", "finetune"], q: "How does a Transformer trained on 8,000 sentences beat a classical model trained on 65,349?", a: "Because of pre-training. The Transformer already learned grammar and meaning from huge unlabelled text; fine-tuning only teaches it the sentiment task. The classical model starts from nothing and learns only from our labels. The difference between fine-tuned DistilBERT and the SVM is statistically significant (McNemar, p < 0.001)." },
+  { c: 2, l: "i", st: ["bilstm", "eval"], q: "Why did the BiLSTM not beat TF-IDF?", a: "It was trained from scratch on the same labels without pre-training, so it must learn word meanings and order effects from 65k short phrases. It reached 82.8% vs 82.9% for the SVM. It was better on negation (78.8% vs about 74.5%) because it reads word order, but not enough to change the overall result. This agrees with Lithuanian studies that found no automatic advantage for neural nets without pre-training." },
+  { c: 2, l: "i", st: ["finetune", "eval"], q: "Why was BERT-tiny the weakest?", a: "It has only 4.4 million parameters (2 layers, hidden size 128), so its capacity is small, and it was fine-tuned on only 8,000 sentences. Pre-training helps, but not enough for such a small model to match a linear model trained on eight times more data. Size matters: tiny 76.6%, small 83.7%, DistilBERT 88.8% with the same recipe." },
+  { c: 2, l: "i", st: ["eval"], q: "What does a Transformer cost compared with TF-IDF?", a: "Inference: 1.2 to 107 ms per sentence vs 0.05 ms, so 20 to 2,000 times slower. Size: roughly 60 to 1,700 times larger. Training: seconds for TF-IDF, 2 minutes (BERT-tiny), 26 minutes (BERT-small) and about 2.6 hours (DistilBERT) on our CPU." },
+  { c: 2, l: "i", st: ["eval"], q: "What did you find about data efficiency?", a: "With 500 labelled sentences BERT-small reached 75.9% vs 61.8% for TF-IDF logistic regression (+14.1 points). With 4,000 labels it matched the classical model trained on about 16 times more data. The advantage shrinks as labels grow, but never disappears in our range (500 to 8,000)." },
+  { c: 2, l: "i", st: ["eval", "ready"], q: "Were Transformers better on negation and contrast?", a: "Yes, the larger ones. On the 184 negation sentences the SVM drops from 82.9% to 74.5% (−8.4 points) while DistilBERT-SST2 drops from 91.1% to 87.0% (−4.1). On the 130 contrast sentences: 77.7% vs 86.2%. Self-attention lets every word see every other word, so “not” can modify “good” even when they are far apart." },
+  { c: 2, l: "i", st: ["ready", "eval"], q: "What can a zero-shot model do?", a: "Our zero-shot NLI DistilRoBERTa reached 81.8% with zero labelled examples: it was trained to decide whether a hypothesis (“this review is positive”) follows from a text. It is a usable first baseline when no labels exist, comparable with classical models, but it is the slowest model here (107 ms per sentence)." },
+  { c: 2, l: "b", st: ["eval", "purpose"], q: "So which model would you recommend?", a: "First check for a public model already fine-tuned for your task and domain (best quality, no training). If none exists, fine-tune a distilled Transformer such as DistilBERT on a few thousand labels. With no labels, start zero-shot. Keep TF-IDF only when inference must be extremely cheap or hardware is very limited." },
+  /* Statistics */
+  { c: 3, l: "i", st: ["eval"], q: "What is a bootstrap confidence interval?", a: "We resample the 872 test sentences with replacement many times, recompute the accuracy each time, and take the 2.5th and 97.5th percentiles. It shows how much accuracy could vary just because of which sentences happened to be in the test set. For DistilBERT-SST2 it is about 89.1% to 92.9%." },
+  { c: 3, l: "h", st: ["eval"], q: "Fine-tuned DistilBERT (88.8%) and DistilBERT-SST2 (91.1%): is the difference real?", a: "Their intervals overlap (about 86.6 to 90.7 vs 89.1 to 92.9), so from the intervals alone we cannot claim a difference. A paired test on the same sentences would be the right tool, and the honest statement is that the ready-made model is probably better but the gap is within the noise of an 872-sentence test set." },
+  { c: 3, l: "h", st: ["eval"], q: "What is McNemar's test and why use it?", a: "It compares two classifiers on the same test items using only the sentences where exactly one is correct. If model A is right and B wrong on b sentences and the reverse on c, then under “no difference” b and c should be about equal; the test measures how unlikely the observed split is. It is the standard paired test for classifier comparison on one test set." },
+  { c: 3, l: "i", st: ["eval", "data"], q: "Is 872 test sentences enough?", a: "It is the standard SST-2 validation size, but the standard error of an accuracy near 85% is about 1.2 points, and the 95% interval about ±2.5 points. So differences below about 2 to 3 points between single models should not be over-interpreted; larger gaps, such as 88.8% vs 82.9%, are clearly real." },
+  /* Transformer theory */
+  { c: 4, l: "b", st: ["paper", "guide"], q: "What is a Transformer?", a: "A neural network architecture (Vaswani et al., 2017, “Attention Is All You Need”) that processes a whole sequence at once and uses self-attention to connect every word with every other word, instead of reading step by step like an RNN. Its original form has an encoder (understands the input) and a decoder (writes the output); BERT keeps only the encoder, GPT only the decoder." },
+  { c: 4, l: "b", st: ["paper", "explainers"], q: "Explain self-attention in simple words.", a: "Each word asks a question (query), every word offers a label (key) and content (value). A word compares its query with all keys; the better the match, the more of that word's value it takes. After this, each word's vector carries information from the words that matter for it, for example “it” can take information from the noun it refers to." },
+  { c: 4, l: "i", st: ["paper", "explainers"], q: "Write the attention formula and explain the √d_k.", a: "Attention(Q, K, V) = softmax(Q·Kᵀ / √d_k)·V. The dot products of long vectors grow with their length and would push the softmax towards 0 or 1 (tiny gradients); dividing by √d_k keeps the scores moderate. Softmax makes each row of weights sum to 1; multiplying by V takes the weighted average of the values." },
+  { c: 4, l: "i", st: ["paper"], q: "Why multi-head attention?", a: "One attention can focus on one kind of relationship. With h heads (16 in NLLB, 12 in BERT-base), each working on a smaller slice of the vector with its own Q, K, V matrices, the model can look for different relationships at once (for example neighbours, subject-verb agreement, coreference); the results are joined and mixed by an output matrix." },
+  { c: 4, l: "i", st: ["paper", "explainers"], q: "Why is positional encoding needed?", a: "Attention treats the input as a set: without extra information it would not know word order, so “dog bites man” and “man bites dog” look the same. A position signal (fixed sine and cosine waves in the original paper, learned vectors in BERT) is added to each word embedding." },
+  { c: 4, l: "i", st: ["paper", "explainers"], q: "What do residual connections and layer normalisation do?", a: "A residual (skip) connection adds a sub-layer's input to its output, giving gradients a direct path through deep stacks so 12 layers can train. Layer normalisation rescales each vector to keep the values stable. Together they make deep Transformers trainable; the 2017 paper normalises after the Add, many modern models before each sub-layer." },
+  { c: 4, l: "i", st: ["paper"], q: "What is the complexity of self-attention and why does it matter?", a: "Every word is compared with every other word, so time and memory grow with the square of the sequence length, O(n²). It is fine for sentences and paragraphs but expensive for long documents, which is why long-context models use tricks such as sparse or windowed attention. The benefit is a path length of one between any two words and full parallelism." },
+  { c: 4, l: "b", st: ["finetune", "ready"], q: "What is the difference between pre-training and fine-tuning?", a: "Pre-training teaches a model general language from huge amounts of unlabelled text (for BERT: predicting masked words). Fine-tuning then adapts it to a specific task with a small labelled dataset by adding a small classification head and training the whole network briefly. Pre-training is expensive but done once; fine-tuning is cheap, and it is why 8,000 sentences were enough for 88.8%." },
+  { c: 4, l: "i", st: ["finetune"], q: "What is DistilBERT?", a: "A smaller, faster version of BERT-base made by knowledge distillation: a small student model is trained to mimic the outputs of the large teacher. It has 6 layers instead of 12 (about 67 million parameters instead of 110 million) and keeps most of BERT's accuracy while being about 60% faster." },
+  { c: 4, l: "h", st: ["paper", "finetune"], q: "BERT versus GPT: what is the difference?", a: "BERT is an encoder: it reads the whole sentence in both directions and is good for understanding tasks (classification, tagging) after fine-tuning. GPT is a decoder: it reads left to right with a causal mask and predicts the next word, so it is a generator. Encoder-decoder models (T5, NLLB) read with one stack and write with the other, which suits translation and summarisation." },
+  /* Attention and training */
+  { c: 5, l: "i", st: ["finetune"], q: "How did you fine-tune the Transformers?", a: "A classification head (a linear layer on the [CLS] vector) was added to each pre-trained encoder and the whole network was trained on 8,000 labelled sentences with AdamW, a linear warm-up and decay schedule, cross-entropy loss, and the best epoch chosen on the development set. One generic script (04_finetune_transformer.py) handles all three models." },
+  { c: 5, l: "i", st: ["finetune", "explainers"], q: "Explain the training loop in four steps.", a: "Forward pass to get predictions; compute the loss (cross-entropy); backpropagate to get the gradient of the loss for every weight; update the weights a small step against the gradient (optimiser such as AdamW). Repeat over many batches; check validation loss each epoch to avoid overfitting." },
+  { c: 5, l: "i", st: ["explainers"], q: "What is overfitting and how did you guard against it?", a: "A model that memorises the training data and fails on new data: training loss keeps falling while validation loss rises. We chose the best epoch on a development set, kept the test set untouched, and evaluated everything on unseen sentences. In our from-scratch translation demo, training loss reached 0.002 while validation loss bottomed near 0.72, which shows the effect." },
+  /* Translation */
+  { c: 6, l: "i", st: ["explainers"], q: "How does a Transformer translate a sentence?", a: "The encoder reads the whole source sentence once and produces a vector for every word (the memory). The decoder then writes the translation one token at a time; at each step it uses masked self-attention over what it has written, cross-attention over the memory, and a feed-forward layer, then a softmax gives the next-token probabilities. The chosen token is appended and the loop repeats until the end token." },
+  { c: 6, l: "h", st: ["explainers"], q: "What is teacher forcing, and what is exposure bias?", a: "During training the decoder is given the correct previous words (shifted by one) and predicts every position in one parallel pass; a wrong guess cannot spoil later inputs. At test time it must use its own previous outputs, which it never practised: that mismatch is exposure bias." },
+  { c: 6, l: "i", st: ["explainers"], q: "Greedy decoding versus beam search?", a: "Greedy takes the most probable token at every step. Beam search keeps the k best partial translations and extends all of them, so an early tempting but poor choice can be recovered. The ranking uses the sum of log-probabilities, normalised by length to avoid favouring short outputs." },
+  { c: 6, l: "i", st: ["explainers"], q: "What is BLEU and what are its limits?", a: "BLEU counts how many 1- to 4-word sequences of the translation also occur in the human reference (clipped), combines the precisions geometrically and penalises outputs that are too short. Limits: it only matches surface words, so a correct translation worded differently scores low; it needs several references and thousands of sentences; for morphologically rich languages like Kannada chrF and human evaluation are used too." },
+  /* RNN and CNN */
+  { c: 7, l: "i", st: ["bilstm", "explainers"], q: "What is the vanishing gradient problem?", a: "In a plain RNN the gradient reaching early words is multiplied at every step by a weight matrix and a tanh slope (at most 1), so it shrinks exponentially with distance and early words cannot influence learning. LSTM and GRU add paths (the cell state, the leaky update) where the multiplier can stay near 1." },
+  { c: 7, l: "i", st: ["bilstm", "explainers"], q: "How does an LSTM differ from an RNN?", a: "It keeps a separate cell state and three gates: the forget gate scales old memory, the input gate lets new content in, the output gate controls what is revealed. Because the cell update is c_t = f ⊙ c_(t−1) + i ⊙ g, the gradient along the cell path is multiplied only by f, which can stay near 1, so long dependencies can be learned." },
+  { c: 7, l: "i", st: ["explainers", "paper"], q: "Why did Transformers replace RNNs?", a: "RNNs are sequential (step t waits for step t−1) and struggle with long-range links. Transformers process all positions in parallel and connect any two words in one attention step, which trains much faster on modern hardware and scales to large pre-training. The price is O(n²) attention cost." },
+  { c: 7, l: "b", st: ["explainers"], q: "Explain a CNN in simple words.", a: "A small filter slides over the image computing a weighted sum at each position (convolution) to detect a pattern, ReLU keeps positive evidence, pooling keeps the strongest response in each block and shrinks the map, the maps are flattened into a list, a dense layer weighs the evidence into class scores, softmax makes probabilities. Learning: loss, backpropagation (chain rule), weight update." },
+  /* Practice and limits */
+  { c: 8, l: "i", st: ["eval", "purpose"], q: "What are the limitations of your study?", a: "One dataset (movie reviews, English), one random seed (run-to-run variance not measured), a small 872-sentence test set, CPU-only timing (GPU ratios would differ), fine-tuning on 8,000 sentences only, and hyper-parameters not tuned extensively per model. We state these in the paper and treat small differences with caution." },
+  { c: 8, l: "h", st: ["purpose", "eval"], q: "How would you extend the work?", a: "Repeat with several seeds and report the spread; add GPU timing; use more datasets and domains; apply the same procedure to Lithuanian (LitLat BERT, XLM-RoBERTa) and Kannada; extend from classification to translation and generation; add error analysis of the sentences that all models get wrong." },
+  { c: 8, l: "i", st: ["purpose"], q: "What ethical issues arise with sentiment models?", a: "Training data reflects its authors: movie-review sentiment may not transfer to other domains, dialects or languages (our Twitter-RoBERTa shows a domain shift cost). Models can be biased towards certain names or groups, and automated sentiment should not be the sole basis for decisions about people. Licences and privacy of data and models must also be checked (for example NLLB is released for non-commercial use)." },
+  { c: 8, l: "b", st: ["kn", "guide", "purpose"], q: "Why did you make Kannada notes and interactive guides?", a: "Because understanding is faster in one's own language and by seeing numbers change. The Kannada notes explain NLP and Transformers with local examples and give viva answers with English answer lines; the interactive pages run real models in the browser so every claim can be checked." },
+  { c: 8, l: "h", st: ["eval", "ready"], q: "A company asks which model to deploy for customer reviews. What do you ask them first?", a: "Which language and domain; how many labelled examples they have; the latency and cost budget (CPU or GPU, requests per second); how costly a wrong prediction is. Then: reuse a public in-domain model if one exists; otherwise fine-tune a distilled Transformer; fall back on TF-IDF only when latency or hardware dominate. Measure on their own data before deciding." },
+  { c: 8, l: "i", st: ["purpose", "topic"], q: "What did you learn from this project?", a: "Pre-training is the real advantage; bigger is not automatically better; cost matters as much as accuracy; and a result without a confidence interval is an anecdote. We also learned to make an experiment reproducible: scripts, fixed seeds, saved predictions, and every number in the paper traceable to a result file." },
+];
+let cat = -1, lvl = "", stageF = "", openAll = false, quizMode = false, quizIdx = 0, quizOrder = [];
+const done = new Set(store.get("done", []));
+const LV = { b: ["Basic", "lv-b"], i: ["Intermediate", "lv-i"], h: ["Hard", "lv-h"] };
+function visibleQ() {
+  const term = $("#qSearch").value.trim().toLowerCase();
+  return Q.map((q, i) => ({ ...q, i })).filter(q => (cat < 0 || q.c === cat) && (!lvl || q.l === lvl) && (!stageF || q.st.includes(stageF)) && (!term || (q.q + " " + q.a).toLowerCase().includes(term)));
+}
+function renderQ() {
+  $("#catChips").innerHTML = `<button class="btn small ${cat < 0 ? "on" : ""}" data-c="-1" type="button">All (${Q.length})</button>` + CATS.map((c, i) => `<button class="btn small ${cat === i ? "on" : ""}" data-c="${i}" type="button">${c} (${Q.filter(q => q.c === i).length})</button>`).join("");
+  $$("#catChips button").forEach(b => b.addEventListener("click", () => { cat = +b.dataset.c; renderQ(); }));
+  $("#lvChips").innerHTML = [["", "All"], ["b", "Basic"], ["i", "Intermediate"], ["h", "Hard"]].map(([k, n]) => `<button class="btn small ${lvl === k ? "on" : ""}" data-l="${k}" type="button">${n}</button>`).join("");
+  $$("#lvChips button").forEach(b => b.addEventListener("click", () => { lvl = b.dataset.l; renderQ(); }));
+  $("#stageFilter").innerHTML = stageF ? `Stage filter: <b>${esc(NID[stageF].l)}</b> <button class="btn small" id="clrStage" type="button">clear</button>` : "";
+  if (stageF) $("#clrStage").addEventListener("click", () => { stageF = ""; renderQ(); });
+  const list = visibleQ();
+  $("#qCount").textContent = `${list.length} of ${Q.length} shown · ${done.size} reviewed`;
+  $("#qList").innerHTML = list.map(q => `<div class="q ${openAll ? "open" : ""} ${done.has(q.i) ? "done" : ""}" data-i="${q.i}"><button type="button" aria-expanded="${openAll}"><span class="chev">&#9656;</span><span>${esc(q.q)}</span></button><div class="a"><p>${q.a.replace(/</g, "&lt;")}</p><div class="tags"><span class="pill ${LV[q.l][1]}">${LV[q.l][0]}</span><span class="pill">${CATS[q.c]}</span>${q.st.map(s => `<span class="pill">stage: ${esc(NID[s].l)}</span>`).join("")}</div><div class="row" style="margin-top:8px"><button class="btn small mark" type="button">${done.has(q.i) ? "Mark as not reviewed" : "Mark as reviewed"}</button></div></div></div>`).join("") || `<p class="muted">No question matches. Clear the filters or the search.</p>`;
+  $$("#qList .q > button").forEach(b => b.addEventListener("click", () => { const q = b.parentElement; q.classList.toggle("open"); b.setAttribute("aria-expanded", q.classList.contains("open")); }));
+  $$("#qList .mark").forEach(b => b.addEventListener("click", () => { const i = +b.closest(".q").dataset.i; done.has(i) ? done.delete(i) : done.add(i); store.set("done", [...done]); renderQ(); }));
+}
+function startQuiz() {
+  quizMode = true; quizOrder = visibleQ().map(q => q.i).sort(() => Math.random() - 0.5); quizIdx = 0; $("#quiz").style.display = ""; drawQuiz();
+}
+function drawQuiz() {
+  const box = $("#quiz");
+  if (!quizOrder.length) { box.innerHTML = `<div class="quizbox"><p>No questions in the current filter.</p><button class="btn" id="qClose" type="button">Close</button></div>`; $("#qClose").addEventListener("click", closeQuiz); return; }
+  if (quizIdx >= quizOrder.length) { box.innerHTML = `<div class="quizbox"><div class="qq">Round finished</div><p>You went through ${quizOrder.length} questions. ${done.size} of ${Q.length} are marked as reviewed overall.</p><div class="row"><button class="btn primary" id="qAgain" type="button">Another round</button><button class="btn" id="qClose" type="button">Close</button></div></div>`; $("#qAgain").addEventListener("click", startQuiz); $("#qClose").addEventListener("click", closeQuiz); return; }
+  const q = Q[quizOrder[quizIdx]];
+  box.innerHTML = `<div class="quizbox"><div class="row" style="justify-content:space-between"><span class="small muted">Question ${quizIdx + 1} of ${quizOrder.length} · ${CATS[q.c]} · <span class="pill ${LV[q.l][1]}">${LV[q.l][0]}</span></span><button class="btn small" id="qClose" type="button">Close quiz</button></div><p class="qq">${esc(q.q)}</p><p class="small muted">Answer out loud first (30 to 60 seconds), then reveal.</p><div id="qa" style="display:none"><p>${q.a.replace(/</g, "&lt;")}</p></div><div class="row"><button class="btn primary" id="reveal" type="button">Reveal the answer</button><button class="btn" id="gotit" type="button" style="display:none">&#10003; I knew it</button><button class="btn" id="again" type="button" style="display:none">Needs more practice</button></div></div>`;
+  $("#qClose").addEventListener("click", closeQuiz);
+  $("#reveal").addEventListener("click", () => { $("#qa").style.display = ""; $("#reveal").style.display = "none"; $("#gotit").style.display = ""; $("#again").style.display = ""; });
+  $("#gotit").addEventListener("click", () => { done.add(quizOrder[quizIdx]); store.set("done", [...done]); quizIdx++; drawQuiz(); renderQ(); });
+  $("#again").addEventListener("click", () => { done.delete(quizOrder[quizIdx]); store.set("done", [...done]); quizIdx++; drawQuiz(); renderQ(); });
+}
+function closeQuiz() { quizMode = false; $("#quiz").style.display = "none"; renderQ(); }
+
+/* ===================== boot ===================== */
+function boot() {
+  const root = document.documentElement; root.dataset.theme = store.get("theme", "auto");
+  $("#themeBtn").addEventListener("click", () => { const dark = root.dataset.theme === "dark" || (root.dataset.theme === "auto" && matchMedia("(prefers-color-scheme: dark)").matches); root.dataset.theme = dark ? "light" : "dark"; store.set("theme", root.dataset.theme); });
+  const NAV = [["s1", "Flow"], ["s2", "Results"], ["s3", "Interview"], ["s4", "Purpose"]];
+  $("#chips").innerHTML = `<a href="#s0" data-id="s0">Start</a>` + NAV.map(n => `<a href="#${n[0]}" data-id="${n[0]}">${n[1]}</a>`).join("");
+  const obs = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) $$("#chips a").forEach(a => a.classList.toggle("on", a.dataset.id === en.target.id)); }), { rootMargin: "-30% 0px -60% 0px" }); $$("section").forEach(s => obs.observe(s));
+  drawFlow(); clearSel();
+  $("#nextBtn").addEventListener("click", () => select(ORDER[Math.min(ORDER.length - 1, (selected ? ORDER.indexOf(selected) : -1) + 1)]));
+  $("#prevBtn").addEventListener("click", () => select(ORDER[Math.max(0, (selected ? ORDER.indexOf(selected) : 1) - 1)]));
+  $("#clearBtn").addEventListener("click", clearSel);
+  renderRes(); renderRQ(); renderQ();
+  $("#qSearch").addEventListener("input", renderQ); $("#expandAll").addEventListener("click", () => { openAll = true; renderQ(); }); $("#collapseAll").addEventListener("click", () => { openAll = false; renderQ(); });
+  $("#quizBtn").addEventListener("click", startQuiz);
+  window.__mapReady = true;
+}
+boot();
+</script>
+</body>
+</html>
