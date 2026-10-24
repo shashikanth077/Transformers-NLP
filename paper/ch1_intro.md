@@ -22,8 +22,8 @@ The topic is relevant for three reasons. First, Transformers are now the default
 
 **Research methods.** Analysis of scientific literature, comparative analysis, computational experiment (training and evaluation of models), statistical evaluation of the results (bootstrap confidence intervals, McNemar's test) and visualisation of attention weights.
 
-**Structure of the work.** The paper consists of an introduction, three chapters, conclusions, a list of references and an appendix. Chapter 1 reviews the literature, Chapter 2 describes the research methodology (problem, dataset, competitors, criteria, program design and mathematical methods), and Chapter 3 presents the implementation and the results of the experiments. The source code is publicly available in the project repository (Appendix A).
+**Structure of the work.** The paper consists of an introduction, three chapters, conclusions and a list of references. Chapter 1 reviews the literature, Chapter 2 describes the research methodology (problem, dataset, competitors, criteria, program design and mathematical methods), and Chapter 3 presents the implementation and the results of the experiments. The source code is publicly available in the project repository (https://github.com/shashikanth077/Transformers-NLP).
 
-**Distribution of work.** The project was carried out by a team of three students. All members took part in formulating the problem, discussing the results and editing the final text; the main responsibilities are shown in Table {tab:team}.
+**Distribution of work.** The project was carried out by a team of two students. All members took part in formulating the problem, discussing the results and editing the final text; the main responsibilities are shown in Table {tab:team}.
 
 [[TABLE team]]

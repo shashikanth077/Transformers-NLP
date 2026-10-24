@@ -1,7 +1,7 @@
 # Transformers for NLP: sentiment classification comparison (SST-2)
 
 Code for the group project "Transformers and their application in natural language processing (NLP) tasks"
-(Shashikanth Hosur Ramegowda, Shaeed Khan, Rimsha Tariq, VILNIUS TECH).
+(Shashikanth Hosur Ramegowda, Shaeed Khan, VILNIUS TECH).
 
 The project compares 10 models on binary sentiment classification of the SST-2 dataset, on CPU only:
 

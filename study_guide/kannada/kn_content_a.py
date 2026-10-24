@@ -18,7 +18,7 @@ def cover(N):
   <h2>ಕನ್ನಡದಲ್ಲಿ ಸರಳ ಅಧ್ಯಯನ ಟಿಪ್ಪಣಿಗಳು</h2>
   <div class="sub">ನಮ್ಮ ಪ್ರಾಜೆಕ್ಟ್ <span class="en">“Transformers and their application in NLP tasks”</span> ಅನ್ನು ನಮ್ಮ ಊರಿನ ಉದಾಹರಣೆಗಳೊಂದಿಗೆ, ಸುಲಭ ಕನ್ನಡದಲ್ಲಿ ಮೊದಲಿನಿಂದ ಕೊನೆಯವರೆಗೆ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಮತ್ತು ವೈವಾ–ಪ್ರೆಸೆಂಟೇಶನ್‌ಗೆ ಸಿದ್ಧರಾಗಲು.</div>
   {cover_art()}
-  <div class="authors"><b>ತಯಾರಿಕೆ:</b> Shashikanth Hosur Ramegowda · Shaeed Khan · Rimsha Tariq<br><span style="opacity:.8">Vilnius Gediminas Technical University · Engineering of Artificial Intelligence</span></div>
+  <div class="authors"><b>ತಯಾರಿಕೆ:</b> Shashikanth Hosur Ramegowda · Shaeed Khan<br><span style="opacity:.8">Vilnius Gediminas Technical University · Engineering of Artificial Intelligence</span></div>
 </section>"""
 
 

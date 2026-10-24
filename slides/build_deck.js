@@ -59,7 +59,7 @@ const FAM = { classical: H.accent2, recurrent: H.accent3, transformer: H.accent1
 const pres = new pptxgen();
 pres.layout = "LAYOUT_WIDE"; // 13.33 x 7.5 in
 pres.title = "Transformers and their application in NLP tasks";
-pres.author = "Shashikanth Hosur Ramegowda, Shaeed Khan, Rimsha Tariq";
+pres.author = "Shashikanth Hosur Ramegowda, Shaeed Khan";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
 const C = pres.SchemeColor;
 const W = 13.333;
@@ -118,8 +118,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
   s.addText("Do Transformers pay off on a laptop CPU? A comparison of 10 sentiment classifiers on SST-2", { isTextBox: true, x: 0.8, y: 3.75, w: 7.8, h: 0.9, fontSize: 18, color: "D6D6EE", margin: 0, italic: true });
   s.addText([
     { text: "Shashikanth Hosur Ramegowda", options: { breakLine: true } },
-    { text: "Shaeed Khan", options: { breakLine: true } },
-    { text: "Rimsha Tariq" },
+    { text: "Shaeed Khan" },
   ], { isTextBox: true, x: 0.8, y: 5.2, w: 6, h: 1.2, fontSize: 16, color: "FFFFFF", margin: 0, paraSpaceAfter: 4 });
   // motif: attention grid
   const words = ["not", "good", "but", "great"];
@@ -154,7 +153,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
     { text: "Pre-train once on huge unlabelled text, then fine-tune", options: { bullet: true, breakLine: true } },
     { text: "Basis of BERT, GPT, T5, ChatGPT, LitLat BERT…", options: { bullet: true } },
   ], { x: 7.25, y: 2.95, w: 5.2, h: 3.2, paraSpaceAfter: 10 });
-  s.addNotes("Speaker: Rimsha (≈45 s). Before 2017 NLP models read sentences word by word. The Transformer by Vaswani et al. removed recurrence and kept only attention. That gave parallel training and made huge pre-training possible: BERT, GPT and others. Aim of the project: explain the architecture and measure its benefit experimentally.");
+  s.addNotes("Speaker: Shashikanth (≈45 s). Before 2017 NLP models read sentences word by word. The Transformer by Vaswani et al. removed recurrence and kept only attention. That gave parallel training and made huge pre-training possible: BERT, GPT and others. Aim of the project: explain the architecture and measure its benefit experimentally.");
 
   // ============================================================ 3. Self-attention
   pres.addSection({ title: "Theory" });
@@ -176,7 +175,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
     s.addText(steps[i][1], { isTextBox: true, x: 6.5, y: y - 0.04, w: 6.2, h: 0.36, fontSize: 16, bold: true, color: H.dk1, margin: 0 });
     s.addText(steps[i][2], { isTextBox: true, x: 6.5, y: y + 0.32, w: 6.2, h: 0.32, fontSize: 13, color: "52516E", margin: 0 });
   }
-  s.addNotes("Speaker: Rimsha (≈60 s). Explain Q, K, V: each word asks a question (query), every word offers a key, the softmax of their dot products gives attention weights, and the output is a weighted mix of values. Several heads run in parallel. Layers are stacked with residual connections and layer normalisation. For classification we take the [CLS] vector and add a softmax layer.");
+  s.addNotes("Speaker: Shashikanth (≈60 s). Explain Q, K, V: each word asks a question (query), every word offers a key, the softmax of their dot products gives attention weights, and the output is a weighted mix of values. Several heads run in parallel. Layers are stacked with residual connections and layer normalisation. For classification we take the [CLS] vector and add a softmax layer.");
 
   // ============================================================ 4. Literature
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Theory" });
@@ -337,7 +336,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
   card(s, 9.2, 4.15, 3.5, 2.5, H.lt2);
   s.addText(`+${((lcT(tn, sizes[0]) - lcT(cn, sizes[0])) * 100).toFixed(0)} p.p.`, { isTextBox: true, x: 9.45, y: 4.25, w: 3.0, h: 0.9, fontFace: "Cambria", fontSize: 40, bold: true, color: H.dk2, margin: 0 });
   s.addText(`advantage with only ${sizes[0]} labels – the gap shrinks as data grows`, { isTextBox: true, x: 9.45, y: 5.15, w: 3.0, h: 1.3, fontSize: 13, color: "52516E", margin: 0 });
-  s.addNotes("Speaker: Rimsha (≈50 s). Same random subsets for both models. With very few labels TF-IDF cannot learn the vocabulary, while BERT-small already knows English from pre-training. This confirms the Lithuanian finding that pre-training, not the neural network as such, is what makes the difference on small data.");
+  s.addNotes("Speaker: Shaeed (≈50 s). Same random subsets for both models. With very few labels TF-IDF cannot learn the vocabulary, while BERT-small already knows English from pre-training. This confirms the Lithuanian finding that pre-training, not the neural network as such, is what makes the difference on small data.");
 
   // ============================================================ 10. Negation + attention
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Results" });
@@ -358,7 +357,7 @@ function imgFit(slide, file, x, y, maxW, maxH) {
   });
   imgFit(s, "attention_heatmap.png", 7.8, 1.35, 4.9, 4.6);
   s.addText("“the plot was not good, but the acting was brilliant” – DistilBERT attention, last layer", { isTextBox: true, x: 7.8, y: 6.05, w: 4.9, h: 0.6, fontSize: 11, color: "52516E", margin: 0, italic: true, align: "center" });
-  s.addNotes("Speaker: Rimsha (≈45 s). Bag-of-words models lose most on sentences with negation and contrast, because 'not good' contains the word 'good'. Transformers keep their accuracy much better. The heat-map shows how attention links the words in such a sentence – but, as Jain and Wallace warn, attention is an illustration, not a proof of reasoning.");
+  s.addNotes("Speaker: Shaeed (≈45 s). Bag-of-words models lose most on sentences with negation and contrast, because 'not good' contains the word 'good'. Transformers keep their accuracy much better. The heat-map shows how attention links the words in such a sentence – but, as Jain and Wallace warn, attention is an illustration, not a proof of reasoning.");
 
   // ============================================================ 11. Conclusions
   pres.addSection({ title: "Conclusions" });

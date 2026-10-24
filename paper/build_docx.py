@@ -39,7 +39,7 @@ OUT = os.environ.get("PAPER_OUT", os.path.join(ROOT, "docs", "Transformers_in_NL
 NUMERIC = re.compile(r"^[\d\s.,%+\-–<>\[\];/·⁰-₟×kM*()]+$|^(yes|no|yes \(\d+k\))$")
 MML2OMML = r"C:/Program Files/Microsoft Office/root/Office16/MML2OMML.XSL"
 
-AUTHORS = "Shashikanth Hosur Ramegowda, Shaeed Khan, Rimsha Tariq"
+AUTHORS = "Shashikanth Hosur Ramegowda, Shaeed Khan"
 TITLE_EN = "TRANSFORMERS AND THEIR APPLICATION IN NATURAL LANGUAGE PROCESSING (NLP) TASKS"
 WORK_TYPE = "Group Project Paper"
 PROGRAMME = "Engineering of Artificial Intelligence study program, state code 6211BX023"
@@ -116,9 +116,8 @@ def load_tables():
     T = {}
     T["team"] = ("Distribution of work among the team members",
                  ["Team member", "Main responsibilities"],
-                 [["Shashikanth Hosur Ramegowda", "Problem formulation and experiment design; implementation of the Transformer fine-tuning program; practical part (Chapter 3); presentation"],
-                  ["Shaeed Khan", "Literature search in Google Scholar and Web of Science; literature review (Chapter 1); classical and BiLSTM baselines; references"],
-                  ["Rimsha Tariq", "Introduction; theory of the Transformer architecture and mathematical methods (Chapter 2); evaluation of ready-made models; error analysis; conclusions"]],
+                 [["Shashikanth Hosur Ramegowda", "Problem formulation and experiment design; implementation of the Transformer fine-tuning program; theory of the Transformer architecture and mathematical methods (Chapter 2); evaluation of ready-made models; practical part (Chapter 3); presentation"],
+                  ["Shaeed Khan", "Introduction; literature search in Google Scholar and Web of Science; literature review (Chapter 1); classical and BiLSTM baselines; error analysis; conclusions; references"]],
                  [5.0, 12.0])
     T["lit"] = ("Summary of the reviewed works most relevant to this project",
                 ["Authors (year)", "Model / approach", "Task, data", "Main result / relevance"],

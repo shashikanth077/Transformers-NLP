@@ -187,7 +187,7 @@ label.field { display: block; font-size: .85rem; font-weight: 600; margin: 8px 0
 /* timer */
 .timeline { display: flex; height: 38px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
 .timeline > div { display: grid; place-items: center; font-size: .72rem; font-weight: 700; color: #fff; border-right: 1px solid rgba(255,255,255,.4); min-width: 0; overflow: hidden; }
-.sp-shashi { background: #2e2a6b; } .sp-shaeed { background: #159a6a; } .sp-rimsha { background: #d9541f; }
+.sp-shashi { background: #2e2a6b; } .sp-shaeed { background: #159a6a; }
 :root[data-theme="dark"] .sp-shashi { background: #6c63e6; }
 .big-time { font-size: 3rem; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
 .slide-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); margin: 5px 0; align-items: center; }

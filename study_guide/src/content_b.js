@@ -105,18 +105,18 @@ const LT_TIMELINE = [
 
 const SLIDES = [
   { n: 1, t: "Title", who: "shashi", s: 30, key: "Do Transformers pay off on a laptop CPU? We compared 10 sentiment classifiers on SST-2." },
-  { n: 2, t: "Reading word by word vs all at once", who: "rimsha", s: 45, key: "LSTMs are sequential. The Transformer lets every token attend to every other and is trained in parallel." },
-  { n: 3, t: "Self-attention", who: "rimsha", s: 60, key: "softmax(QKᵀ/√d_k)·V. Heads, layers, [CLS] → softmax classifier." },
+  { n: 2, t: "Reading word by word vs all at once", who: "shashi", s: 45, key: "LSTMs are sequential. The Transformer lets every token attend to every other and is trained in parallel." },
+  { n: 3, t: "Self-attention", who: "shashi", s: 60, key: "softmax(QKᵀ/√d_k)·V. Heads, layers, [CLS] → softmax classifier." },
   { n: 4, t: "Literature", who: "shaeed", s: 60, key: "Google Scholar + Web of Science. Lithuanian work shows pre-training is the key. Gap: cost and small data." },
   { n: 5, t: "Experiment design", who: "shaeed", s: 45, key: "SST-2 (65k / 2k / 872), 10 models in four groups, one laptop CPU, criteria incl. CI and McNemar." },
   { n: 6, t: "Implementation", who: "shashi", s: 40, key: "Reproducible pipeline: one generic fine-tuning script; results saved as JSON; report script builds tables." },
   { n: 7, t: "Accuracy", who: "shashi", s: 60, key: "DistilBERT fine-tuned 88.8% vs best classical 82.9% (+5.9); ready-made 91.1%; zero-shot 81.8%." },
   { n: 8, t: "The price", who: "shashi", s: 45, key: "~700× slower inference, hours of CPU training, 67 M parameters. Still only ~40 ms per sentence." },
-  { n: 9, t: "Learning curve", who: "rimsha", s: 50, key: "With 500 labels: +14 points. BERT-small with 4,000 labels matches TF-IDF with 65k." },
-  { n: 10, t: "Negation and attention", who: "rimsha", s: 45, key: "Bag-of-words lose 8–9 points on negation, big Transformers 2–4. Attention is an illustration, not proof." },
+  { n: 9, t: "Learning curve", who: "shaeed", s: 50, key: "With 500 labels: +14 points. BERT-small with 4,000 labels matches TF-IDF with 65k." },
+  { n: 10, t: "Negation and attention", who: "shaeed", s: 45, key: "Bag-of-words lose 8–9 points on negation, big Transformers 2–4. Attention is an illustration, not proof." },
   { n: 11, t: "Conclusions", who: "shaeed", s: 60, key: "Reuse first, fine-tune a distilled model second, TF-IDF when speed/size dominate. Next: LitLat BERT on Lithuanian." },
 ];
-const SPEAKERS = { shashi: "Shashikanth", shaeed: "Shaeed", rimsha: "Rimsha" };
+const SPEAKERS = { shashi: "Shashikanth", shaeed: "Shaeed" };
 
 const CHECKLIST = [
   "I can explain the whole project in 60 seconds (question, method, answer).",

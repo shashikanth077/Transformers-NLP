@@ -1,6 +1,6 @@
 # Study Guide: Transformers and Their Application in NLP Tasks
 
-Based on the group paper by Shashikanth Hosur Ramegowda, Shaeed Khan and Rimsha Tariq (Vilnius Gediminas Technical University, Engineering of AI).
+Based on the group paper by Shashikanth Hosur Ramegowda and Shaeed Khan (Vilnius Gediminas Technical University, Engineering of AI).
 
 This guide is written so you can learn the paper from beginning to end, understand every concept with a small example, and prepare to present it.
 
@@ -18,9 +18,8 @@ The paper lists these responsibilities:
 
 | Member | Responsibilities |
 |---|---|
-| Shashikanth (you) | Problem formulation and experiment design; implementation of the Transformer fine-tuning program; practical part (Chapter 3); presentation |
-| Shaeed Khan | Literature search; literature review (Chapter 1); classical and BiLSTM baselines; references |
-| Rimsha Tariq | Introduction; Transformer theory and mathematical methods (Chapter 2); ready-made model evaluation; error analysis; conclusions |
+| Shashikanth (you) | Problem formulation and experiment design; implementation of the Transformer fine-tuning program; Transformer theory and mathematical methods (Chapter 2); ready-made model evaluation; practical part (Chapter 3); presentation |
+| Shaeed Khan | Introduction; literature search and review (Chapter 1); classical and BiLSTM baselines; error analysis; conclusions; references |
 
 **Priority for you:** Chapter 3 and the implementation (Section 2.5 and the code pipeline) in depth. Know the theory (Section 2.6 and 2.7) well enough to explain it, because the presenter will be asked about it. Know the literature review at a high level.
 

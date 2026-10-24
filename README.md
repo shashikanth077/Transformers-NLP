@@ -1,7 +1,7 @@
 # Transformers and their Application in NLP Tasks
 
 Group project, VILNIUS TECH – Faculty of Fundamental Sciences, *Engineering of Artificial Intelligence* study program.
-**Team:** Shashikanth Hosur Ramegowda, Shaeed Khan, Rimsha Tariq
+**Team:** Shashikanth Hosur Ramegowda, Shaeed Khan
 
 The project explains the Transformer architecture and evaluates it experimentally: **10 sentiment classifiers**
 (classical TF-IDF, a BiLSTM, three Transformers fine-tuned by us and three ready-made Transformers) are compared on
@@ -12,7 +12,7 @@ robustness on negation / contrast.
 
 | File | Description |
 |---|---|
-| `Transformers_in_NLP_Project_Paper.docx` / `.pdf` | Project paper (28 pages, VILNIUS TECH MFT template, English only) |
+| `Transformers_in_NLP_Project_Paper.docx` / `.pdf` | Project paper (25 pages, VILNIUS TECH MFT template, English only) |
 | `Transformers_in_NLP_Presentation.pptx` | 11-slide presentation for a 7–10 minute talk, with speaker notes |
 | `Project_Study_Guide.html` | **Interactive study guide** (open in any browser, works offline): real-world story, step-by-step pipeline, sentence lab with real attention maps, all 872 test sentences for every model, results explorer, Q&A, quiz, rehearsal timer |
 | `Project_Map_and_Interview_Prep.html` | **Whole project on one page** (offline): clickable flow diagram from assignment to deliverables, results explorer, 54 interview and viva questions with answers (search, filters, quiz mode), and the project's purpose and motto |

@@ -195,7 +195,7 @@ label.field { display: block; font-size: .85rem; font-weight: 600; margin: 8px 0
 /* timer */
 .timeline { display: flex; height: 38px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
 .timeline > div { display: grid; place-items: center; font-size: .72rem; font-weight: 700; color: #fff; border-right: 1px solid rgba(255,255,255,.4); min-width: 0; overflow: hidden; }
-.sp-shashi { background: #2e2a6b; } .sp-shaeed { background: #159a6a; } .sp-rimsha { background: #d9541f; }
+.sp-shashi { background: #2e2a6b; } .sp-shaeed { background: #159a6a; }
 :root[data-theme="dark"] .sp-shashi { background: #6c63e6; }
 .big-time { font-size: 3rem; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
 .slide-row { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); margin: 5px 0; align-items: center; }
@@ -251,7 +251,7 @@ label.field { display: block; font-size: .85rem; font-weight: 600; margin: 8px 0
   <p class="eyebrow">VILNIUS TECH · Group project</p>
   <h1>Transformers in NLP: your interactive study guide</h1>
   <p class="lead">Everything you need to understand, explain and defend this project: from the first question to the last number. Click, type, drag and compare. All results here are the <b>real outputs</b> of our experiment.</p>
-  <p class="muted">Team: Shashikanth Hosur Ramegowda · Shaeed Khan · Rimsha Tariq</p>
+  <p class="muted">Team: Shashikanth Hosur Ramegowda · Shaeed Khan</p>
 
   <div class="card">
     <h3 style="margin-top:0">The project in 60 seconds</h3>
@@ -530,7 +530,7 @@ label.field { display: block; font-size: .85rem; font-weight: 600; margin: 8px 0
   <h2>Presentation coach (7–10 minutes)</h2>
   <p class="lead">11 slides, three speakers, a plan of 9:00. Rehearse with the timer: it shows who should be speaking and warns you when you run over.</p>
   <div class="timeline" id="timeline" aria-label="Time plan"></div>
-  <div class="legend"><span><i class="dot" style="background:#2e2a6b"></i>Shashikanth</span><span><i class="dot" style="background:#159a6a"></i>Shaeed</span><span><i class="dot" style="background:#d9541f"></i>Rimsha</span></div>
+  <div class="legend"><span><i class="dot" style="background:#2e2a6b"></i>Shashikanth</span><span><i class="dot" style="background:#159a6a"></i>Shaeed</span></div>
   <div class="grid g2" style="margin-top:10px">
     <div class="card">
       <div class="big-time" id="clock">0:00</div>
@@ -539,9 +539,8 @@ label.field { display: block; font-size: .85rem; font-weight: 600; margin: 8px 0
     </div>
     <div class="card"><b>Who answers what</b>
       <table style="margin-top:6px"><tbody>
-        <tr><td><b>Shashikanth</b></td><td>Problem formulation, experiment design, fine-tuning program, practical part (results, costs), presentation</td></tr>
-        <tr><td><b>Shaeed</b></td><td>Literature search and review, classical and BiLSTM baselines, references, literature questions</td></tr>
-        <tr><td><b>Rimsha</b></td><td>Introduction, Transformer theory and mathematics, ready-made models, error analysis, conclusions</td></tr>
+        <tr><td><b>Shashikanth</b></td><td>Problem formulation, experiment design, fine-tuning program, Transformer theory and mathematics, ready-made models, practical part (results, costs), presentation</td></tr>
+        <tr><td><b>Shaeed</b></td><td>Introduction, literature search and review, classical and BiLSTM baselines, error analysis, conclusions, references</td></tr>
       </tbody></table>
       <p class="small muted" style="margin-bottom:0">Everyone should still be able to explain the whole pipeline in 60 seconds.</p>
     </div>
@@ -896,18 +895,18 @@ const LT_TIMELINE = [
 
 const SLIDES = [
   { n: 1, t: "Title", who: "shashi", s: 30, key: "Do Transformers pay off on a laptop CPU? We compared 10 sentiment classifiers on SST-2." },
-  { n: 2, t: "Reading word by word vs all at once", who: "rimsha", s: 45, key: "LSTMs are sequential. The Transformer lets every token attend to every other and is trained in parallel." },
-  { n: 3, t: "Self-attention", who: "rimsha", s: 60, key: "softmax(QKᵀ/√d_k)·V. Heads, layers, [CLS] → softmax classifier." },
+  { n: 2, t: "Reading word by word vs all at once", who: "shashi", s: 45, key: "LSTMs are sequential. The Transformer lets every token attend to every other and is trained in parallel." },
+  { n: 3, t: "Self-attention", who: "shashi", s: 60, key: "softmax(QKᵀ/√d_k)·V. Heads, layers, [CLS] → softmax classifier." },
   { n: 4, t: "Literature", who: "shaeed", s: 60, key: "Google Scholar + Web of Science. Lithuanian work shows pre-training is the key. Gap: cost and small data." },
   { n: 5, t: "Experiment design", who: "shaeed", s: 45, key: "SST-2 (65k / 2k / 872), 10 models in four groups, one laptop CPU, criteria incl. CI and McNemar." },
   { n: 6, t: "Implementation", who: "shashi", s: 40, key: "Reproducible pipeline: one generic fine-tuning script; results saved as JSON; report script builds tables." },
   { n: 7, t: "Accuracy", who: "shashi", s: 60, key: "DistilBERT fine-tuned 88.8% vs best classical 82.9% (+5.9); ready-made 91.1%; zero-shot 81.8%." },
   { n: 8, t: "The price", who: "shashi", s: 45, key: "~700× slower inference, hours of CPU training, 67 M parameters. Still only ~40 ms per sentence." },
-  { n: 9, t: "Learning curve", who: "rimsha", s: 50, key: "With 500 labels: +14 points. BERT-small with 4,000 labels matches TF-IDF with 65k." },
-  { n: 10, t: "Negation and attention", who: "rimsha", s: 45, key: "Bag-of-words lose 8–9 points on negation, big Transformers 2–4. Attention is an illustration, not proof." },
+  { n: 9, t: "Learning curve", who: "shaeed", s: 50, key: "With 500 labels: +14 points. BERT-small with 4,000 labels matches TF-IDF with 65k." },
+  { n: 10, t: "Negation and attention", who: "shaeed", s: 45, key: "Bag-of-words lose 8–9 points on negation, big Transformers 2–4. Attention is an illustration, not proof." },
   { n: 11, t: "Conclusions", who: "shaeed", s: 60, key: "Reuse first, fine-tune a distilled model second, TF-IDF when speed/size dominate. Next: LitLat BERT on Lithuanian." },
 ];
-const SPEAKERS = { shashi: "Shashikanth", shaeed: "Shaeed", rimsha: "Rimsha" };
+const SPEAKERS = { shashi: "Shashikanth", shaeed: "Shaeed" };
 
 const CHECKLIST = [
   "I can explain the whole project in 60 seconds (question, method, answer).",
