@@ -14,6 +14,7 @@ robustness on negation / contrast.
 |---|---|
 | `Transformers_in_NLP_Project_Paper.docx` / `.pdf` | Project paper (25 pages, VILNIUS TECH MFT template, English only) |
 | `Transformers_in_NLP_Presentation.pptx` | 11-slide presentation for a 7–10 minute talk, with speaker notes |
+| `Literature_Gap_Explained.pdf` | **The literature gap, drawn** (4-page PDF): the four Lithuanian-related articles, what each leaves open, why small data hurts (bias and variance, unseen words, learning curve), and what this project did step by step with a real example sentence |
 | `Project_Study_Guide.html` | **Interactive study guide** (open in any browser, works offline): real-world story, step-by-step pipeline, sentence lab with real attention maps, all 872 test sentences for every model, results explorer, Q&A, quiz, rehearsal timer |
 | `Project_Map_and_Interview_Prep.html` | **Whole project on one page** (offline): clickable flow diagram from assignment to deliverables, results explorer, 54 interview and viva questions with answers (search, filters, quiz mode), and the project's purpose and motto |
 | `Transformers_NLP_Kannada_Notes.pdf` | **Study notes in Kannada** (40 pages): NLP and Transformers explained with Karnataka examples, the project's real results, viva Q&A with English answer lines, glossary, quiz, one-page summary |
