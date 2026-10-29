@@ -24,6 +24,10 @@ pip install -r requirements.txt
 Internet access is needed on the first run to download the dataset and the pre-trained models
 from the Hugging Face Hub (about 1.5 GB in total).
 
+## Optional: GPU (for example in Google Colab)
+
+The scripts run on the CPU by default, as in the reported results. Setting the environment variable `DEVICE=cuda` makes `04_finetune_transformer.py` and `05_pretrained_transformers.py` use the GPU (see `notebooks/Transformers_NLP_Colab.ipynb`). Times and latencies measured on a GPU are not comparable with the CPU results.
+
 ## Run everything
 
 ```bash

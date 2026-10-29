@@ -50,6 +50,7 @@ code/     experiment (Python): 01_prepare_data.py ... 09_diagrams.py, run_all.sh
 paper/    chapter texts (*.md), build_docx.py (generates the paper from template/MFT_template_2025.docx),
           word_finalize.ps1 (updates the table of contents and exports PDF with MS Word),
           check_docx.py (quality checks of the generated paper)
+notebooks/ Transformers_NLP_Colab.ipynb (run the project in Google Colab), build_notebook.py
 slides/   build_deck.js (generates the presentation from the results)
 docs/     final paper, presentation and the interactive study guide
 study_guide/  export_data.py (collects the real results, TF-IDF weights and attention maps) and
@@ -58,6 +59,12 @@ study_guide/  export_data.py (collects the real results, TF-IDF weights and atte
               build_overview.py (writes docs/Transformers_Explained_Overview.html)
               kannada/  build_kannada_notes.py (notes_kn.html + Edge print-to-PDF; numbers come from data.json)
 ```
+
+## Run in Google Colab
+
+[![Open In Colab](https://colab.research.google.com/assets/colab/badge.svg)](https://colab.research.google.com/github/shashikanth077/Transformers-NLP/blob/master/notebooks/Transformers_NLP_Colab.ipynb)
+
+`notebooks/Transformers_NLP_Colab.ipynb` runs the same scripts (`code/01` to `08`) step by step in Colab, with an explanation above every step, a **quick** mode (demo, about 10 to 20 minutes on a GPU) and a **full** mode (the paper's settings), a comparison with the paper's results and a cell to try your own sentences. Scripts 04 and 05 use the CPU by default; setting `DEVICE=cuda` (done by the notebook) uses a GPU. Training times and latencies from Colab are not comparable with the paper's laptop numbers.
 
 ## Reproduce
 

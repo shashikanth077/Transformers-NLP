@@ -4,12 +4,15 @@
 2. cardiffnlp/twitter-roberta-base-sentiment-latest (out-of-domain: trained on tweets, 3 classes)
 3. cross-encoder/nli-distilroberta-base              (zero-shot classification through NLI)
 """
+import os
+
 import numpy as np
 from transformers import pipeline
 
 from utils import Timer, compute_metrics, load_split, save_result, set_seed
 
 set_seed()
+DEV = 0 if os.environ.get("DEVICE") == "cuda" else -1   # CPU by default; DEVICE=cuda uses the first GPU (e.g. Google Colab)
 test = load_split("test")
 texts, y = test["sentence"].tolist(), test["label"].values
 
@@ -33,7 +36,7 @@ def save(tag, family, model_name, pred, seconds, params):
 
 # 1. In-domain fine-tuned DistilBERT
 name = "distilbert-base-uncased-finetuned-sst-2-english"
-clf = pipeline("sentiment-analysis", model=name, device=-1)
+clf = pipeline("sentiment-analysis", model=name, device=DEV)
 with Timer() as t:
     out = clf(texts, batch_size=32, truncation=True)
 save("pt_distilbert_sst2", "transformer-pretrained", name,
@@ -41,7 +44,7 @@ save("pt_distilbert_sst2", "transformer-pretrained", name,
 
 # 2. Out-of-domain Twitter RoBERTa: compare positive vs negative scores only (neutral ignored)
 name = "cardiffnlp/twitter-roberta-base-sentiment-latest"
-clf = pipeline("sentiment-analysis", model=name, device=-1)
+clf = pipeline("sentiment-analysis", model=name, device=DEV)
 with Timer() as t:
     out = clf(texts, batch_size=32, truncation=True, top_k=None)
 pred = []
@@ -52,7 +55,7 @@ save("pt_twitter_roberta", "transformer-pretrained", name, np.array(pred), t.sec
 
 # 3. Zero-shot classification via natural language inference
 name = "cross-encoder/nli-distilroberta-base"
-zs = pipeline("zero-shot-classification", model=name, device=-1)
+zs = pipeline("zero-shot-classification", model=name, device=DEV)
 with Timer() as t:
     out = zs(texts, candidate_labels=["positive", "negative"],
              hypothesis_template="The sentiment of this movie review is {}.", batch_size=32)

@@ -5,6 +5,7 @@ Usage:
 """
 import argparse
 import math
+import os
 
 import torch
 from torch.utils.data import DataLoader
@@ -24,12 +25,14 @@ p.add_argument("--save-dir", default=None, help="optionally save the fine-tuned 
 args = p.parse_args()
 
 set_seed()
+# CPU by default (the reported results); set the environment variable DEVICE=cuda to use a GPU, e.g. in Google Colab
+DEVICE = torch.device(os.environ.get("DEVICE", "cpu"))
 train, dev, test = load_split("train"), load_split("dev"), load_split("test")
 if args.train_size < len(train):
     train = train.sample(n=args.train_size, random_state=42)
 
 tok = AutoTokenizer.from_pretrained(args.model)
-model = AutoModelForSequenceClassification.from_pretrained(args.model, num_labels=2)
+model = AutoModelForSequenceClassification.from_pretrained(args.model, num_labels=2).to(DEVICE)
 
 
 def make_loader(df, shuffle):
@@ -50,7 +53,8 @@ def predict(loader):
     with torch.no_grad():
         for batch in loader:
             batch.pop("labels")
-            preds.append(model(**batch).logits.argmax(-1))
+            batch = {k: v.to(DEVICE) for k, v in batch.items()}
+            preds.append(model(**batch).logits.argmax(-1).cpu())
     return torch.cat(preds).numpy()
 
 
@@ -65,6 +69,7 @@ with Timer() as t_train:
         model.train()
         total, n = 0.0, 0
         for step, batch in enumerate(train_dl):
+            batch = {k: v.to(DEVICE) for k, v in batch.items()}
             out = model(**batch)  # cross-entropy loss is computed inside the model
             out.loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
