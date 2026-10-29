@@ -179,32 +179,46 @@ function imgFit(slide, file, x, y, maxW, maxH) {
 
   // ============================================================ 4. Literature
   s = pres.addSlide({ masterName: "CONTENT", sectionTitle: "Theory" });
-  title(s, "Literature: Transformers lead, but gaps remain");
+  title(s, "Literature: what is known, and what is missing");
+  // three model families in one compact row
   const fams = [
-    ["Encoder-only", "BERT, RoBERTa, DistilBERT, DeBERTa", "Understanding & classification", H.accent1],
-    ["Decoder-only", "GPT-2/3/4, Llama", "Generation, in-context learning", H.accent2],
-    ["Encoder–decoder", "T5, BART", "Translation, summarisation", H.accent5],
+    ["Encoder-only", "BERT, DistilBERT, RoBERTa", "understanding, classification", H.accent1],
+    ["Decoder-only", "GPT, Llama", "text generation", H.accent2],
+    ["Encoder–decoder", "T5, BART", "translation, summaries", H.accent5],
   ];
   fams.forEach((f, i) => {
     const x = 0.6 + i * 4.1;
-    card(s, x, 1.5, 3.8, 2.0, H.lt2);
-    s.addText(f[0], { isTextBox: true, x: x + 0.3, y: 1.65, w: 3.3, h: 0.5, fontFace: "Cambria", fontSize: 20, bold: true, color: f[3], margin: 0 });
-    s.addText(f[1], { isTextBox: true, x: x + 0.3, y: 2.2, w: 3.3, h: 0.5, fontSize: 15, bold: true, color: H.dk1, margin: 0 });
-    s.addText(f[2], { isTextBox: true, x: x + 0.3, y: 2.75, w: 3.3, h: 0.5, fontSize: 14, color: "52516E", margin: 0 });
+    card(s, x, 1.4, 3.8, 0.95, H.lt2);
+    s.addText(f[0], { isTextBox: true, x: x + 0.25, y: 1.48, w: 3.3, h: 0.4, fontFace: "Cambria", fontSize: 17, bold: true, color: f[3], margin: 0 });
+    s.addText([{ text: f[1], options: { bold: true, color: H.dk1 } }, { text: "  →  " + f[2], options: { color: "52516E" } }], { isTextBox: true, x: x + 0.25, y: 1.9, w: 3.4, h: 0.4, fontSize: 12.5, margin: 0, valign: "middle" });
   });
-  await iconCircle(s, fa.FaMapMarkerAlt, 0.6, 3.95, 0.7, H.accent3);
-  s.addText("In Lithuania", { isTextBox: true, x: 1.5, y: 3.95, w: 4, h: 0.7, fontFace: "Cambria", fontSize: 20, bold: true, color: H.dk1, margin: 0, valign: "middle" });
-  body(s, [
-    { text: "Kapočiūtė-Dzikienė et al. (2019): NB 0.735 beat LSTM/CNN 0.706 – no pre-training", options: { bullet: true, breakLine: true } },
-    { text: "Ulčar & Robnik-Šikonja (2021): LitLat BERT for LT/LV/EN", options: { bullet: true, breakLine: true } },
-    { text: "Vileikytė et al. (2024): BERT & T5 for Lithuanian reviews", options: { bullet: true, breakLine: true } },
-    { text: "Nakvosas et al. (2024): first open Lithuanian Llama2 LLMs", options: { bullet: true } },
-  ], { x: 0.6, y: 4.8, w: 6.6, h: 1.9, fontSize: 14, paraSpaceAfter: 4 });
-  card(s, 7.6, 3.95, 5.1, 2.75, "FDF1E8");
-  await iconCircle(s, fa.FaSearch, 7.85, 4.15, 0.6, H.accent3);
-  s.addText("Gap we address", { isTextBox: true, x: 8.6, y: 4.15, w: 3.9, h: 0.6, fontFace: "Cambria", fontSize: 18, bold: true, color: H.dk1, margin: 0, valign: "middle" });
-  body(s, "Results are reported on GPUs with full data. How large is the gain on a CPU with a few thousand labels – and is a ready-made model enough?", { x: 7.9, y: 4.9, w: 4.6, h: 1.7, fontSize: 15 });
-  s.addNotes("Speaker: Shaeed (≈60 s). We searched Google Scholar and Web of Science with the query transformer OR BERT AND sentiment / text classification, plus Lithuanian. Three model families. In Lithuania: early work showed that deep nets without pre-training lose to naive Bayes; newer work uses LitLat BERT, BERT/T5 and Lithuanian Llama2. Gap: cost and small-data behaviour on ordinary hardware.");
+  // left: what the studies show (three plain sentences)
+  card(s, 0.6, 2.6, 7.4, 4.1, H.lt2);
+  await iconCircle(s, fa.FaBookOpen, 0.85, 2.78, 0.6, H.accent2);
+  s.addText("What the studies show", { isTextBox: true, x: 1.6, y: 2.78, w: 5.5, h: 0.6, fontFace: "Cambria", fontSize: 20, bold: true, color: H.dk1, margin: 0, valign: "middle" });
+  const facts = [
+    ["1", "Transformers are the most accurate.", " Fine-tuned BERT-type models exceed 90% on SST-2; classical models reach about 79–83%."],
+    ["2", "Without pre-training, small data is a problem.", " In Lithuania a simple naive Bayes (0.735) beat LSTM and CNN networks (0.706) (Kapočiūtė-Dzikienė et al., 2019)."],
+    ["3", "Lithuanian now has pre-trained models.", " LitLat BERT (2021), BERT and T5 for reviews (2024), the first open Llama2 models (2024)."],
+  ];
+  facts.forEach((f, i) => {
+    const y = 3.6 + i * 1.02;
+    s.addShape(pres.shapes.OVAL, { x: 0.85, y: y + 0.05, w: 0.42, h: 0.42, fill: { color: H.dk2 }, line: { color: H.dk2 } });
+    s.addText(f[0], { isTextBox: true, x: 0.85, y: y + 0.05, w: 0.42, h: 0.42, fontSize: 14, bold: true, color: "FFFFFF", align: "center", valign: "middle", margin: 0 });
+    s.addText([{ text: f[1], options: { bold: true, color: H.dk1 } }, { text: f[2], options: { color: "3B3A55" } }], { isTextBox: true, x: 1.45, y, w: 6.35, h: 0.95, fontSize: 14.5, margin: 0, valign: "top" });
+  });
+  // right: the gap in plain words
+  card(s, 8.3, 2.6, 4.4, 4.1, "FDF1E8");
+  await iconCircle(s, fa.FaSearch, 8.55, 2.78, 0.6, H.accent3);
+  s.addText("What is missing: our gap", { isTextBox: true, x: 9.3, y: 2.78, w: 3.3, h: 0.6, fontFace: "Cambria", fontSize: 18, bold: true, color: H.dk1, margin: 0, valign: "middle" });
+  s.addText([
+    { text: "These studies report accuracy. They rarely tell a student with a laptop:", options: { breakLine: true, color: H.dk1, paraSpaceAfter: 6 } },
+    { text: "What does the better model cost? (training time, speed, size)", options: { bullet: true, breakLine: true, color: H.dk1 } },
+    { text: "How many labelled sentences does it need?", options: { bullet: true, breakLine: true, color: H.dk1 } },
+    { text: "Is a ready-made model good enough?", options: { bullet: true, breakLine: true, color: H.dk1, paraSpaceAfter: 8 } },
+    { text: "We measure all three, on one laptop CPU.", options: { bold: true, color: "B8441B" } },
+  ], { isTextBox: true, x: 8.55, y: 3.55, w: 3.95, h: 3.0, fontSize: 14.5, margin: 0, valign: "top", paraSpaceAfter: 4 });
+  s.addNotes("Speaker: Shaeed (≈60 s). In one sentence: the papers tell us which model is accurate, but not what it costs or how many labels it needs. We searched Google Scholar and Web of Science (transformer OR BERT AND sentiment / text classification, plus Lithuanian). There are three model families; we use encoder-only models for classification. What the studies show: first, Transformers are the most accurate, above 90% on SST-2 against 79 to 83% for classical models. Second, without pre-training small data is a problem: in Lithuania naive Bayes at 0.735 beat LSTM and CNN at 0.706. Third, Lithuanian now has pre-trained models, LitLat BERT and BERT/T5, and open Llama2 models. What is missing, our gap: these studies report accuracy, but a student with a laptop also needs to know the cost, how many labels are needed, and whether a ready-made model is enough. We measure all three on one laptop CPU.");
 
   // ============================================================ 5. Experiment design
   pres.addSection({ title: "Experiment" });
