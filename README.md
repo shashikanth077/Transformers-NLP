@@ -51,7 +51,7 @@ paper/    chapter texts (*.md), build_docx.py (generates the paper from template
           word_finalize.ps1 (updates the table of contents and exports PDF with MS Word),
           check_docx.py (quality checks of the generated paper)
 notebooks/ Transformers_NLP_Colab.ipynb (run the project in Google Colab), build_notebook.py
-slides/   build_deck.js (generates the presentation from the results)
+slides/   build_deck.py (generates the presentation on the official VILNIUS TECH template; template in slides/template/)
 docs/     final paper, presentation and the interactive study guide
 study_guide/  export_data.py (collects the real results, TF-IDF weights and attention maps) and
               build.py (writes docs/Project_Study_Guide.html from src/ and data.json)
@@ -82,5 +82,5 @@ Rebuild the documents (Windows with MS Word / PowerPoint):
 pip install python-docx latex2mathml lxml pandas
 python paper/build_docx.py
 powershell -File paper/word_finalize.ps1 -Docx docs/Transformers_in_NLP_Project_Paper.docx -Pdf docs/Transformers_in_NLP_Project_Paper.pdf
-cd slides && npm install && node build_deck.js
+python slides/build_deck.py
 ```

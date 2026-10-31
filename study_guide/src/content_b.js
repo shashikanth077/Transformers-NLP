@@ -148,7 +148,7 @@ const FILES = [
   { p: "code/results/", d: "One JSON per model (metrics, timings, parameters, predictions) and CSV summaries. <b>This guide is built from these files.</b>", dir: true },
   { p: "code/figures/", d: "All charts and diagrams used in the paper and slides.", dir: true },
   { p: "paper/", d: "Chapter texts (markdown), <code>build_docx.py</code> (builds the paper on the VILNIUS TECH template), <code>check_docx.py</code> (quality checks).", dir: true },
-  { p: "slides/build_deck.js", d: "Builds the 11-slide presentation from the results (so slide numbers cannot disagree with the paper)." },
+  { p: "slides/build_deck.py", d: "Builds the 11-slide presentation on the official VILNIUS TECH template from the results (so slide numbers cannot disagree with the paper)." },
   { p: "docs/", d: "Final paper (DOCX, PDF), presentation (PPTX) and this study guide.", dir: true },
   { p: "study_guide/", d: "<code>export_data.py</code> collects real results (incl. the TF-IDF model weights and DistilBERT attention) → <code>build.py</code> writes this HTML.", dir: true },
 ];
@@ -164,7 +164,7 @@ pip install -r requirements.txt`],
   ["Rebuild tables, figures and statistics", `python 08_report.py`],
   ["Rebuild paper and slides (Windows + MS Office)", `python paper/build_docx.py
 powershell -File paper/word_finalize.ps1 -Docx docs/Transformers_in_NLP_Project_Paper.docx -Pdf docs/Transformers_in_NLP_Project_Paper.pdf
-cd slides && npm install && node build_deck.js`],
+python slides/build_deck.py`],
   ["Rebuild this study guide", `python study_guide/export_data.py     # needs the project environment
 python study_guide/build.py`],
 ];

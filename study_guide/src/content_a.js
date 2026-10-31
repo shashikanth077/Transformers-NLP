@@ -172,7 +172,7 @@ p = binomtest(min(b01, b10), b01 + b10, 0.5).pvalue                 # exact McNe
   { short: "Deliver", title: "Report, paper, slides and repository",
     paper: "Conclusions; Appendix A", rw: "ReviewRadar: “Tell management what to build.”",
     what: ["<code>08_report.py</code> turns the JSON results into tables, charts and statistics.",
-           "<code>paper/build_docx.py</code> builds the paper on the official VILNIUS TECH template; <code>slides/build_deck.js</code> builds the presentation from the same results, so numbers never disagree.",
+           "<code>paper/build_docx.py</code> builds the paper on the official VILNIUS TECH template; <code>slides/build_deck.py</code> builds the presentation on the VILNIUS TECH template from the same results, so numbers never disagree.",
            "Everything (code, results, paper, slides, this guide) is in the GitHub repository; <code>run_all.sh</code> re-runs the whole experiment (~2.5–3 h)."],
     why: "Reproducibility: anybody can re-run it, and every number in the paper traces back to a result file.",
     out: "docs/ paper (DOCX, PDF) and presentation; conclusions with practical recommendations.",

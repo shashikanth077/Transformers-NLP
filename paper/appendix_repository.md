@@ -8,7 +8,7 @@ The complete source code, the results of every model (JSON files with metrics, t
 - code/results/ – one JSON file per model and the summary tables (summary_table.csv, statistics.csv, subset_accuracy.csv, learning_curve.csv);
 - code/figures/ – all figures used in the paper and the presentation;
 - paper/ – the chapter texts and build_docx.py, which generates this document from the VILNIUS TECH template;
-- slides/ – build_deck.js, which generates the presentation from the results;
+- slides/ – build_deck.py, which generates the presentation on the VILNIUS TECH template from the results;
 - docs/ – the final paper (DOCX, PDF) and the presentation (PPTX).
 
 To reproduce the experiment, create a Python 3.11 environment, install the CPU build of PyTorch and the packages listed in code/requirements.txt, and run bash run_all.sh in the code directory. On a 4-core laptop the whole pipeline takes about 2.5–3 hours; the dataset and the pre-trained models (about 1.5 GB) are downloaded automatically from the Hugging Face Hub on the first run.
